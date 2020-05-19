@@ -7,14 +7,10 @@ public class HealthReadout : MonoBehaviour
 {
     private Text text;
 
-    private void Start()
+    public void initHealthUI(float startingHealth)
     {
         text = GetComponent<Text>();
-    }
-
-    public void initUI(float currentHealth)
-    {
-        string healthText = currentHealth + " health";
+        string healthText = startingHealth + " health";
         text.text = healthText;
     }
 
