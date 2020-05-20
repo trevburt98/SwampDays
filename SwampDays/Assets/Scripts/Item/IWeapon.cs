@@ -28,6 +28,12 @@ public interface IWeapon<T>
         set;
     }
 
+    float Range
+    {
+        get;
+        set;
+    }
+
     float Durability
     {
         get;

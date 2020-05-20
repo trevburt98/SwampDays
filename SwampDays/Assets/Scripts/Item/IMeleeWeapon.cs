@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IMeleeWeapon : MonoBehaviour
+public interface IMeleeWeapon<T> : IWeapon<T>
 {
-    // Start is called before the first frame update
-    void Start()
+    float StrengthMultiplier
     {
-        
+        set;
+        get;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    void Block(T damageReduction);
+
+    void HeavyAttack(T damageMultiplier);
 }

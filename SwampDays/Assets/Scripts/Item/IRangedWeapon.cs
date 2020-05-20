@@ -4,12 +4,6 @@ using UnityEngine;
 
 public interface IRangedWeapon<T> : IWeapon<T>
 {
-    float Range
-    {
-        get;
-        set;
-    }
-
     int[] BulletID
     {
         get;
