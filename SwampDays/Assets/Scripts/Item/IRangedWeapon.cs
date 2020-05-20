@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface IRangedWeapon<T> : IWeapon<T>
 {
-    int[] BulletID
+    int[] BulletIDs
     {
         get;
         set;
