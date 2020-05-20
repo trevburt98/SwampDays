@@ -47,6 +47,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private float sprintDeltaTime;
         private float staminaRecoveryDeltaTime;
 
+        public float staminaRecoveryModifier;
+        public float staminaUseModifier;
+        public float runSpeedModifier;
+        public float moveSpeedModifier;
+
         // Use this for initialization
         private void Start()
         {
@@ -221,16 +226,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
 #endif
             // set the desired speed to be walking or running
             //speed = m_IsWalking ? m_WalkSpeed : m_RunSpeed;
-            speed = m_WalkSpeed;
+            speed = m_WalkSpeed * moveSpeedModifier;
             if (!m_IsWalking && playerCharacter.Stamina > 0)
             {
-                speed = m_RunSpeed;
+                speed = m_RunSpeed * runSpeedModifier;
                 staminaRecoveryDeltaTime = 0;
                 sprintDeltaTime += Time.deltaTime;
                 if(sprintDeltaTime >= 1)
                 {
                     sprintDeltaTime = 0;
-                    playerCharacter.updateStamina(-1);
+                    playerCharacter.updateStamina(-1 * staminaUseModifier);
                 }
             } else if(m_IsWalking)
             {
@@ -239,7 +244,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 if(staminaRecoveryDeltaTime >= 1)
                 {
                     staminaRecoveryDeltaTime = 0;
-                    playerCharacter.updateStamina(1);
+                    playerCharacter.updateStamina(1 * staminaRecoveryModifier);
                 }
             }
 
@@ -287,6 +292,14 @@ namespace UnityStandardAssets.Characters.FirstPerson
         {
             m_WalkSpeed = newWalkSpeed;
             m_RunSpeed = m_WalkSpeed * 2;
+        }
+
+        public void resetModifiers()
+        {
+            staminaRecoveryModifier = 1;
+            staminaUseModifier = 1;
+            runSpeedModifier = 1;
+            moveSpeedModifier = 1;
         }
     }
 }
