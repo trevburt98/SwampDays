@@ -2,17 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IInteractable : MonoBehaviour
+public interface IInteractable
 {
-    // Start is called before the first frame update
-    void Start()
+    bool Equippable
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        get;
     }
 }

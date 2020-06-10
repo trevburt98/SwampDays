@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IWeapon<T>
+public interface IWeapon<T> : IInteractable
 {
     int ID
     {

@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
 {
+    private bool _equippable = true;
+    public bool Equippable
+    {
+        get => _equippable;
+    }
+
     private int _weaponId;
     public int ID
     {
