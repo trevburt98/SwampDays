@@ -7,19 +7,16 @@ public interface IWeapon<T> : IInteractable
     int ID
     {
         get;
-        set;
     }
 
     string Name
     {
         get;
-        set;
     }
 
     string FlavourText
     {
         get;
-        set;
     }
 
     float BaseDamage
@@ -43,10 +40,15 @@ public interface IWeapon<T> : IInteractable
     float Weight
     {
         get;
-        set;
     }
 
     bool Broken
+    {
+        get;
+        set;
+    }
+
+    AudioClip Sound
     {
         get;
         set;

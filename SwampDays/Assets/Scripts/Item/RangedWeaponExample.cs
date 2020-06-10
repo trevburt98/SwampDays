@@ -10,35 +10,33 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
         get => _equippable;
     }
 
-    private int _weaponId;
+    private int _weaponId = 1;
     public int ID
     {
         get => _weaponId;
         set => _weaponId = value;
     }
 
-    private string _weaponName;
+    private string _weaponName = "Example Ranged Weapon";
     public string Name
     {
         get => _weaponName;
-        set => _weaponName = value;
     }
 
-    private string _flavourText;
+    private string _flavourText = "Example implementation of a ranged weapon. Used to create a workflow for future weapons";
     public string FlavourText
     {
         get => _flavourText;
-        set => _flavourText = value;
     }
 
-    private float _damage;
+    private float _damage = 10;
     public float BaseDamage
     {
         get => _damage;
         set => _damage = value;
     }
 
-    private float _range;
+    private float _range = 10;
     public float Range
     {
         get => _range;
@@ -66,6 +64,13 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
         set => _broken = value;
     }
 
+    private AudioClip _fireSound;
+    public AudioClip Sound
+    {
+        get => _fireSound;
+        set => _fireSound = value;
+    }
+
     private int[] _compatibleBulletArray;
     public int[] BulletIDs
     {
@@ -75,7 +80,10 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
 
     void IWeapon<float>.Attack(float damageDone)
     {
-
+        Vector3 fwd = transform.TransformDirection(Vector3.forward);
+        Debug.DrawRay(transform.position, fwd, Color.red);
+        Debug.Log(fwd);
+        Debug.Log("pew pew");
     }
 
     void IWeapon<float>.Break()
