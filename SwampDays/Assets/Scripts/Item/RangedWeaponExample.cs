@@ -80,10 +80,10 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
 
     void IWeapon<float>.Attack(float damageDone)
     {
-        Vector3 fwd = transform.TransformDirection(Vector3.forward);
-        Debug.DrawRay(transform.position, fwd, Color.red);
-        Debug.Log(fwd);
-        Debug.Log("pew pew");
+        Transform startObject = transform.GetChild(0);
+        Vector3 fwd = startObject.TransformDirection(Vector3.forward);
+        Vector3 start = startObject.position;
+        Debug.DrawRay(start, fwd, Color.red);
     }
 
     void IWeapon<float>.Break()
