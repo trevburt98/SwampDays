@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Math = System.Math;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
 using Random = UnityEngine.Random;
@@ -9,6 +7,7 @@ namespace Character.PlayerCharacter
 {
     public class PlayerCharacter : MonoBehaviour, ICharacter<float>
     {
+        #region Trait Declarations
         private string _name;
         public string Name
         {
@@ -61,16 +60,29 @@ namespace Character.PlayerCharacter
             get => _stamina;
             set => _stamina = value;
         }
+        #endregion
 
         public float maxHealth;
         public float currentHealth;
 
+        private IInteractable equipped = null;
+        private List<IInteractable> inventory = new List<IInteractable>();
+
         //Reference to the first person controller attached to the character
         [SerializeField] private FirstPersonController fpsController;
+        //Reference to UI canvas
+        [SerializeField] private Canvas CanvasUI;
+        //Reference to the camera of the character
+        [SerializeField] private Camera camera;
+        //Reference to the hand gameobject
+        [SerializeField] private GameObject hand;
+
         //Reference to the health readout on the UI
-        [SerializeField] private HealthReadout healthUI;
+        private HealthReadout healthUI;
         //Reference to the stamina readout on the UI
-        [SerializeField] private StaminaReadout staminaUI;
+        private StaminaReadout staminaUI;
+        //Reference to interaction prompt on UI
+        private InteractionPrompt interactionPrompt;
 
         //TEMP
         //Public versions to quickly change from unity editor
@@ -89,6 +101,12 @@ namespace Character.PlayerCharacter
             updateCarryingCapacity(20);
             currentHealth = maxHealth;
 
+            //Get the UI elements for the character
+            healthUI = CanvasUI.GetComponentInChildren<HealthReadout>();
+            staminaUI = CanvasUI.GetComponentInChildren<StaminaReadout>();
+            interactionPrompt = CanvasUI.GetComponentInChildren<InteractionPrompt>();
+
+            //Initialize health and stamina UI elements
             healthUI.initHealthUI(maxHealth);
             staminaUI.initStaminaUI(maxStamina);
         }
@@ -108,6 +126,15 @@ namespace Character.PlayerCharacter
             {
                 Attack(5.0f);
             }
+
+            //If we have an item equipped call our equipped update function
+            if(equipped != null)
+            {
+                equippedUpdate();
+            }
+
+            //Send out the raycast seeking interactables
+            interactableRayCast();
         }
 
         //Setters for each trait
@@ -141,6 +168,8 @@ namespace Character.PlayerCharacter
         }
         #endregion
 
+
+        #region Public Function
         //ICharacter method for taking damage
         //TODO: implement death
         public void Damage(float damageTaken)
@@ -250,5 +279,69 @@ namespace Character.PlayerCharacter
                 fpsController.staminaRecoveryModifier = 0.75f;
             }
         }
+        #endregion
+
+        #region Private Functions
+
+        //Function to handle the raycast checking for interactables
+        private void interactableRayCast()
+        {
+            int layerMask = 1 << 8;
+            RaycastHit hit;
+
+            Vector3 forward = camera.transform.TransformDirection(Vector3.forward) * 5;
+            Debug.DrawRay(camera.transform.position, forward, Color.green);
+
+            //On Raycast hit
+            if (Physics.Raycast(camera.transform.position, forward, out hit, 10, layerMask))
+            {
+                //Throw up the prompt for this interaction
+                interactionPrompt.promptInteraction(hit.transform.name);
+                //If the player presses the interaction button
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    //If the item is equippable
+                    if (hit.transform.gameObject.GetComponent<IInteractable>().Equippable)
+                    {
+                        //Add the item to the players inventory
+                        //TODO: check max inventory space against current to determine whether or not this item can be stowed
+                        inventory.Add(hit.transform.gameObject.GetComponent<IInteractable>());
+                        //If nothing is equipped
+                        if (equipped == null)
+                        {
+                            //Set equipped to the object, make the object a child of the hand
+                            equipped = hit.transform.gameObject.GetComponent<IInteractable>();
+                            hit.transform.position = hand.transform.position;
+                            hit.transform.parent = hand.transform;
+                        }
+                        Debug.Log(inventory[0]);
+                    }
+                }
+            }
+            //Otherwise, remove the interaction prompt from the screen
+            else
+            {
+                interactionPrompt.removePrompt();
+            }
+        }
+
+        //Update called whenever the player has an item currently equipped
+        private void equippedUpdate()
+        {
+            //The player presses the interaction key while they have something equipped
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                //Unparent the hand, set equipped to nothing
+                //TODO: Remove the specific item from the player's inventory
+                hand.transform.GetChild(0).transform.parent = null;
+                equipped = null;
+                int i = 0;
+                foreach(IInteractable interactable in inventory)
+                {
+                    Debug.Log(++i + ": " + interactable);
+                }
+            }
+        }
+        #endregion
     }
 }
