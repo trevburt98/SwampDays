@@ -171,11 +171,17 @@ namespace Character.PlayerCharacter
 
         #region Public Function
         //ICharacter method for taking damage
-        //TODO: implement death
         public void Damage(float damageTaken)
         {
             currentHealth -= damageTaken;
             healthUI.changeHealthUI(currentHealth);
+        }
+
+        //ICharacter method for dying
+        //TODO: implement death
+        public void Die()
+        {
+            Debug.Log("oof");
         }
 
         //TEMP: temporary melee attack function to test functionality of strength
@@ -208,13 +214,14 @@ namespace Character.PlayerCharacter
         {
             int prevTier = currentTier;
             currentCarryingCapacity += newCarryingCapacity;
+            Debug.Log(currentCarryingCapacity);
 
             //Need to increase our current tier
             if(currentCarryingCapacity > tier[currentTier])
             {
                 for(int i = currentTier; i < tier.Length; i++)
                 {
-                    if(currentCarryingCapacity <= tier[i])
+                    if(currentCarryingCapacity <= tier[i] || i == 4)
                     {
                         currentTier = i;
                         break;

@@ -64,7 +64,7 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
         set => _broken = value;
     }
 
-    private AudioClip _fireSound;
+    [SerializeField] private AudioClip _fireSound;
     public AudioClip Sound
     {
         get => _fireSound;
@@ -78,12 +78,35 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
         set => _compatibleBulletArray = value;
     }
 
+    private AudioSource audioSource;
+
+
+    public void Start()
+    {
+        audioSource = GetComponent<AudioSource>();    
+    }
+
     void IWeapon<float>.Attack(float damageDone)
     {
         Transform startObject = transform.GetChild(0);
-        Vector3 fwd = startObject.TransformDirection(Vector3.forward);
+        RaycastHit hit;
+        Vector3 fwd = startObject.TransformDirection(Vector3.forward) * 10;
         Vector3 start = startObject.position;
         Debug.DrawRay(start, fwd, Color.red);
+        //Play the sound for this particular weapon
+        audioSource.PlayOneShot(Sound, 0.5f);
+        Debug.Log("pew pew");
+        //Raycast hit something
+        //If we want to do projectile physics this will change heavily
+        if (Physics.Raycast(start, fwd, out hit, Range))
+        {
+            //Check the hit's layer to determine what course of action to take
+            //Hit layer 9: NPC. Call the NPC's damage function
+            if(hit.transform.gameObject.layer == 9)
+            {
+                hit.transform.GetComponent<INpc>().Damage(BaseDamage);
+            }
+        }
     }
 
     void IWeapon<float>.Break()
