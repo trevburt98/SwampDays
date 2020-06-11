@@ -35,4 +35,6 @@ public interface ICharacter<T>
     }
 
     void Damage(T damageTaken);
+
+    void Die();
 }
