@@ -84,6 +84,11 @@ public class SampleEnemy : MonoBehaviour, INpc
         }
     }
 
+    public void Heal(float healthHealed)
+    {
+
+    }
+
     public void Die()
     {
         Debug.Log("well shit, guess i'll die then");

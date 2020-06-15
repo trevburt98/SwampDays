@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
 {
+    #region Member Declarations
     private bool _equippable = true;
     public bool Equippable
     {
         get => _equippable;
     }
 
-    private int _weaponId = 1;
-    public int ID
+    private string _weaponId = "rWeapEx";
+    public string ID
     {
         get => _weaponId;
-        set => _weaponId = value;
     }
 
     private string _weaponName = "Example Ranged Weapon";
@@ -27,6 +27,7 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
     public string FlavourText
     {
         get => _flavourText;
+        set => _flavourText = value;
     }
 
     private float _damage = 10;
@@ -80,6 +81,7 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
 
     private AudioSource audioSource;
 
+    #endregion
 
     public void Start()
     {

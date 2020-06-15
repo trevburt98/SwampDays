@@ -66,7 +66,7 @@ namespace Character.PlayerCharacter
         public float currentHealth;
 
         private GameObject equipped = null;
-        private List<GameObject> inventory = new List<GameObject>();
+        private List<InventoryItem> inventory = new List<InventoryItem>();
 
         //Reference to the first person controller attached to the character
         [SerializeField] private FirstPersonController fpsController;
@@ -109,6 +109,8 @@ namespace Character.PlayerCharacter
             //Initialize health and stamina UI elements
             healthUI.initHealthUI(maxHealth);
             staminaUI.initStaminaUI(maxStamina);
+
+            Damage(10);
         }
 
         // Update is called once per frame
@@ -168,12 +170,21 @@ namespace Character.PlayerCharacter
         }
         #endregion
 
-
         #region Public Function
         //ICharacter method for taking damage
         public void Damage(float damageTaken)
         {
             currentHealth -= damageTaken;
+            healthUI.changeHealthUI(currentHealth);
+        }
+
+        public void Heal(float healthHealed)
+        {
+            currentHealth += healthHealed;
+            if(currentHealth >= maxHealth)
+            {
+                currentHealth = maxHealth;
+            }
             healthUI.changeHealthUI(currentHealth);
         }
 
@@ -214,7 +225,6 @@ namespace Character.PlayerCharacter
         {
             int prevTier = currentTier;
             currentCarryingCapacity += newCarryingCapacity;
-            Debug.Log(currentCarryingCapacity);
 
             //Need to increase our current tier
             if(currentCarryingCapacity > tier[currentTier])
@@ -312,7 +322,6 @@ namespace Character.PlayerCharacter
                     {
                         //Add the item to the players inventory
                         //TODO: check max inventory space against current to determine whether or not this item can be stowed
-                        inventory.Add(hit.transform.gameObject);
                         //If nothing is equipped
                         if (equipped == null)
                         {
@@ -324,6 +333,15 @@ namespace Character.PlayerCharacter
                             hit.rigidbody.useGravity = false;
                             hit.rigidbody.constraints = RigidbodyConstraints.FreezeAll;
                         }
+                    }
+                    //If the item is not equippable (i.e. consumable, object)
+                    else
+                    {
+                        IInteractable interactable = hit.transform.gameObject.GetComponent<IInteractable>();
+                        InventoryItem item = Instantiate(InventoryItem);
+                        inventory.Add(item);
+                        Destroy(hit.transform.gameObject);
+                        //hit.transform.gameObject.GetComponent<IConsumable>().use();
                     }
                 }
             }
@@ -348,9 +366,9 @@ namespace Character.PlayerCharacter
                 equipped.transform.parent = null;
                 equipped = null;
                 int i = 0;
-                foreach(GameObject obj in inventory)
+                foreach(InventoryItem item in inventory)
                 {
-                    Debug.Log(++i + ": " + obj);
+                    Debug.Log(++i + ": " + item);
                 }
             }
 
