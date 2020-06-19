@@ -30,23 +30,15 @@ public class HealConsumableExample : MonoBehaviour, IConsumable
         set => _flavourText = value;
     }
 
-    private PlayerCharacter character;
-
-    // Start is called before the first frame update
-    void Start()
+    private float _weight = 15.6f;
+    public float Weight
     {
-        character = FindObjectOfType<PlayerCharacter>();
+        get => _weight;
+        set => _weight = value;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void use(ICharacter<float> user)
     {
-        
-    }
-
-    public void use()
-    {
-        character.Heal(10);
-        Destroy(this.gameObject);
+        user.Heal(10);
     }
 }

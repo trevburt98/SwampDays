@@ -24,4 +24,10 @@ public interface IInteractable
         get;
         set;
     }
+
+    float Weight
+    {
+        get;
+        set;
+    }
 }

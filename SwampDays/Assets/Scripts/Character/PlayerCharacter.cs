@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityStandardAssets.Characters.FirstPerson;
 using Random = UnityEngine.Random;
 
@@ -25,7 +27,7 @@ namespace Character.PlayerCharacter
         //Our current tier of carrying capacity
         private int currentTier;
         //Our current carrying capacity
-        public int currentCarryingCapacity;
+        public float currentCarryingCapacity;
         //Array representing the maximum carrying capacity of each tier
         private float[] tier = new float[5];
 
@@ -66,12 +68,14 @@ namespace Character.PlayerCharacter
         public float currentHealth;
 
         private GameObject equipped = null;
-        private List<InventoryItem> inventory = new List<InventoryItem>();
+        public List<InventoryItem> inventory = new List<InventoryItem>();
 
         //Reference to the first person controller attached to the character
         [SerializeField] private FirstPersonController fpsController;
-        //Reference to UI canvas
-        [SerializeField] private Canvas CanvasUI;
+        //Reference to HUD UI canvas
+        [SerializeField] private Canvas HUDCanvasUI;
+        //Reference to Player Menu UI Canvas
+        [SerializeField] private Canvas playerMenuCanvas;
         //Reference to the camera of the character
         [SerializeField] private Camera camera;
         //Reference to the hand gameobject
@@ -83,6 +87,8 @@ namespace Character.PlayerCharacter
         private StaminaReadout staminaUI;
         //Reference to interaction prompt on UI
         private InteractionPrompt interactionPrompt;
+        //Reference to inventory menu script in inventory UI
+        private InventoryMenuController populate;
 
         //TEMP
         //Public versions to quickly change from unity editor
@@ -91,6 +97,8 @@ namespace Character.PlayerCharacter
         public int vitality;
         public int moveSpeed;
 
+        private bool inMenu = false;
+
         void Start()
         {
             setStrength(strength);
@@ -98,13 +106,13 @@ namespace Character.PlayerCharacter
             setVitality(vitality);
             setMoveSpeed(moveSpeed);
             currentTier = 0;
-            updateCarryingCapacity(20);
+            updateCarryingCapacity(0);
             currentHealth = maxHealth;
 
             //Get the UI elements for the character
-            healthUI = CanvasUI.GetComponentInChildren<HealthReadout>();
-            staminaUI = CanvasUI.GetComponentInChildren<StaminaReadout>();
-            interactionPrompt = CanvasUI.GetComponentInChildren<InteractionPrompt>();
+            healthUI = HUDCanvasUI.GetComponentInChildren<HealthReadout>();
+            staminaUI = HUDCanvasUI.GetComponentInChildren<StaminaReadout>();
+            interactionPrompt = HUDCanvasUI.GetComponentInChildren<InteractionPrompt>();
 
             //Initialize health and stamina UI elements
             healthUI.initHealthUI(maxHealth);
@@ -116,53 +124,62 @@ namespace Character.PlayerCharacter
         // Update is called once per frame
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.KeypadMinus))
+            if (Input.GetKeyDown(KeyCode.Tab))
             {
-                updateCarryingCapacity(-10);
-            }
-            if(Input.GetKeyDown(KeyCode.KeypadPlus))
-            {
-                updateCarryingCapacity(10);
-            }
-            //if(Input.GetKeyDown(KeyCode.Mouse0))
-            //{
-            //    Attack(5.0f);
-            //}
-
-            //If we have an item equipped call our equipped update function
-            if(equipped != null)
-            {
-                equippedUpdate();
+                TogglePlayerMenu(!inMenu);
+                //inventoryController.renderInventory(inventory);
             }
 
-            //Send out the raycast seeking interactables
-            interactableRayCast();
+            if (!inMenu)
+            {
+                if (Input.GetKeyDown(KeyCode.KeypadMinus))
+                {
+                    updateCarryingCapacity(-10);
+                }
+                if (Input.GetKeyDown(KeyCode.KeypadPlus))
+                {
+                    updateCarryingCapacity(10);
+                }
+                //if(Input.GetKeyDown(KeyCode.Mouse0))
+                //{
+                //    Attack(5.0f);
+                //}
+
+                //If we have an item equipped call our equipped update function
+                if (equipped != null)
+                {
+                    equippedUpdate();
+                }
+
+                //Send out the raycast seeking interactables
+                interactableRayCast();
+            }
         }
 
         //Setters for each trait
         #region Trait Setters
-        public void setStrength(int newStrength)
+        private void setStrength(int newStrength)
         {
             Strength = newStrength;
             //Recalculate the various carrying tiers whenever changing strength
             calculateCarryingTier();
         }
 
-        public void setEndurance(int newEndurance)
+        private void setEndurance(int newEndurance)
         {
             Endurance = newEndurance;
             //TODO: update with acutal endurance -> max stamina algorithm
             maxStamina = Stamina = newEndurance;
         }
 
-        public void setVitality(int newVitality)
+        private void setVitality(int newVitality)
         {
             Vitality = newVitality;
             //TODO: update with actual vitality -> max health algorithm
             maxHealth = Vitality * 2;
         }
 
-        public void setMoveSpeed(int newMoveSpeed)
+        private void setMoveSpeed(int newMoveSpeed)
         {
             MoveSpeed = newMoveSpeed;
             //Change the movements speed within the first person controller to reflect changes in the character
@@ -203,6 +220,12 @@ namespace Character.PlayerCharacter
             Debug.Log("Did " + damageDone + " damage!");
         }
 
+        public void removeFromInventory(InventoryItem item)
+        {
+            inventory.Remove(item);
+            updateCarryingCapacity(-item.weight);
+        }
+
         //Simple update to indicate that stamina has been changed
         //TODO: prevent this from being called all the time, even when not needed, have to change implementation within fpscontroller
         public void updateStamina(float staminaChange)
@@ -219,12 +242,20 @@ namespace Character.PlayerCharacter
             }
             staminaUI.changeStaminaUI(Stamina);
         }
+        #endregion
 
+        #region Private Functions
         //Change the amount that is currently being carried
-        public void updateCarryingCapacity(int newCarryingCapacity)
+        private void updateCarryingCapacity(float newCarryingCapacity)
         {
             int prevTier = currentTier;
             currentCarryingCapacity += newCarryingCapacity;
+
+            //Zero check
+            if(currentCarryingCapacity < 0)
+            {
+                currentCarryingCapacity = 0;
+            }
 
             //Need to increase our current tier
             if(currentCarryingCapacity > tier[currentTier])
@@ -241,7 +272,6 @@ namespace Character.PlayerCharacter
             //Need to decrease our current tier
             else if(currentTier > 0 && currentCarryingCapacity <= tier[currentTier - 1])
             {
-                Debug.Log("Going down a tier from " + currentTier);
                 for(int i = currentTier; i >= 0; i--)
                 {
                     if(currentCarryingCapacity >= tier[i])
@@ -261,7 +291,7 @@ namespace Character.PlayerCharacter
 
         //Calculate the various carrying tiers
         //TODO: overhaul with an actual algorithm
-        public void calculateCarryingTier()
+        private void calculateCarryingTier()
         {
             tier[0] = Strength * 2;
             tier[1] = tier[0] + Strength * 2;
@@ -272,7 +302,7 @@ namespace Character.PlayerCharacter
 
         //Function to apply the constraints of the current tier onto the player
         //TODO: update with actual tier modifiers
-        public void applyCurrentTier()
+        private void applyCurrentTier()
         {
             int i = currentTier;
             fpsController.resetModifiers();
@@ -295,10 +325,7 @@ namespace Character.PlayerCharacter
             {
                 fpsController.staminaRecoveryModifier = 0.75f;
             }
-        }
-        #endregion
-
-        #region Private Functions
+        }  
 
         //Function to handle the raycast checking for interactables and the pickup of items
         private void interactableRayCast()
@@ -313,7 +340,7 @@ namespace Character.PlayerCharacter
             if (Physics.Raycast(camera.transform.position, forward, out hit, 10, layerMask))
             {
                 //Throw up the prompt for this interaction
-                interactionPrompt.promptInteraction(hit.transform.name);
+                interactionPrompt.promptInteraction(hit.transform.gameObject.GetComponent<IInteractable>().Name);
                 //If the player presses the interaction button
                 if (Input.GetKeyDown(KeyCode.E))
                 {
@@ -338,8 +365,9 @@ namespace Character.PlayerCharacter
                     else
                     {
                         IInteractable interactable = hit.transform.gameObject.GetComponent<IInteractable>();
-                        InventoryItem item = Instantiate(InventoryItem);
+                        InventoryItem item = new InventoryItem(interactable.ID, interactable.Name, interactable.FlavourText, interactable.Weight);
                         inventory.Add(item);
+                        updateCarryingCapacity(item.weight);
                         Destroy(hit.transform.gameObject);
                         //hit.transform.gameObject.GetComponent<IConsumable>().use();
                     }
@@ -375,6 +403,27 @@ namespace Character.PlayerCharacter
             if(Input.GetKeyDown(KeyCode.Mouse0))
             {
                 equipped.GetComponent<IRangedWeapon<float>>().Attack(20);
+            }
+        }
+
+        //Opens the player menu, disables character movement, displays mouse
+        private void TogglePlayerMenu(bool newInMenu)
+        {
+            fpsController.inMenu = inMenu = newInMenu;
+            CanvasGroup playerMenuCanvasGroup = playerMenuCanvas.GetComponent<CanvasGroup>();
+            if (inMenu)
+            {
+                Cursor.lockState = CursorLockMode.Confined;
+                Cursor.visible = true;
+                playerMenuCanvasGroup.alpha = 1;
+                playerMenuCanvasGroup.interactable = true;
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                playerMenuCanvasGroup.alpha = 0;
+                playerMenuCanvasGroup.interactable = false;
             }
         }
         #endregion

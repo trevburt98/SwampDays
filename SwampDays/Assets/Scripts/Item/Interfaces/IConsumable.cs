@@ -5,5 +5,5 @@ using UnityEngine;
 
 public interface IConsumable : IInteractable
 {
-    void use();
+    void use(ICharacter<float> user);
 }
