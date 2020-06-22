@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Math = System.Math;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityStandardAssets.Characters.FirstPerson;
 using Random = UnityEngine.Random;
 
@@ -9,6 +9,7 @@ namespace Character.PlayerCharacter
 {
     public class PlayerCharacter : MonoBehaviour, ICharacter<float>
     {
+        #region Trait Declarations
         private string _name;
         public string Name
         {
@@ -26,7 +27,7 @@ namespace Character.PlayerCharacter
         //Our current tier of carrying capacity
         private int currentTier;
         //Our current carrying capacity
-        public int currentCarryingCapacity;
+        public float currentCarryingCapacity;
         //Array representing the maximum carrying capacity of each tier
         private float[] tier = new float[5];
 
@@ -61,16 +62,33 @@ namespace Character.PlayerCharacter
             get => _stamina;
             set => _stamina = value;
         }
+        #endregion
 
         public float maxHealth;
         public float currentHealth;
 
+        private GameObject equipped = null;
+        public List<InventoryItem> inventory = new List<InventoryItem>();
+
         //Reference to the first person controller attached to the character
         [SerializeField] private FirstPersonController fpsController;
+        //Reference to HUD UI canvas
+        [SerializeField] private Canvas HUDCanvasUI;
+        //Reference to Player Menu UI Canvas
+        [SerializeField] private Canvas playerMenuCanvas;
+        //Reference to the camera of the character
+        [SerializeField] private Camera camera;
+        //Reference to the hand gameobject
+        [SerializeField] private GameObject hand;
+
         //Reference to the health readout on the UI
-        [SerializeField] private HealthReadout healthUI;
+        private HealthReadout healthUI;
         //Reference to the stamina readout on the UI
-        [SerializeField] private StaminaReadout staminaUI;
+        private StaminaReadout staminaUI;
+        //Reference to interaction prompt on UI
+        private InteractionPrompt interactionPrompt;
+        //Reference to inventory menu script in inventory UI
+        private InventoryMenuController populate;
 
         //TEMP
         //Public versions to quickly change from unity editor
@@ -79,6 +97,8 @@ namespace Character.PlayerCharacter
         public int vitality;
         public int moveSpeed;
 
+        private bool inMenu = false;
+
         void Start()
         {
             setStrength(strength);
@@ -86,54 +106,80 @@ namespace Character.PlayerCharacter
             setVitality(vitality);
             setMoveSpeed(moveSpeed);
             currentTier = 0;
-            updateCarryingCapacity(20);
+            updateCarryingCapacity(0);
             currentHealth = maxHealth;
 
+            //Get the UI elements for the character
+            healthUI = HUDCanvasUI.GetComponentInChildren<HealthReadout>();
+            staminaUI = HUDCanvasUI.GetComponentInChildren<StaminaReadout>();
+            interactionPrompt = HUDCanvasUI.GetComponentInChildren<InteractionPrompt>();
+
+            //Initialize health and stamina UI elements
             healthUI.initHealthUI(maxHealth);
             staminaUI.initStaminaUI(maxStamina);
+
+            Damage(10);
         }
 
         // Update is called once per frame
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.KeypadMinus))
+            if (Input.GetKeyDown(KeyCode.Tab))
             {
-                updateCarryingCapacity(-10);
+                TogglePlayerMenu(!inMenu);
+                //inventoryController.renderInventory(inventory);
             }
-            if(Input.GetKeyDown(KeyCode.KeypadPlus))
+
+            if (!inMenu)
             {
-                updateCarryingCapacity(10);
-            }
-            if(Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                Attack(5.0f);
+                if (Input.GetKeyDown(KeyCode.KeypadMinus))
+                {
+                    updateCarryingCapacity(-10);
+                }
+                if (Input.GetKeyDown(KeyCode.KeypadPlus))
+                {
+                    updateCarryingCapacity(10);
+                }
+                //if(Input.GetKeyDown(KeyCode.Mouse0))
+                //{
+                //    Attack(5.0f);
+                //}
+
+                //If we have an item equipped call our equipped update function
+                if (equipped != null)
+                {
+                    equippedUpdate();
+                }
+
+                //Send out the raycast seeking interactables
+                interactableRayCast();
             }
         }
 
         //Setters for each trait
         #region Trait Setters
-        public void setStrength(int newStrength)
+        private void setStrength(int newStrength)
         {
             Strength = newStrength;
             //Recalculate the various carrying tiers whenever changing strength
             calculateCarryingTier();
         }
 
-        public void setEndurance(int newEndurance)
+        private void setEndurance(int newEndurance)
         {
             Endurance = newEndurance;
             //TODO: update with acutal endurance -> max stamina algorithm
             maxStamina = Stamina = newEndurance;
         }
 
-        public void setVitality(int newVitality)
+        private void setVitality(int newVitality)
         {
             Vitality = newVitality;
             //TODO: update with actual vitality -> max health algorithm
             maxHealth = Vitality * 2;
         }
 
-        public void setMoveSpeed(int newMoveSpeed)
+        private void setMoveSpeed(int newMoveSpeed)
         {
             MoveSpeed = newMoveSpeed;
             //Change the movements speed within the first person controller to reflect changes in the character
@@ -141,12 +187,29 @@ namespace Character.PlayerCharacter
         }
         #endregion
 
+        #region Public Function
         //ICharacter method for taking damage
-        //TODO: implement death
         public void Damage(float damageTaken)
         {
             currentHealth -= damageTaken;
             healthUI.changeHealthUI(currentHealth);
+        }
+
+        public void Heal(float healthHealed)
+        {
+            currentHealth += healthHealed;
+            if(currentHealth >= maxHealth)
+            {
+                currentHealth = maxHealth;
+            }
+            healthUI.changeHealthUI(currentHealth);
+        }
+
+        //ICharacter method for dying
+        //TODO: implement death
+        public void Die()
+        {
+            Debug.Log("oof");
         }
 
         //TEMP: temporary melee attack function to test functionality of strength
@@ -155,6 +218,12 @@ namespace Character.PlayerCharacter
         {
             float damageDone = Random.Range(damageBase - 5, damageBase + 5) + Strength;
             Debug.Log("Did " + damageDone + " damage!");
+        }
+
+        public void removeFromInventory(InventoryItem item)
+        {
+            inventory.Remove(item);
+            updateCarryingCapacity(-item.weight);
         }
 
         //Simple update to indicate that stamina has been changed
@@ -173,19 +242,27 @@ namespace Character.PlayerCharacter
             }
             staminaUI.changeStaminaUI(Stamina);
         }
+        #endregion
 
+        #region Private Functions
         //Change the amount that is currently being carried
-        public void updateCarryingCapacity(int newCarryingCapacity)
+        private void updateCarryingCapacity(float newCarryingCapacity)
         {
             int prevTier = currentTier;
             currentCarryingCapacity += newCarryingCapacity;
+
+            //Zero check
+            if(currentCarryingCapacity < 0)
+            {
+                currentCarryingCapacity = 0;
+            }
 
             //Need to increase our current tier
             if(currentCarryingCapacity > tier[currentTier])
             {
                 for(int i = currentTier; i < tier.Length; i++)
                 {
-                    if(currentCarryingCapacity <= tier[i])
+                    if(currentCarryingCapacity <= tier[i] || i == 4)
                     {
                         currentTier = i;
                         break;
@@ -195,7 +272,6 @@ namespace Character.PlayerCharacter
             //Need to decrease our current tier
             else if(currentTier > 0 && currentCarryingCapacity <= tier[currentTier - 1])
             {
-                Debug.Log("Going down a tier from " + currentTier);
                 for(int i = currentTier; i >= 0; i--)
                 {
                     if(currentCarryingCapacity >= tier[i])
@@ -215,7 +291,7 @@ namespace Character.PlayerCharacter
 
         //Calculate the various carrying tiers
         //TODO: overhaul with an actual algorithm
-        public void calculateCarryingTier()
+        private void calculateCarryingTier()
         {
             tier[0] = Strength * 2;
             tier[1] = tier[0] + Strength * 2;
@@ -226,7 +302,7 @@ namespace Character.PlayerCharacter
 
         //Function to apply the constraints of the current tier onto the player
         //TODO: update with actual tier modifiers
-        public void applyCurrentTier()
+        private void applyCurrentTier()
         {
             int i = currentTier;
             fpsController.resetModifiers();
@@ -249,6 +325,107 @@ namespace Character.PlayerCharacter
             {
                 fpsController.staminaRecoveryModifier = 0.75f;
             }
+        }  
+
+        //Function to handle the raycast checking for interactables and the pickup of items
+        private void interactableRayCast()
+        {
+            int layerMask = 1 << 8;
+            RaycastHit hit;
+
+            Vector3 forward = camera.transform.TransformDirection(Vector3.forward) * 5;
+            Debug.DrawRay(camera.transform.position, forward, Color.green);
+
+            //On Raycast hit
+            if (Physics.Raycast(camera.transform.position, forward, out hit, 10, layerMask))
+            {
+                //Throw up the prompt for this interaction
+                interactionPrompt.promptInteraction(hit.transform.gameObject.GetComponent<IInteractable>().Name);
+                //If the player presses the interaction button
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    //If the item is equippable
+                    if (hit.transform.gameObject.GetComponent<IInteractable>().Equippable)
+                    {
+                        //Add the item to the players inventory
+                        //TODO: check max inventory space against current to determine whether or not this item can be stowed
+                        //If nothing is equipped
+                        if (equipped == null)
+                        {
+                            //Set equipped to the object, make the object a child of the hand
+                            equipped = hit.transform.gameObject;
+                            hit.transform.parent = hand.transform;
+                            hit.transform.localPosition = new Vector3(0, 0, 0);
+                            hit.transform.localRotation = Quaternion.Euler(0, 90, 0);
+                            hit.rigidbody.useGravity = false;
+                            hit.rigidbody.constraints = RigidbodyConstraints.FreezeAll;
+                        }
+                    }
+                    //If the item is not equippable (i.e. consumable, object)
+                    else
+                    {
+                        IInteractable interactable = hit.transform.gameObject.GetComponent<IInteractable>();
+                        InventoryItem item = new InventoryItem(interactable.ID, interactable.Name, interactable.FlavourText, interactable.Weight);
+                        inventory.Add(item);
+                        updateCarryingCapacity(item.weight);
+                        Destroy(hit.transform.gameObject);
+                        //hit.transform.gameObject.GetComponent<IConsumable>().use();
+                    }
+                }
+            }
+            //Otherwise, remove the interaction prompt from the screen
+            else
+            {
+                interactionPrompt.removePrompt();
+            }
         }
+
+        //Update called whenever the player has an item currently equipped
+        private void equippedUpdate()
+        {
+            //The player presses the interaction key while they have something equipped
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                //Unparent the hand, set equipped to nothing
+                //TODO: Remove the specific item from the player's inventory
+                Rigidbody rb = equipped.GetComponent<Rigidbody>();
+                rb.useGravity = true;
+                rb.constraints = RigidbodyConstraints.None;
+                equipped.transform.parent = null;
+                equipped = null;
+                int i = 0;
+                foreach(InventoryItem item in inventory)
+                {
+                    Debug.Log(++i + ": " + item);
+                }
+            }
+
+            if(Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                equipped.GetComponent<IRangedWeapon<float>>().Attack(20);
+            }
+        }
+
+        //Opens the player menu, disables character movement, displays mouse
+        private void TogglePlayerMenu(bool newInMenu)
+        {
+            fpsController.inMenu = inMenu = newInMenu;
+            CanvasGroup playerMenuCanvasGroup = playerMenuCanvas.GetComponent<CanvasGroup>();
+            if (inMenu)
+            {
+                Cursor.lockState = CursorLockMode.Confined;
+                Cursor.visible = true;
+                playerMenuCanvasGroup.alpha = 1;
+                playerMenuCanvasGroup.interactable = true;
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                playerMenuCanvasGroup.alpha = 0;
+                playerMenuCanvasGroup.interactable = false;
+            }
+        }
+        #endregion
     }
 }
