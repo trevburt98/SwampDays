@@ -67,8 +67,8 @@ namespace Character.PlayerCharacter
         public float maxHealth;
         public float currentHealth;
 
-        private GameObject equipped = null;
-        public List<InventoryItem> inventory = new List<InventoryItem>();
+        public EquipmentManager equipment;
+        public List<IInteractable> inventory = new List<IInteractable>();
 
         //Reference to the first person controller attached to the character
         [SerializeField] private FirstPersonController fpsController;
@@ -87,8 +87,6 @@ namespace Character.PlayerCharacter
         private StaminaReadout staminaUI;
         //Reference to interaction prompt on UI
         private InteractionPrompt interactionPrompt;
-        //Reference to inventory menu script in inventory UI
-        private InventoryMenuController populate;
 
         //TEMP
         //Public versions to quickly change from unity editor
@@ -146,7 +144,7 @@ namespace Character.PlayerCharacter
                 //}
 
                 //If we have an item equipped call our equipped update function
-                if (equipped != null)
+                if (equipment.mainHand != null)
                 {
                     equippedUpdate();
                 }
@@ -220,10 +218,10 @@ namespace Character.PlayerCharacter
             Debug.Log("Did " + damageDone + " damage!");
         }
 
-        public void removeFromInventory(InventoryItem item)
+        public void removeFromInventory(IInteractable item)
         {
             inventory.Remove(item);
-            updateCarryingCapacity(-item.weight);
+            updateCarryingCapacity(-item.Weight);
         }
 
         //Simple update to indicate that stamina has been changed
@@ -344,33 +342,35 @@ namespace Character.PlayerCharacter
                 //If the player presses the interaction button
                 if (Input.GetKeyDown(KeyCode.E))
                 {
-                    //If the item is equippable
-                    if (hit.transform.gameObject.GetComponent<IInteractable>().Equippable)
-                    {
-                        //Add the item to the players inventory
-                        //TODO: check max inventory space against current to determine whether or not this item can be stowed
-                        //If nothing is equipped
-                        if (equipped == null)
-                        {
-                            //Set equipped to the object, make the object a child of the hand
-                            equipped = hit.transform.gameObject;
-                            hit.transform.parent = hand.transform;
-                            hit.transform.localPosition = new Vector3(0, 0, 0);
-                            hit.transform.localRotation = Quaternion.Euler(0, 90, 0);
-                            hit.rigidbody.useGravity = false;
-                            hit.rigidbody.constraints = RigidbodyConstraints.FreezeAll;
-                        }
-                    }
-                    //If the item is not equippable (i.e. consumable, object)
-                    else
-                    {
-                        IInteractable interactable = hit.transform.gameObject.GetComponent<IInteractable>();
-                        InventoryItem item = new InventoryItem(interactable.ID, interactable.Name, interactable.FlavourText, interactable.Weight);
-                        inventory.Add(item);
-                        updateCarryingCapacity(item.weight);
-                        Destroy(hit.transform.gameObject);
+                    ////If the item is equippable
+                    //if (hit.transform.gameObject.GetComponent<IInteractable>().Equippable)
+                    //{
+                    //    //Add the item to the players inventory
+                    //    //TODO: check max inventory space against current to determine whether or not this item can be stowed
+                    //    //If nothing is equipped
+                    //    if (equipped == null)
+                    //    {
+                    //        //Set equipped to the object, make the object a child of the hand
+                    //        equipped = hit.transform.gameObject;
+                    //        hit.transform.parent = hand.transform;
+                    //        hit.transform.localPosition = new Vector3(0, 0, 0);
+                    //        hit.transform.localRotation = Quaternion.Euler(0, 90, 0);
+                    //        hit.rigidbody.useGravity = false;
+                    //        hit.rigidbody.constraints = RigidbodyConstraints.FreezeAll;
+                    //    }
+                    //}
+                    ////If the item is not equippable (i.e. consumable, object)
+                    //else
+                    //{
+                    IInteractable interactable = hit.transform.gameObject.GetComponent<IInteractable>();
+                    //IInteractable interactableCopy = interactable;
+                    //InventoryItem item = new InventoryItem(interactable.ID, interactable.Name, interactable.FlavourText, interactable.Weight);
+                    //inventory.Add(item);
+                    inventory.Add(interactable);
+                    updateCarryingCapacity(interactable.Weight);
+                    Destroy(hit.transform.gameObject);
                         //hit.transform.gameObject.GetComponent<IConsumable>().use();
-                    }
+                    //}
                 }
             }
             //Otherwise, remove the interaction prompt from the screen
@@ -388,13 +388,13 @@ namespace Character.PlayerCharacter
             {
                 //Unparent the hand, set equipped to nothing
                 //TODO: Remove the specific item from the player's inventory
-                Rigidbody rb = equipped.GetComponent<Rigidbody>();
+                Rigidbody rb = equipment.GetComponent<Rigidbody>();
                 rb.useGravity = true;
                 rb.constraints = RigidbodyConstraints.None;
-                equipped.transform.parent = null;
-                equipped = null;
+                equipment.transform.parent = null;
+                equipment = null;
                 int i = 0;
-                foreach(InventoryItem item in inventory)
+                foreach(IInteractable item in inventory)
                 {
                     Debug.Log(++i + ": " + item);
                 }
@@ -402,7 +402,7 @@ namespace Character.PlayerCharacter
 
             if(Input.GetKeyDown(KeyCode.Mouse0))
             {
-                equipped.GetComponent<IRangedWeapon<float>>().Attack(20);
+                equipment.GetComponent<IRangedWeapon<float>>().Attack(20);
             }
         }
 
