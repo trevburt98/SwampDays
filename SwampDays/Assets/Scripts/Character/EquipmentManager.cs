@@ -2,50 +2,66 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class EquipmentManager : MonoBehaviour
 {
+    [SerializeField] private GameObject playerHand;
+    [SerializeField] private PlayerCharacter player;
 
-    public IEquipment head;
-    public IEquipment torso;
-    public IEquipment arms;
-    public IEquipment legs;
-    public IEquipment feet;
-    public IWeapon<float> mainHand;
-    public IWeapon<float> offHand;
+    //0 - Head
+    //1 - Torso
+    //2 - Arms
+    //3 - Legs
+    //4 - Feet
+    public IEquipment[] equipmentArray = new IEquipment[5];
+
+    public GameObject mainHand;
+    public GameObject offHand;
 
     void Start()
     {
-        head = null;
-        torso = null;
-        arms = null;
-        legs = null;
-        feet = null;
+        for(int i = 0; i < equipmentArray.Length; i++)
+        {
+            equipmentArray[i] = null;
+        }
+
         mainHand = null;
         offHand = null;
     }
 
-    public void equipNew(IEquipment newEquipment, int equipmentSlot)
+    public void equipNewEquipment(IEquipment newEquipment, int equipmentSlot)
     {
-        switch(equipmentSlot)
-        {
-            case 1:
-                head = newEquipment;
-                break;
-            case 2:
-                torso = newEquipment;
-                break;
-            case 3:
-                arms = newEquipment;
-                break;
-            case 4:
-                legs = newEquipment;
-                break;
-            case 5:
-                feet = newEquipment;
-                break;
-        }
+        equipmentArray[equipmentSlot] = newEquipment;
 
-        Debug.Log("Just equipped " + newEquipment);
+        player.armourRating += newEquipment.ArmourValue;
+        Debug.Log(player.armourRating);
+    }
+
+    public void unequipEquipment(int spotToUnequip)
+    {
+        player.armourRating -= equipmentArray[spotToUnequip].ArmourValue;
+        equipmentArray[spotToUnequip] = null;
+        Debug.Log(player.armourRating);
+    }
+
+    public void equipNewWeapon(IWeapon<float> newWeapon, bool inMainHand)
+    {
+        GameObject obj = (GameObject)Resources.Load(newWeapon.ID);
+        GameObject objInGame = GameObject.Instantiate(obj);
+        objInGame.transform.parent = playerHand.transform;
+        objInGame.transform.localPosition = new Vector3(0, 0, 0);
+        objInGame.transform.localRotation = Quaternion.Euler(0, 90, 0);
+        objInGame.GetComponent<Rigidbody>().useGravity = false;
+        objInGame.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+
+        if (inMainHand)
+        {
+            mainHand = objInGame;
+        }
+        else
+        {
+            offHand = objInGame;
+        }
     }
 }

@@ -69,6 +69,8 @@ public class PlayerMenuController : MonoBehaviour
         journalCanvas.alpha = 0;
         journalCanvas.interactable = false;
         journalCanvas.blocksRaycasts = false;
+
+        equipmentCanvas.GetComponentInChildren<EquipmentMenuController>().PopulateEquipment();
     }
 
     void switchToJournalCanvas()

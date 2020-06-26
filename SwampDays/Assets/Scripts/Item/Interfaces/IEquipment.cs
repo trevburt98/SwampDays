@@ -28,9 +28,4 @@ public interface IEquipment : IInteractable
         get;
         set;
     }
-
-    Image EquipmentImage
-    {
-        get;
-    }
 }

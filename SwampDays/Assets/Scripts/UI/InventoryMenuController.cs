@@ -59,8 +59,16 @@ public class InventoryMenuController : MonoBehaviour
             IEquipment equipment = obj.GetComponent<IEquipment>();
             equipButton.onClick.AddListener(delegate { EquipItem(equipment); });
             toggleEquipButton(true);
+        } else if(item is IWeapon<float>)
+        {
+            GameObject obj = (GameObject)Resources.Load(item.ID);
+            IWeapon<float> equipment = obj.GetComponent<IWeapon<float>>();
+            equipButton.onClick.AddListener(delegate { EquipWeapon(equipment, true); });
+            toggleEquipButton(true);
         }
+
         itemDescription.text = item.FlavourText;
+        itemImage.sprite = item.ItemImage;
 
         dropButton.onClick.AddListener(delegate { DropItem(item); });
         toggleDropButton(true);
@@ -68,10 +76,11 @@ public class InventoryMenuController : MonoBehaviour
 
     void ClearItemInfo()
     {
-        itemImage = null;
+        itemImage.sprite = null;
         itemDescription.text = "";
         useButton.onClick.RemoveAllListeners();
         dropButton.onClick.RemoveAllListeners();
+        equipButton.onClick.RemoveAllListeners();
 
         toggleAllButtons(false);
     }
@@ -86,7 +95,12 @@ public class InventoryMenuController : MonoBehaviour
 
     void EquipItem(IEquipment equipment)
     {
-        equipmentManager.equipNew(equipment, equipment.EquipSlot);
+        equipmentManager.equipNewEquipment(equipment, equipment.EquipSlot);
+    }
+
+    void EquipWeapon(IWeapon<float> weapon, bool mainHand)
+    {
+        equipmentManager.equipNewWeapon(weapon, mainHand);
     }
 
     void DropItem(IInteractable item)

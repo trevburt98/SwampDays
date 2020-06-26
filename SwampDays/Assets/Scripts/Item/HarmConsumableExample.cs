@@ -37,6 +37,20 @@ public class HarmConsumableExample : MonoBehaviour, IConsumable
         set => _weight = value;
     }
 
+    private int _value = 10;
+    public int MonetaryValue
+    {
+        get => _value;
+        set => _value = value;
+    }
+
+    private Sprite _itemImage;
+    public Sprite ItemImage
+    {
+        get => _itemImage;
+        set => _itemImage = value;
+    }
+
     public void use(ICharacter<float> user)
     {
         user.Damage(10);

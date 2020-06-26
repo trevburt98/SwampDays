@@ -12,7 +12,7 @@ public class HeadEquipExample : MonoBehaviour, IEquipment
         get => _equippable;
     }
 
-    private string _id = "exHeadEquip";
+    private string _id = "hEquipEx";
     public string ID
     {
         get => _id;
@@ -38,7 +38,14 @@ public class HeadEquipExample : MonoBehaviour, IEquipment
         set => _weight = value;
     }
 
-    private int _equipSlot = 1;
+    private int _value = 25;
+    public int MonetaryValue
+    {
+        get => _value;
+        set => _value = value;
+    }
+
+    private int _equipSlot = 0;
     public int EquipSlot
     {
         get => _equipSlot;
@@ -58,18 +65,20 @@ public class HeadEquipExample : MonoBehaviour, IEquipment
         set => _durability = value;
     }
 
-    private Image _image;
-    public Image EquipmentImage
+    [SerializeField] private Sprite _image;
+    public Sprite ItemImage
     {
         get => _image;
+        set => _image = value;
     }
+
     #endregion
 
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame

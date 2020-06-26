@@ -51,14 +51,28 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
         set => _durability = value;
     }
 
-    private float _weight;
+    private float _weight = 20;
     public float Weight
     {
         get => _weight;
         set => _weight = value;
     }
 
-    private bool _broken;
+    private int _value = 100;
+    public int MonetaryValue
+    {
+        get => _value;
+        set => _value = value;
+    }
+
+    [SerializeField] private Sprite _weaponImage;
+    public Sprite ItemImage
+    {
+        get => _weaponImage;
+        set => _weaponImage = value;
+    }
+
+    private bool _broken = false;
     public bool Broken
     {
         get => _broken;
@@ -71,6 +85,7 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
         get => _fireSound;
         set => _fireSound = value;
     }
+    [SerializeField] private AudioSource audioSource;
 
     private int[] _compatibleBulletArray;
     public int[] BulletIDs
@@ -79,17 +94,17 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
         set => _compatibleBulletArray = value;
     }
 
-    private AudioSource audioSource;
-
     #endregion
+
 
     public void Start()
     {
-        audioSource = GetComponent<AudioSource>();    
+
     }
 
     void IWeapon<float>.Attack(float damageDone)
     {
+        Debug.Log(transform.position);
         Transform startObject = transform.GetChild(0);
         RaycastHit hit;
         Vector3 fwd = startObject.TransformDirection(Vector3.forward) * 10;
