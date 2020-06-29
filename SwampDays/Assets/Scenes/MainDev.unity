@@ -202,7 +202,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 22661231}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1300564844}
+        m_MethodName: FilterToBodypart
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 3
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &22661231
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -523,7 +534,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 97745795}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1300564844}
+        m_MethodName: FilterToBodypart
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &97745795
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -964,7 +986,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 176434228}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1300564844}
+        m_MethodName: FilterToBodypart
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &176434228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3125,7 +3158,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 679884187}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1300564844}
+        m_MethodName: FilterToBodypart
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &679884187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3425,7 +3469,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 741957141}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1300564844}
+        m_MethodName: FilterToBodypart
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &741957141
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6762,7 +6817,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1627177187}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1300564844}
+        m_MethodName: FilterToBodypart
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 4
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1627177187
 MonoBehaviour:
   m_ObjectHideFlags: 0

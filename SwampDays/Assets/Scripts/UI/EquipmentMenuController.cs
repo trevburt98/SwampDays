@@ -24,6 +24,8 @@ public class EquipmentMenuController : MonoBehaviour
     public Button equipButton;
     public Button unequipButton;
 
+    private int prevFiltered = -1;
+
     public void PopulateEquipment()
     {
         //TODO: Change this so that we aren't destroying and recreating the inventory every time the menu is opened
@@ -82,7 +84,7 @@ public class EquipmentMenuController : MonoBehaviour
             }
         }
 
-
+        prevFiltered = -1;
     }
 
     void LoadItemInfo(IInteractable item)
@@ -201,5 +203,39 @@ public class EquipmentMenuController : MonoBehaviour
     {
         equipButton.onClick.RemoveAllListeners();
         unequipButton.onClick.RemoveAllListeners();
+    }
+
+    public void FilterToBodypart(int equipSlot)
+    {
+        if(prevFiltered == equipSlot)
+        {
+            PopulateEquipment();
+        }
+        else
+        {
+            foreach (Transform child in this.transform)
+            {
+                GameObject.Destroy(child.gameObject);
+            }
+
+            GameObject newObj;
+
+            //Repopulate the list
+            foreach (IInteractable item in player.inventory)
+            {
+                //If the item in the inventory is either an equipment or a weapon, display it in the equipment menu list
+                if (item is IEquipment)
+                {
+                    IEquipment equipmentVersion = item as IEquipment;
+                    if (equipmentVersion.EquipSlot == equipSlot)
+                    {
+                        newObj = (GameObject)Instantiate(inventoryItemPrefab, transform);
+                        newObj.GetComponentInChildren<Text>().text = item.Name;
+                        newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { LoadItemInfo(item); });
+                    }
+                }
+            }
+            prevFiltered = equipSlot;
+        }
     }
 }
