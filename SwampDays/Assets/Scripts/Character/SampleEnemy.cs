@@ -6,7 +6,7 @@ public class SampleEnemy : MonoBehaviour, INpc
 {
 
     #region Trait Declarations
-    private string _name;
+    private string _name = "Sample Enemy";
     public string Name
     {
         get => _name;
@@ -56,6 +56,19 @@ public class SampleEnemy : MonoBehaviour, INpc
     {
         get => _opinion;
         set => _opinion = value;
+    }
+
+    private List<ConversationLine> _conversationLines;
+    public List<ConversationLine> ConversationLines
+    {
+        get => _conversationLines;
+    }
+
+    private int _currentLinePtr;
+    public int CurrentLinePtr
+    {
+        get => _currentLinePtr;
+        set => CurrentLinePtr = value;
     }
     #endregion
 

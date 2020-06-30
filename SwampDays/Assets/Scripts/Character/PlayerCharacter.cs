@@ -72,6 +72,8 @@ namespace Character.PlayerCharacter
         public EquipmentManager equipment;
         public List<IInteractable> inventory = new List<IInteractable>();
 
+        public List<IQuest> questList = new List<IQuest>();
+
         //Reference to the first person controller attached to the character
         [SerializeField] private FirstPersonController fpsController;
         //Reference to HUD UI canvas
@@ -89,6 +91,8 @@ namespace Character.PlayerCharacter
         private StaminaReadout staminaUI;
         //Reference to interaction prompt on UI
         private InteractionPrompt interactionPrompt;
+        //Reference to the conversation controller controlling the conversation canvas
+        [SerializeField] private ConversationController conversationController;
 
         //TEMP
         //Public versions to quickly change from unity editor
@@ -127,7 +131,6 @@ namespace Character.PlayerCharacter
             if (Input.GetKeyDown(KeyCode.Tab))
             {
                 TogglePlayerMenu(!inMenu);
-                //inventoryController.renderInventory(inventory);
             }
 
             if (!inMenu)
@@ -339,18 +342,36 @@ namespace Character.PlayerCharacter
             //On Raycast hit
             if (Physics.Raycast(camera.transform.position, forward, out hit, 10, layerMask))
             {
-                //Throw up the prompt for this interaction
-                interactionPrompt.promptInteraction(hit.transform.gameObject.GetComponent<IInteractable>().Name);
-                //If the player presses the interaction button
-                if (Input.GetKeyDown(KeyCode.E))
+                //If the raycast hit an interactable object
+                if(hit.transform.GetComponent<IInteractable>() != null)
                 {
                     IInteractable interactable = hit.transform.gameObject.GetComponent<IInteractable>();
-                    inventory.Add(interactable);
-                    updateCarryingCapacity(interactable.Weight);
-                    Destroy(hit.transform.gameObject);
+
+                    //Throw up the prompt for this interaction
+                    interactionPrompt.promptPickup(interactable.Name);
+                    //If the player presses the interaction button
+                    if (Input.GetKeyDown(KeyCode.E))
+                    { 
+                        inventory.Add(interactable);
+                        updateCarryingCapacity(interactable.Weight);
+                        Destroy(hit.transform.gameObject);
+                    }
+                }
+                //If the raycast instead hit an NPC that can be talked to
+                else if(hit.transform.gameObject.GetComponent<INpc>() != null)
+                {
+                    INpc npc = hit.transform.gameObject.GetComponent<INpc>();
+
+                    //Throw up the prompt to talk to that specific NPC
+                    interactionPrompt.promptTalk(npc.Name);
+                    if(Input.GetKeyDown(KeyCode.E))
+                    {
+                        beginConversation(npc);    
+                    }
                 }
             }
             //Otherwise, remove the interaction prompt from the screen
+            //TODO: I would like to change this so that it isn't calling this more than necessary
             else
             {
                 interactionPrompt.removePrompt();
@@ -385,6 +406,22 @@ namespace Character.PlayerCharacter
                 playerMenuCanvasGroup.alpha = 0;
                 playerMenuCanvasGroup.interactable = false;
             }
+        }
+
+        private void beginConversation(INpc conversationPartner)
+        {
+            fpsController.inMenu = inMenu = true;
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
+
+            conversationController.setConversationPartner(conversationPartner);
+            conversationController.toggleConversationCanvas(true);
+            interactionPrompt.removePrompt();
+        }
+
+        private void endConversation()
+        {
+
         }
         #endregion
     }

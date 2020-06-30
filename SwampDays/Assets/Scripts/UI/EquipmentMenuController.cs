@@ -63,13 +63,6 @@ public class EquipmentMenuController : MonoBehaviour
             }
         }
 
-        //headButton.GetComponent<Image>().sprite = equipment.head.ItemImage;
-        //torsoButton.GetComponentInChildren<Text>().text = equipment.torso.Name;
-        //leftArmButton.GetComponentInChildren<Text>().text = equipment.arms.Name;
-        //rightArmButton.GetComponentInChildren<Text>().text = equipment.arms.Name;
-        //pantsButton.GetComponentInChildren<Text>().text = equipment.legs.Name;
-        //shoesButton.GetComponentInChildren<Text>().text = equipment.feet.Name;
-
         GameObject newObj;
 
         //Repopulate the list
@@ -210,8 +203,7 @@ public class EquipmentMenuController : MonoBehaviour
         if(prevFiltered == equipSlot)
         {
             PopulateEquipment();
-        }
-        else
+        } else
         {
             foreach (Transform child in this.transform)
             {

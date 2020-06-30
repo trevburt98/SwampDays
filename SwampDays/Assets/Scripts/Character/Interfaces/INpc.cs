@@ -10,4 +10,15 @@ public interface INpc : ICharacter<float>
         get;
         set;
     }
+
+    List<ConversationLine> ConversationLines
+    {
+        get;
+    }
+
+    int CurrentLinePtr
+    {
+        get;
+        set;
+    }
 }
