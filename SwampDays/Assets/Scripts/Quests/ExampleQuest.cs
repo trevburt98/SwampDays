@@ -52,22 +52,33 @@ public class ExampleQuest : MonoBehaviour, IQuest
         set => _failed = value;
     }
 
-    [SerializeField] private INpc _questGiver;
+    [SerializeField] private GameObject _questGiver;
     public INpc QuestGiver
     {
-        get => _questGiver;
+        get => _questGiver.GetComponent<INpc>();
     }
 
-    [SerializeField] private INpc _questReceiver;
+    [SerializeField] private GameObject _questReceiver;
     public INpc QuestReceiver
     {
-        get => _questReceiver;
-        set => _questReceiver = value;
+        get => _questReceiver.GetComponent<INpc>();
+        //set => _questReceiver.GetComponent<INpc>() = value;
+    }
+
+    [SerializeField] private GameObject target;
+
+    void Update()
+    {
+        if(target == null)
+        {
+            completeQuest();
+        }
     }
 
     public void completeQuest()
     {
         Complete = true;
+        Debug.Log("Yay we did it");
     }
 
     public void failQuest()
@@ -75,9 +86,9 @@ public class ExampleQuest : MonoBehaviour, IQuest
         Failed = true;
     }
 
-    public void updateQuest(string descriptionAddition)
+    public void updateQuestDescription(string descriptionAddition)
     {
-        QuestDescription += "\ndescriptionAddition";
+        QuestDescription += "\n" + descriptionAddition;
     }
 
     public void updateQuestTime(float changeInTime)

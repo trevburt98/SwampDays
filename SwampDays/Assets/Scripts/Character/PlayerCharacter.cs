@@ -419,6 +419,15 @@ namespace Character.PlayerCharacter
             interactionPrompt.removePrompt();
         }
 
+        public void exitConversation()
+        {
+            fpsController.inMenu = inMenu = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
+            conversationController.toggleConversationCanvas(false);
+        }
+
         private void endConversation()
         {
 

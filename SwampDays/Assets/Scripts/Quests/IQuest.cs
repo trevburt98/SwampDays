@@ -53,14 +53,14 @@ public interface IQuest
     INpc QuestReceiver
     {
         get;
-        set;
+        //set;
     }
 
     void completeQuest();
 
     void failQuest();
 
-    void updateQuest(string descriptionAddition);
+    void updateQuestDescription(string descriptionAddition);
 
     void updateQuestTime(float changeInTime);
 }

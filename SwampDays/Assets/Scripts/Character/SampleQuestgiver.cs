@@ -51,7 +51,7 @@ public class SampleQuestgiver : MonoBehaviour, INpc
         set => _moveSpeed = value;
     }
 
-    private int _opinion = -100;
+    private int _opinion = 100;
     public int Opinion
     {
         get => _opinion;
@@ -72,6 +72,8 @@ public class SampleQuestgiver : MonoBehaviour, INpc
     }
     #endregion
 
+    [SerializeField]  private ExampleQuest quest;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -79,8 +81,21 @@ public class SampleQuestgiver : MonoBehaviour, INpc
         List<Response> responseList = new List<Response>();
         responseList.Add(new Response("General Kenobi", 1));
         responseList.Add(new Response("*Lightsaber whoosing noise*", 2));
-
         ConversationLines.Add(new ConversationLine("Hello There!", responseList));
+
+        ConversationLines.Add(new ConversationLine("And then we fight", null));
+
+        List<Response> questOfferResponses = new List<Response>();
+        questOfferResponses.Add(new Response("Yeah, sure, why not", 3, quest));
+        questOfferResponses.Add(new Response("Nah fam, I'm aight", 4));
+        questOfferResponses.Add(new Response("I'll think about it", 5));
+        ConversationLines.Add(new ConversationLine("Want to do this quest for me right quick", questOfferResponses));
+
+        ConversationLines.Add(new ConversationLine("Alright then, here you go", null));
+
+        ConversationLines.Add(new ConversationLine("Alright then, screw you too", null));
+
+        ConversationLines.Add(new ConversationLine("Well let me know if you want to", null));
     }
 
     // Update is called once per frame

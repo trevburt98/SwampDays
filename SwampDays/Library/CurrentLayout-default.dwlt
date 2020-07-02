@@ -115,7 +115,7 @@ MonoBehaviour:
   m_MinSize: {x: 679, y: 492}
   m_MaxSize: {x: 14002, y: 14042}
   vertical: 0
-  controlID: 78
+  controlID: 66
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -140,7 +140,7 @@ MonoBehaviour:
   m_MinSize: {x: 403, y: 492}
   m_MaxSize: {x: 10001, y: 14042}
   vertical: 1
-  controlID: 130
+  controlID: 118
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -165,7 +165,7 @@ MonoBehaviour:
   m_MinSize: {x: 403, y: 221}
   m_MaxSize: {x: 8003, y: 4021}
   vertical: 0
-  controlID: 131
+  controlID: 119
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -402,9 +402,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 942.122, y: 195.27617, z: -26.701668}
+    m_Target: {x: 974.3084, y: 477.5572, z: -291}
     speed: 2
-    m_Value: {x: 942.122, y: 195.27617, z: -26.701668}
+    m_Value: {x: 974.3084, y: 477.5572, z: -291}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -454,9 +454,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 649.9468
+    m_Target: 640.04895
     speed: 2
-    m_Value: 649.9468
+    m_Value: 640.04895
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -512,21 +512,21 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: 52fbffff4c3400009e34000070360000
+      m_ExpandedIDs: 70fbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
-        m_Name: Panel
-        m_OriginalName: Panel
+        m_Name: 
+        m_OriginalName: 
         m_EditFieldRect:
           serializedVersion: 2
           x: 0
           y: 0
           width: 0
           height: 0
-        m_UserData: -7406
+        m_UserData: 0
         m_IsWaitingForDelay: 0
         m_IsRenaming: 0
-        m_OriginalEventType: 0
+        m_OriginalEventType: 11
         m_IsRenamingFilename: 0
         m_ClientGUIView: {fileID: 8}
       m_SearchString: 
@@ -587,8 +587,8 @@ MonoBehaviour:
     vZoomLockedByDefault: 0
     m_HBaseRangeMin: -877
     m_HBaseRangeMax: 877
-    m_VBaseRangeMin: -445.5
-    m_VBaseRangeMax: 445.5
+    m_VBaseRangeMin: -456
+    m_VBaseRangeMax: 456
     m_HAllowExceedBaseRangeMin: 1
     m_HAllowExceedBaseRangeMax: 1
     m_VAllowExceedBaseRangeMin: 1
@@ -605,11 +605,11 @@ MonoBehaviour:
     m_DrawArea:
       serializedVersion: 2
       x: 0
-      y: 21
+      y: 0
       width: 1754
-      height: 891
+      height: 912
     m_Scale: {x: 1, y: 1}
-    m_Translation: {x: 877, y: 445.5}
+    m_Translation: {x: 877, y: 456}
     m_MarginLeft: 0
     m_MarginRight: 0
     m_MarginTop: 0
@@ -617,9 +617,9 @@ MonoBehaviour:
     m_LastShownAreaInsideMargins:
       serializedVersion: 2
       x: -877
-      y: -445.5
+      y: -456
       width: 1754
-      height: 891
+      height: 912
     m_MinimalGUI: 1
   m_defaultScale: 1
   m_LastWindowPixelSize: {x: 1754, y: 912}
@@ -667,20 +667,20 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Resources
+    - Assets/Scripts/Quests
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Resources
+  - Assets/Scripts/Quests
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\type3\SwampDays\SwampDays
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 14380000
-    m_LastClickedID: 14356
-    m_ExpandedIDs: 00000000fc370000fe37000000380000023800000438000000ca9a3b
+    m_SelectedIDs: b4380000
+    m_LastClickedID: 14516
+    m_ExpandedIDs: 000000009a3800009c3800009e380000a0380000a238000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -708,7 +708,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000fc370000fe370000003800000238000004380000
+    m_ExpandedIDs: 000000009a3800009c3800009e380000a0380000a2380000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -735,7 +735,7 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 1
+    m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: c6230000a6380000263e00006c38000084660000000000009c3b0000b83d0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
