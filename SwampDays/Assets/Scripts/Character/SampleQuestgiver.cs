@@ -72,8 +72,6 @@ public class SampleQuestgiver : MonoBehaviour, INpc
     }
     #endregion
 
-    [SerializeField]  private ExampleQuest quest;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -86,7 +84,7 @@ public class SampleQuestgiver : MonoBehaviour, INpc
         ConversationLines.Add(new ConversationLine("And then we fight", null));
 
         List<Response> questOfferResponses = new List<Response>();
-        questOfferResponses.Add(new Response("Yeah, sure, why not", 3, quest));
+        questOfferResponses.Add(new Response("Yeah, sure, why not", 3, 0));
         questOfferResponses.Add(new Response("Nah fam, I'm aight", 4));
         questOfferResponses.Add(new Response("I'll think about it", 5));
         ConversationLines.Add(new ConversationLine("Want to do this quest for me right quick", questOfferResponses));

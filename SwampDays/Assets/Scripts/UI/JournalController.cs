@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class JournalController : MonoBehaviour
 {
-    [SerializeField] private PlayerCharacter player;
+    [SerializeField] private QuestManager questManager;
     [SerializeField] private GameObject listItemPrefab;
 
     [SerializeField] private Text questName;
@@ -16,11 +16,14 @@ public class JournalController : MonoBehaviour
     {
         GameObject newObj;
 
-        foreach (IQuest quest in player.questList)
+        foreach (IQuest quest in questManager.questList)
         {
-            newObj = (GameObject)Instantiate(listItemPrefab, transform);
-            newObj.GetComponentInChildren<Text>().text = quest.QuestName;
-            newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { LoadQuestInfo(quest); });
+            if(quest.Status > 1)
+            {
+                newObj = (GameObject)Instantiate(listItemPrefab, transform);
+                newObj.GetComponentInChildren<Text>().text = quest.QuestName;
+                newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { LoadQuestInfo(quest); });
+            }
         }
     }
 

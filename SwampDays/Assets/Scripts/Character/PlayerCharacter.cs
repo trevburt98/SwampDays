@@ -72,8 +72,6 @@ namespace Character.PlayerCharacter
         public EquipmentManager equipment;
         public List<IInteractable> inventory = new List<IInteractable>();
 
-        public List<IQuest> questList = new List<IQuest>();
-
         //Reference to the first person controller attached to the character
         [SerializeField] private FirstPersonController fpsController;
         //Reference to HUD UI canvas

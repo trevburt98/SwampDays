@@ -24,6 +24,13 @@ public class ExampleQuest : MonoBehaviour, IQuest
         set => _questDescription = value;
     }
 
+    private int _status = 0;
+    public int Status
+    {
+        get => _status;
+        set => _status = value;
+    }
+
     private float _timeToComplete = 0;
     public float TimeToComplete
     {
@@ -63,16 +70,6 @@ public class ExampleQuest : MonoBehaviour, IQuest
     {
         get => _questReceiver.GetComponent<INpc>();
         //set => _questReceiver.GetComponent<INpc>() = value;
-    }
-
-    [SerializeField] private GameObject target;
-
-    void Update()
-    {
-        if(target == null)
-        {
-            completeQuest();
-        }
     }
 
     public void completeQuest()

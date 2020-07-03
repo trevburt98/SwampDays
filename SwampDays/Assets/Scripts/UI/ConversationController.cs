@@ -11,6 +11,7 @@ public class ConversationController : MonoBehaviour
 
     [SerializeField] private GameObject responsePanel;
     [SerializeField] private PlayerCharacter player;
+    [SerializeField] private QuestManager questManager;
 
     [SerializeField] private GameObject responsePrefab;
 
@@ -62,10 +63,10 @@ public class ConversationController : MonoBehaviour
         setCurrentText(currentPartner.ConversationLines[currentPartner.CurrentLinePtr].line);
     }
 
-    void swapPtrAndGiveQuest(int newPtr, IQuest quest)
+    void swapPtrAndGiveQuest(int newPtr, int questIndex)
     {
         swapConversationPtr(newPtr);
-        player.questList.Add(quest);
+        questManager.changeQuestStatus(questIndex, 2);
     }
 
     void setResponses()
@@ -90,9 +91,10 @@ public class ConversationController : MonoBehaviour
                 newButton.transform.position = buttonPosition;
                 newButton.GetComponent<RectTransform>().sizeDelta = new Vector2(buttonSize, responsePanel.GetComponent<RectTransform>().sizeDelta.y);
                 newButton.GetComponentInChildren<Text>().text = response.response;
-                if(response.quest != null)
+                Debug.Log(response.questIndex);
+                if(response.questIndex != -1)
                 {
-                    newButton.GetComponentInChildren<Button>().onClick.AddListener(delegate { swapPtrAndGiveQuest(response.nextLinePtr, response.quest); });
+                    newButton.GetComponentInChildren<Button>().onClick.AddListener(delegate { swapPtrAndGiveQuest(response.nextLinePtr, response.questIndex); });
                 } else
                 {
                     newButton.GetComponentInChildren<Button>().onClick.AddListener(delegate { swapConversationPtr(response.nextLinePtr); });

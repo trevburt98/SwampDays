@@ -21,6 +21,19 @@ public interface IQuest
         set;
     }
 
+    //0 - Not held, inactive
+    //1 - Not held, active
+    //2 - Held, active
+    //3 - Held, failed
+    //4 - Held, complete
+    //5 - Turned in, falied
+    //6 - Turned in, complete
+    int Status
+    {
+        get;
+        set;
+    }
+
     float TimeToComplete
     {
         get;

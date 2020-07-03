@@ -6,7 +6,7 @@ public class Response
 {
     public string response;
     public int nextLinePtr;
-    public IQuest quest;
+    public int questIndex = -1;
 
     public Response(string responseString, int next)
     {
@@ -14,10 +14,10 @@ public class Response
         nextLinePtr = next;
     }
 
-    public Response(string responseString, int next, IQuest newQuest)
+    public Response(string responseString, int next, int quest)
     {
         response = responseString;
         nextLinePtr = next;
-        quest = newQuest;
+        questIndex = quest;
     }
 }

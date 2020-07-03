@@ -75,6 +75,8 @@ public class SampleEnemy : MonoBehaviour, INpc
     public float maxHealth;
     public float currentHealth;
 
+    [SerializeField] private QuestManager questManager;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -105,6 +107,11 @@ public class SampleEnemy : MonoBehaviour, INpc
     public void Die()
     {
         Debug.Log("well shit, guess i'll die then");
+        IQuest applicableQuest = questManager.questList[0];
+        if(applicableQuest.Status == 1 || applicableQuest.Status == 2)
+        {
+            applicableQuest.completeQuest();
+        }
         Destroy(this.gameObject);
     }
 }
