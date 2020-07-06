@@ -10,5 +10,10 @@ public interface IRangedWeapon<T> : IWeapon<T>
         set;
     }
 
+    bool ADS
+    {
+        get;
+    }
     void Reload();
+    void AimDownSight();
 }

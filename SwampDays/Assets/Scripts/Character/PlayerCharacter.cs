@@ -383,6 +383,15 @@ namespace Character.PlayerCharacter
             {
                 equipment.mainHand.GetComponent<IWeapon<float>>().Attack(20);
             }
+            if(Input.GetKeyDown(KeyCode.Mouse1))
+            {
+                equipment.mainHand.GetComponent<IRangedWeapon<float>>().AimDownSight();
+            }
+            //add check for if ads is set to hold instead of toggle
+            if(Input.GetKeyUp(KeyCode.Mouse1))
+            {
+                equipment.mainHand.GetComponent<IRangedWeapon<float>>().AimDownSight();
+            }
         }
 
         //Opens the player menu, disables character movement, displays mouse

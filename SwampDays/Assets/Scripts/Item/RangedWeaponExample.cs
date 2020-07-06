@@ -94,8 +94,14 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
         set => _compatibleBulletArray = value;
     }
 
-    #endregion
+    private bool _ads;
 
+    public bool ADS
+    {
+        get => _ads;
+    }
+
+    #endregion
 
     public void Start()
     {
@@ -109,7 +115,7 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
         RaycastHit hit;
         Vector3 fwd = startObject.TransformDirection(Vector3.forward) * 10;
         Vector3 start = startObject.position;
-        Debug.DrawRay(start, fwd, Color.red);
+        Debug.DrawRay(start, fwd, Color.red, 2.5f);
         //Play the sound for this particular weapon
         audioSource.PlayOneShot(Sound, 0.5f);
         Debug.Log("pew pew");
@@ -124,6 +130,22 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
                 hit.transform.GetComponent<INpc>().Damage(BaseDamage);
             }
         }
+    }
+
+    void IRangedWeapon<float>.AimDownSight()
+    {
+        Transform hand = transform.parent;
+        if (_ads){
+            hand.Translate(1, 0, 0);
+            _ads = false;
+        }
+        else
+        {
+            hand.Translate(-1, 0, 0);
+            _ads = true;
+        }
+        
+        
     }
 
     void IWeapon<float>.Break()
