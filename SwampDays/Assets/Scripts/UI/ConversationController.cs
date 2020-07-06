@@ -59,6 +59,7 @@ public class ConversationController : MonoBehaviour
 
     void swapConversationPtr(int newPtr)
     {
+        Debug.Log("swapping conversation");
         currentPartner.CurrentLinePtr = newPtr;
         setCurrentText(currentPartner.ConversationLines[currentPartner.CurrentLinePtr].line);
     }
@@ -84,6 +85,7 @@ public class ConversationController : MonoBehaviour
             float buttonSize = responsePanel.GetComponent<RectTransform>().sizeDelta.x / numResponses;
             Vector3 buttonPosition = responsePanel.transform.position;
             buttonPosition.x -= (responsePanel.GetComponent<RectTransform>().sizeDelta.x / 2) - (buttonSize / 2);
+            Debug.Log(buttonPosition);
 
             foreach (Response response in responseList)
             {

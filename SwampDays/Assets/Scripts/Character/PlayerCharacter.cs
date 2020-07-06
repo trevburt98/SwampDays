@@ -393,17 +393,16 @@ namespace Character.PlayerCharacter
             if (inMenu)
             {
                 Cursor.lockState = CursorLockMode.Confined;
-                Cursor.visible = true;
                 playerMenuCanvasGroup.alpha = 1;
-                playerMenuCanvasGroup.interactable = true;
             }
             else
             {
                 Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
                 playerMenuCanvasGroup.alpha = 0;
-                playerMenuCanvasGroup.interactable = false;
             }
+            Cursor.visible = inMenu;
+            playerMenuCanvasGroup.interactable = inMenu;
+            playerMenuCanvasGroup.blocksRaycasts = inMenu;
         }
 
         private void beginConversation(INpc conversationPartner)
