@@ -383,6 +383,12 @@ namespace Character.PlayerCharacter
             {
                 equipment.mainHand.GetComponent<IWeapon<float>>().Attack(20);
             }
+            if (equipment.mainHand.GetComponent<IRangedWeapon<float>>() != null)
+            { if (Input.GetKeyDown(KeyCode.R))
+                {
+                    equipment.mainHand.GetComponent<IRangedWeapon<float>>().Reload();
+                }
+            }
         }
 
         //Opens the player menu, disables character movement, displays mouse
