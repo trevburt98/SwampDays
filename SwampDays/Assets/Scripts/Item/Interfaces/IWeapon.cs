@@ -22,6 +22,11 @@ public interface IWeapon<T> : IInteractable
         set;
     }
 
+    float Weight
+    {
+        get;
+    }
+
     bool Broken
     {
         get;
@@ -33,8 +38,6 @@ public interface IWeapon<T> : IInteractable
         get;
         set;
     }
-
-    //Inherited from IInteractable
 
     void Attack(T damageDone);
 
