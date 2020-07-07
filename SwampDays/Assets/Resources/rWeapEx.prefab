@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 2139819255492978468}
   - component: {fileID: 2139819255492978471}
   m_Layer: 8
-  m_Name: rWeapEx
+  m_Name: Weapon Example
   m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -125,11 +125,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12003d110d809cf418491087e5e50be0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _weaponImage: {fileID: 0}
   _fireSound: {fileID: 8300000, guid: 308ce673173a8c542a73bf3f218dc31e, type: 3}
   audioSource: {fileID: 2139819255492978471}
-  BulletHole: {fileID: 7574736564949768836, guid: 75bfa2f0998683d4189dbe9c6b9f23d4,
-    type: 3}
 --- !u!82 &2139819255492978471
 AudioSource:
   m_ObjectHideFlags: 0
