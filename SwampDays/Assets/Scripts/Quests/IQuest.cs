@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Character.PlayerCharacter;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,7 +13,6 @@ public interface IQuest
     string QuestName
     {
         get;
-        set;
     }
 
     string QuestDescription
@@ -30,7 +30,7 @@ public interface IQuest
     //6 - Turned in, complete
     int Status
     {
-        get;
+        get; 
         set;
     }
 
@@ -66,10 +66,11 @@ public interface IQuest
     INpc QuestReceiver
     {
         get;
-        //set;
     }
 
     void completeQuest();
+
+    void turnInQuest(PlayerCharacter player);
 
     void failQuest();
 

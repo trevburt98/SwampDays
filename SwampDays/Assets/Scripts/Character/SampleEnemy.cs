@@ -114,4 +114,19 @@ public class SampleEnemy : MonoBehaviour, INpc
         }
         Destroy(this.gameObject);
     }
+
+    public void addConversationLine(ConversationLine newLine)
+    {
+        
+    }
+
+    public int startConversation()
+    {
+        return 0;
+    }
+
+    public void endConversation()
+    {
+        
+    }
 }

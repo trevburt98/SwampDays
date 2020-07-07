@@ -109,9 +109,9 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
         RaycastHit hit;
         Vector3 fwd = startObject.TransformDirection(Vector3.forward) * 10;
         Vector3 start = startObject.position;
-        Debug.DrawRay(start, fwd, Color.red);
+        Debug.DrawRay(start, fwd, Color.red, 5.0f);
         //Play the sound for this particular weapon
-        audioSource.PlayOneShot(Sound, 0.5f);
+        audioSource.PlayOneShot(Sound, 0.1f);
         Debug.Log("pew pew");
         //Raycast hit something
         //If we want to do projectile physics this will change heavily

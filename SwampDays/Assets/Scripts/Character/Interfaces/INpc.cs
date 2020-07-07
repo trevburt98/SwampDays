@@ -21,4 +21,11 @@ public interface INpc : ICharacter<float>
         get;
         set;
     }
+
+    void addConversationLine(ConversationLine newLine);
+
+    int startConversation();
+
+    void endConversation();
+
 }

@@ -47,6 +47,8 @@ public class ConversationController : MonoBehaviour
         if(toggle)
         {
             canvasGroup.alpha = 1;
+            Debug.Log(currentPartner);
+            swapConversationPtr(currentPartner.startConversation());
         } else
         {
             canvasGroup.alpha = 0;
@@ -59,7 +61,6 @@ public class ConversationController : MonoBehaviour
 
     void swapConversationPtr(int newPtr)
     {
-        Debug.Log("swapping conversation");
         currentPartner.CurrentLinePtr = newPtr;
         setCurrentText(currentPartner.ConversationLines[currentPartner.CurrentLinePtr].line);
     }
@@ -68,6 +69,12 @@ public class ConversationController : MonoBehaviour
     {
         swapConversationPtr(newPtr);
         questManager.changeQuestStatus(questIndex, 2);
+    }
+
+    void swapPtrAndCompleteQuest(int newPtr, int questIndex)
+    {
+        swapConversationPtr(newPtr);
+        questManager.turnInQuest(questIndex);
     }
 
     void setResponses()
@@ -85,7 +92,6 @@ public class ConversationController : MonoBehaviour
             float buttonSize = responsePanel.GetComponent<RectTransform>().sizeDelta.x / numResponses;
             Vector3 buttonPosition = responsePanel.transform.position;
             buttonPosition.x -= (responsePanel.GetComponent<RectTransform>().sizeDelta.x / 2) - (buttonSize / 2);
-            Debug.Log(buttonPosition);
 
             foreach (Response response in responseList)
             {
@@ -93,10 +99,16 @@ public class ConversationController : MonoBehaviour
                 newButton.transform.position = buttonPosition;
                 newButton.GetComponent<RectTransform>().sizeDelta = new Vector2(buttonSize, responsePanel.GetComponent<RectTransform>().sizeDelta.y);
                 newButton.GetComponentInChildren<Text>().text = response.response;
-                Debug.Log(response.questIndex);
                 if(response.questIndex != -1)
                 {
-                    newButton.GetComponentInChildren<Button>().onClick.AddListener(delegate { swapPtrAndGiveQuest(response.nextLinePtr, response.questIndex); });
+                    if (questManager.questList[response.questIndex].Status == 4)
+                    {
+                        newButton.GetComponentInChildren<Button>().onClick.AddListener(delegate { swapPtrAndCompleteQuest(response.nextLinePtr, response.questIndex); });
+                    } else
+                    {
+                        newButton.GetComponentInChildren<Button>().onClick.AddListener(delegate { swapPtrAndGiveQuest(response.nextLinePtr, response.questIndex); });
+
+                    }
                 } else
                 {
                     newButton.GetComponentInChildren<Button>().onClick.AddListener(delegate { swapConversationPtr(response.nextLinePtr); });

@@ -2880,6 +2880,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   questObj: {fileID: 505936662}
+  player: {fileID: 276012313}
 --- !u!4 &505936665
 Transform:
   m_ObjectHideFlags: 0
@@ -4222,6 +4223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentCarryingCapacity: 0
+  questManager: {fileID: 505936664}
 --- !u!136 &845148934
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -8784,9 +8786,9 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2110475404}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 0
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
 --- !u!114 &2110475410
 MonoBehaviour:

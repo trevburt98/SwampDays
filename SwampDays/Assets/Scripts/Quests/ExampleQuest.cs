@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Character.PlayerCharacter;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -75,7 +76,17 @@ public class ExampleQuest : MonoBehaviour, IQuest
     public void completeQuest()
     {
         Complete = true;
-        Debug.Log("Yay we did it");
+        Status = 4;
+    }
+
+    public void turnInQuest(PlayerCharacter player)
+    {
+        Status = 6;
+
+        //This seems questionable, but y'know, whatever
+        GameObject reward = Instantiate(Resources.Load("consHealEx")) as GameObject;
+        player.inventory.Add(reward.GetComponent<IInteractable>());
+        Destroy(reward);
     }
 
     public void failQuest()

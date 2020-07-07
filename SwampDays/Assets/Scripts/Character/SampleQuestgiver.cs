@@ -72,6 +72,8 @@ public class SampleQuestgiver : MonoBehaviour, INpc
     }
     #endregion
 
+    [SerializeField] private QuestManager questManager;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -94,6 +96,15 @@ public class SampleQuestgiver : MonoBehaviour, INpc
         ConversationLines.Add(new ConversationLine("Alright then, screw you too", null));
 
         ConversationLines.Add(new ConversationLine("Well let me know if you want to", null));
+
+        List<Response> questCompleteResponses = new List<Response>();
+        questCompleteResponses.Add(new Response("Yup, killed that boi dead", 7, 0));
+        questCompleteResponses.Add(new Response("No, not yet", 8));
+        ConversationLines.Add(new ConversationLine("You done with that quest yet?", questCompleteResponses));
+
+        ConversationLines.Add(new ConversationLine("Naisu", null));
+
+        ConversationLines.Add(new ConversationLine("Alright, get back to it then", null));
     }
 
     // Update is called once per frame
@@ -113,6 +124,26 @@ public class SampleQuestgiver : MonoBehaviour, INpc
     }
 
     public void Die()
+    {
+
+    }
+
+    public int startConversation()
+    {
+        //Finished, not turned in yet
+        if (questManager.questList[0].Status == 4)
+        {
+            CurrentLinePtr = 6;
+        }
+        return CurrentLinePtr;
+    }
+
+    public void endConversation()
+    {
+
+    }
+
+    public void addConversationLine(ConversationLine newConversationLine)
     {
 
     }
