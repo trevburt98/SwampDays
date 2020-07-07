@@ -10,5 +10,30 @@ public interface IRangedWeapon<T> : IWeapon<T>
         set;
     }
 
+    float Accuracy
+    {
+        get;
+        set;
+    }
+
+    int MagazineSize
+    {
+        get;
+        set;
+    }
+
+    int AmmoCount
+    {
+        get;
+        set;
+    }
+
+    //Inherited from IWeapon
+
+    float Range
+    {
+        get;
+    }
+
     void Reload();
 }
