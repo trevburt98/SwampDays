@@ -127,7 +127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _weaponImage: {fileID: 0}
-  _fireSound: {fileID: 8300000, guid: 308ce673173a8c542a73bf3f218dc31e, type: 3}
+  _fireSound: {fileID: 8300000, guid: 9c7919b6193ae6f45add56c156bccd35, type: 3}
   audioSource: {fileID: 2139819255492978471}
 --- !u!82 &2139819255492978471
 AudioSource:

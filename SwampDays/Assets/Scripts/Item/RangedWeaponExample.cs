@@ -65,6 +65,13 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
         set => _value = value;
     }
 
+    [SerializeField] private float _zoom = 16f;
+
+    public float Zoom{
+        get => _zoom;
+        set => _zoom = value;
+    }
+
     [SerializeField] private Sprite _weaponImage;
     public Sprite ItemImage
     {
@@ -136,11 +143,15 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
     {
         Transform hand = transform.parent;
         if (_ads){
+            //TODO: change this to revert to a global or "default" fov value, probably chosen in settings by player
+            Camera.main.fieldOfView = Camera.main.fieldOfView * _zoom;
             hand.Translate(1, 0, 0);
             _ads = false;
         }
         else
         {
+            //TODO change this to be "default" fov value over zoom instead of current value
+            Camera.main.fieldOfView = Camera.main.fieldOfView / _zoom;
             hand.Translate(-1, 0, 0);
             _ads = true;
         }

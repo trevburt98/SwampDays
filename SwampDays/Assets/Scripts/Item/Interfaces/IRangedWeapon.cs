@@ -14,6 +14,13 @@ public interface IRangedWeapon<T> : IWeapon<T>
     {
         get;
     }
+
+    float Zoom
+    {
+        get;
+        set;
+    }
+
     void Reload();
     void AimDownSight();
 }
