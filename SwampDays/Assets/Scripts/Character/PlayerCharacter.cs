@@ -67,8 +67,10 @@ namespace Character.PlayerCharacter
         public float maxHealth;
         public float currentHealth;
 
-        private GameObject equipped = null;
-        public List<InventoryItem> inventory = new List<InventoryItem>();
+        public int armourRating;
+
+        public EquipmentManager equipment;
+        public List<IInteractable> inventory = new List<IInteractable>();
 
         //Reference to the first person controller attached to the character
         [SerializeField] private FirstPersonController fpsController;
@@ -87,8 +89,8 @@ namespace Character.PlayerCharacter
         private StaminaReadout staminaUI;
         //Reference to interaction prompt on UI
         private InteractionPrompt interactionPrompt;
-        //Reference to inventory menu script in inventory UI
-        private InventoryMenuController populate;
+        //Reference to the conversation controller controlling the conversation canvas
+        [SerializeField] private ConversationController conversationController;
 
         //TEMP
         //Public versions to quickly change from unity editor
@@ -118,7 +120,7 @@ namespace Character.PlayerCharacter
             healthUI.initHealthUI(maxHealth);
             staminaUI.initStaminaUI(maxStamina);
 
-            Damage(10);
+            armourRating = 0;
         }
 
         // Update is called once per frame
@@ -127,7 +129,6 @@ namespace Character.PlayerCharacter
             if (Input.GetKeyDown(KeyCode.Tab))
             {
                 TogglePlayerMenu(!inMenu);
-                //inventoryController.renderInventory(inventory);
             }
 
             if (!inMenu)
@@ -146,7 +147,7 @@ namespace Character.PlayerCharacter
                 //}
 
                 //If we have an item equipped call our equipped update function
-                if (equipped != null)
+                if (equipment.mainHand != null)
                 {
                     equippedUpdate();
                 }
@@ -220,10 +221,10 @@ namespace Character.PlayerCharacter
             Debug.Log("Did " + damageDone + " damage!");
         }
 
-        public void removeFromInventory(InventoryItem item)
+        public void removeFromInventory(IInteractable item)
         {
             inventory.Remove(item);
-            updateCarryingCapacity(-item.weight);
+            updateCarryingCapacity(-item.Weight);
         }
 
         //Simple update to indicate that stamina has been changed
@@ -339,41 +340,36 @@ namespace Character.PlayerCharacter
             //On Raycast hit
             if (Physics.Raycast(camera.transform.position, forward, out hit, 10, layerMask))
             {
-                //Throw up the prompt for this interaction
-                interactionPrompt.promptInteraction(hit.transform.gameObject.GetComponent<IInteractable>().Name);
-                //If the player presses the interaction button
-                if (Input.GetKeyDown(KeyCode.E))
+                //If the raycast hit an interactable object
+                if(hit.transform.GetComponent<IInteractable>() != null)
                 {
-                    //If the item is equippable
-                    if (hit.transform.gameObject.GetComponent<IInteractable>().Equippable)
-                    {
-                        //Add the item to the players inventory
-                        //TODO: check max inventory space against current to determine whether or not this item can be stowed
-                        //If nothing is equipped
-                        if (equipped == null)
-                        {
-                            //Set equipped to the object, make the object a child of the hand
-                            equipped = hit.transform.gameObject;
-                            hit.transform.parent = hand.transform;
-                            hit.transform.localPosition = new Vector3(0, 0, 0);
-                            hit.transform.localRotation = Quaternion.Euler(0, 90, 0);
-                            hit.rigidbody.useGravity = false;
-                            hit.rigidbody.constraints = RigidbodyConstraints.FreezeAll;
-                        }
-                    }
-                    //If the item is not equippable (i.e. consumable, object)
-                    else
-                    {
-                        IInteractable interactable = hit.transform.gameObject.GetComponent<IInteractable>();
-                        InventoryItem item = new InventoryItem(interactable.ID, interactable.Name, interactable.FlavourText, interactable.Weight);
-                        inventory.Add(item);
-                        updateCarryingCapacity(item.weight);
+                    IInteractable interactable = hit.transform.gameObject.GetComponent<IInteractable>();
+
+                    //Throw up the prompt for this interaction
+                    interactionPrompt.promptPickup(interactable.Name);
+                    //If the player presses the interaction button
+                    if (Input.GetKeyDown(KeyCode.E))
+                    { 
+                        inventory.Add(interactable);
+                        updateCarryingCapacity(interactable.Weight);
                         Destroy(hit.transform.gameObject);
-                        //hit.transform.gameObject.GetComponent<IConsumable>().use();
+                    }
+                }
+                //If the raycast instead hit an NPC that can be talked to
+                else if(hit.transform.gameObject.GetComponent<INpc>() != null)
+                {
+                    INpc npc = hit.transform.gameObject.GetComponent<INpc>();
+
+                    //Throw up the prompt to talk to that specific NPC
+                    interactionPrompt.promptTalk(npc.Name);
+                    if(Input.GetKeyDown(KeyCode.E))
+                    {
+                        beginConversation(npc);    
                     }
                 }
             }
             //Otherwise, remove the interaction prompt from the screen
+            //TODO: I would like to change this so that it isn't calling this more than necessary
             else
             {
                 interactionPrompt.removePrompt();
@@ -383,26 +379,25 @@ namespace Character.PlayerCharacter
         //Update called whenever the player has an item currently equipped
         private void equippedUpdate()
         {
-            //The player presses the interaction key while they have something equipped
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                //Unparent the hand, set equipped to nothing
-                //TODO: Remove the specific item from the player's inventory
-                Rigidbody rb = equipped.GetComponent<Rigidbody>();
-                rb.useGravity = true;
-                rb.constraints = RigidbodyConstraints.None;
-                equipped.transform.parent = null;
-                equipped = null;
-                int i = 0;
-                foreach(InventoryItem item in inventory)
-                {
-                    Debug.Log(++i + ": " + item);
-                }
-            }
-
             if(Input.GetKeyDown(KeyCode.Mouse0))
             {
-                equipped.GetComponent<IRangedWeapon<float>>().Attack(20);
+                equipment.mainHand.GetComponent<IWeapon>().Attack();
+            }
+            if (equipment.mainHand.GetComponent<IRangedWeapon>() != null)
+            {
+                if (Input.GetKeyDown(KeyCode.R))
+                {
+                    equipment.mainHand.GetComponent<IRangedWeapon>().Reload();
+                }
+            }
+            if(Input.GetKeyDown(KeyCode.Mouse1))
+            {
+                equipment.mainHand.GetComponent<IRangedWeapon>().AimDownSight();
+            }
+            //add check for if ads is set to hold instead of toggle
+            if(Input.GetKeyUp(KeyCode.Mouse1))
+            {
+                equipment.mainHand.GetComponent<IRangedWeapon>().AimDownSight();
             }
         }
 
@@ -414,17 +409,41 @@ namespace Character.PlayerCharacter
             if (inMenu)
             {
                 Cursor.lockState = CursorLockMode.Confined;
-                Cursor.visible = true;
                 playerMenuCanvasGroup.alpha = 1;
-                playerMenuCanvasGroup.interactable = true;
             }
             else
             {
                 Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
                 playerMenuCanvasGroup.alpha = 0;
-                playerMenuCanvasGroup.interactable = false;
             }
+            Cursor.visible = inMenu;
+            playerMenuCanvasGroup.interactable = inMenu;
+            playerMenuCanvasGroup.blocksRaycasts = inMenu;
+        }
+
+        private void beginConversation(INpc conversationPartner)
+        {
+            fpsController.inMenu = inMenu = true;
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
+
+            conversationController.setConversationPartner(conversationPartner);
+            conversationController.toggleConversationCanvas(true);
+            interactionPrompt.removePrompt();
+        }
+
+        public void exitConversation()
+        {
+            fpsController.inMenu = inMenu = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
+            conversationController.toggleConversationCanvas(false);
+        }
+
+        private void endConversation()
+        {
+
         }
         #endregion
     }

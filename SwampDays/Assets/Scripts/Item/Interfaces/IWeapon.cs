@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IWeapon<T> : IInteractable
+public interface IWeapon : IInteractable
 {
     float BaseDamage
     {
@@ -22,11 +22,6 @@ public interface IWeapon<T> : IInteractable
         set;
     }
 
-    float Weight
-    {
-        get;
-    }
-
     bool Broken
     {
         get;
@@ -39,7 +34,7 @@ public interface IWeapon<T> : IInteractable
         set;
     }
 
-    void Attack(T damageDone);
+    void Attack();
 
     void Break();
 

@@ -6,7 +6,7 @@ public class SampleEnemy : MonoBehaviour, INpc
 {
 
     #region Trait Declarations
-    private string _name;
+    private string _name = "Sample Enemy";
     public string Name
     {
         get => _name;
@@ -57,10 +57,25 @@ public class SampleEnemy : MonoBehaviour, INpc
         get => _opinion;
         set => _opinion = value;
     }
+
+    private List<ConversationLine> _conversationLines;
+    public List<ConversationLine> ConversationLines
+    {
+        get => _conversationLines;
+    }
+
+    private int _currentLinePtr;
+    public int CurrentLinePtr
+    {
+        get => _currentLinePtr;
+        set => CurrentLinePtr = value;
+    }
     #endregion
 
     public float maxHealth;
     public float currentHealth;
+
+    [SerializeField] private QuestManager questManager;
 
     // Start is called before the first frame update
     void Start()
@@ -92,6 +107,26 @@ public class SampleEnemy : MonoBehaviour, INpc
     public void Die()
     {
         Debug.Log("well shit, guess i'll die then");
+        IQuest applicableQuest = questManager.questList[0];
+        if(applicableQuest.Status == 1 || applicableQuest.Status == 2)
+        {
+            applicableQuest.completeQuest();
+        }
         Destroy(this.gameObject);
+    }
+
+    public void addConversationLine(ConversationLine newLine)
+    {
+        
+    }
+
+    public int startConversation()
+    {
+        return 0;
+    }
+
+    public void endConversation()
+    {
+        
     }
 }

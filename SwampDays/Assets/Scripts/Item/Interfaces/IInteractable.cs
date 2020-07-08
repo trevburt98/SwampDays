@@ -30,4 +30,16 @@ public interface IInteractable
         get;
         set;
     }
+
+    int MonetaryValue
+    {
+        get;
+        set;
+    }
+
+    Sprite ItemImage
+    {
+        get;
+        set;
+    }
 }
