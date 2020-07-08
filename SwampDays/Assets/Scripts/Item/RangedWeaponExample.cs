@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
+public class RangedWeaponExample : MonoBehaviour, IRangedWeapon
 {
     #region Member Declarations
     private bool _equippable = true;
@@ -94,6 +94,30 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
         set => _compatibleBulletArray = value;
     }
 
+    private float _accuracy = 2;
+    public float Accuracy
+    {
+        get => _accuracy;
+        set => _accuracy = value;
+    }
+
+    private int _magazineSize = 10;
+    public int MagazineSize
+    {
+        get => _magazineSize;
+        set => _magazineSize = value;
+    }
+
+    private int _ammoCount = 10;
+    public int AmmoCount
+    {
+        get => _ammoCount;
+        set => _ammoCount = value;
+    }
+
+
+    public GameObject BulletHole;
+    public GameObject newHole;
     #endregion
 
 
@@ -102,42 +126,59 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon<float>
 
     }
 
-    void IWeapon<float>.Attack(float damageDone)
+    void IWeapon.Attack()
     {
-        Debug.Log(transform.position);
-        Transform startObject = transform.GetChild(0);
-        RaycastHit hit;
-        Vector3 fwd = startObject.TransformDirection(Vector3.forward) * 10;
-        Vector3 start = startObject.position;
-        Debug.DrawRay(start, fwd, Color.red, 5.0f);
-        //Play the sound for this particular weapon
-        audioSource.PlayOneShot(Sound, 0.1f);
-        Debug.Log("pew pew");
-        //Raycast hit something
-        //If we want to do projectile physics this will change heavily
-        if (Physics.Raycast(start, fwd, out hit, Range))
+        if(AmmoCount != 0)
         {
-            //Check the hit's layer to determine what course of action to take
-            //Hit layer 9: NPC. Call the NPC's damage function
-            if(hit.transform.gameObject.layer == 9)
+            Debug.Log(transform.position);
+            Transform startObject = transform.GetChild(0);
+            RaycastHit hit;
+            Vector3 fwd = startObject.TransformDirection(Vector3.forward) * 10;
+            Vector3 start = startObject.position;
+            Debug.DrawRay(start, fwd, Color.red, 5.0f);
+            //Play the sound for this particular weapon
+            audioSource.PlayOneShot(Sound, 0.1f);
+            Debug.Log("pew pew");
+
+            //Update AmmoCount
+            Debug.Log(AmmoCount);
+            AmmoCount--;
+
+            //Raycast hit something
+            //If we want to do projectile physics this will change heavily
+            if (Physics.Raycast(start, fwd, out hit, Range))
             {
-                hit.transform.GetComponent<INpc>().Damage(BaseDamage);
+                //Check the hit's layer to determine what course of action to take
+                //Hit layer 9: NPC. Call the NPC's damage function
+                if (hit.transform.gameObject.layer == 9)
+                {
+                    hit.transform.GetComponent<INpc>().Damage(BaseDamage);
+                }
+                if(hit.transform.gameObject.layer == 11)
+                {
+                    newHole = Instantiate(BulletHole, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal));
+                    Destroy(newHole, 3f);
+                }
             }
+        }
+        else
+        {
+            Debug.Log("out of ammo");
         }
     }
 
-    void IWeapon<float>.Break()
+    void IWeapon.Break()
     {
 
     }
 
-    void IWeapon<float>.Repair()
+    void IWeapon.Repair()
     {
 
     }
 
-    void IRangedWeapon<float>.Reload()
+    void IRangedWeapon.Reload()
     {
-
+        AmmoCount = MagazineSize;
     }
 }

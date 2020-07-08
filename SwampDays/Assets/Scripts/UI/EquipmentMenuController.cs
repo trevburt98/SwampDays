@@ -69,7 +69,7 @@ public class EquipmentMenuController : MonoBehaviour
         foreach(IInteractable item in player.inventory)
         {
             //If the item in the inventory is either an equipment or a weapon, display it in the equipment menu list
-            if(item is IEquipment || item is IWeapon<float>)
+            if(item is IEquipment || item is IWeapon)
             {
                 newObj = (GameObject)Instantiate(inventoryItemPrefab, transform);
                 newObj.GetComponentInChildren<Text>().text = item.Name;
@@ -173,7 +173,7 @@ public class EquipmentMenuController : MonoBehaviour
         toggleEquipButton(true);
     }
 
-    void EquipWeapon(IWeapon<float> weapon, bool mainHand)
+    void EquipWeapon(IWeapon weapon, bool mainHand)
     {
         equipmentManager.equipNewWeapon(weapon, mainHand);
     }

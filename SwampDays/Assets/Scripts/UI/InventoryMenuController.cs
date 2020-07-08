@@ -59,10 +59,10 @@ public class InventoryMenuController : MonoBehaviour
             IEquipment equipment = obj.GetComponent<IEquipment>();
             equipButton.onClick.AddListener(delegate { EquipItem(equipment); });
             toggleEquipButton(true);
-        } else if(item is IWeapon<float>)
+        } else if(item is IWeapon)
         {
             GameObject obj = (GameObject)Resources.Load(item.ID);
-            IWeapon<float> equipment = obj.GetComponent<IWeapon<float>>();
+            IWeapon equipment = obj.GetComponent<IWeapon>();
             equipButton.onClick.AddListener(delegate { EquipWeapon(equipment, true); });
             toggleEquipButton(true);
         }
@@ -98,7 +98,7 @@ public class InventoryMenuController : MonoBehaviour
         equipmentManager.equipNewEquipment(equipment, equipment.EquipSlot);
     }
 
-    void EquipWeapon(IWeapon<float> weapon, bool mainHand)
+    void EquipWeapon(IWeapon weapon, bool mainHand)
     {
         equipmentManager.equipNewWeapon(weapon, mainHand);
     }

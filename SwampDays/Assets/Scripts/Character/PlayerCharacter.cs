@@ -381,7 +381,14 @@ namespace Character.PlayerCharacter
         {
             if(Input.GetKeyDown(KeyCode.Mouse0))
             {
-                equipment.mainHand.GetComponent<IWeapon<float>>().Attack(20);
+                equipment.mainHand.GetComponent<IWeapon>().Attack();
+            }
+            if (equipment.mainHand.GetComponent<IRangedWeapon>() != null)
+            {
+                if (Input.GetKeyDown(KeyCode.R))
+                {
+                    equipment.mainHand.GetComponent<IRangedWeapon>().Reload();
+                }
             }
         }
 

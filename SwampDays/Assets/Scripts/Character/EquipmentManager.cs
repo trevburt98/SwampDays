@@ -45,7 +45,7 @@ public class EquipmentManager : MonoBehaviour
         Debug.Log(player.armourRating);
     }
 
-    public void equipNewWeapon(IWeapon<float> newWeapon, bool inMainHand)
+    public void equipNewWeapon(IWeapon newWeapon, bool inMainHand)
     {
         GameObject obj = (GameObject)Resources.Load(newWeapon.ID);
         GameObject objInGame = GameObject.Instantiate(obj);
