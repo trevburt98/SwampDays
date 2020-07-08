@@ -65,7 +65,7 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon
         set => _value = value;
     }
 
-    [SerializeField] private float _zoom = 16f;
+    [SerializeField] private float _zoom = 2f;
     public float Zoom
     {
         get => _zoom;
@@ -126,6 +126,7 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon
     public bool ADS
     {
         get => _ads;
+        set => _ads = value;
     }
 
     #endregion
@@ -180,7 +181,7 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon
         }
     }
 
-    void IRangedWeapon<float>.AimDownSight()
+    void IRangedWeapon.AimDownSight()
     {
         Transform hand = transform.parent;
         if (ADS){
@@ -200,7 +201,7 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon
         
     }
 
-    void IWeapon<float>.Break()
+    void IWeapon.Break()
     {
 
     }

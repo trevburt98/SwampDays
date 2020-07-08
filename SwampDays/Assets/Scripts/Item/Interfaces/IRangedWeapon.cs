@@ -31,6 +31,7 @@ public interface IRangedWeapon : IWeapon
     bool ADS
     {
         get;
+        set;
     }
 
     float Zoom
