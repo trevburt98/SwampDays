@@ -27,6 +27,18 @@ public interface IRangedWeapon : IWeapon
         get;
         set;
     }
+    
+    bool ADS
+    {
+        get;
+    }
+
+    float Zoom
+    {
+        get;
+        set;
+    }
 
     void Reload();
+    void AimDownSight();
 }
