@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HealConsumableExample : MonoBehaviour, IConsumable
+public class SoupThatIsTooHot : MonoBehaviour, IConsumable
 {
     private bool _equippable = false;
     public bool Equippable
@@ -11,19 +11,19 @@ public class HealConsumableExample : MonoBehaviour, IConsumable
         get => _equippable;
     }
 
-    private string _itemId = "consHealEx";
+    private string _itemId = "soupTooHot";
     public string ID
     {
         get => _itemId;
     }
 
-    private string _itemName = "Example Healing Consumable";
+    private string _itemName = "Soup That Is Too Hot";
     public string Name
     {
         get => _itemName;
     }
 
-    private string _flavourText = "Example implementation of a consumable that heals the player. Used to create a workflow for future consumables";
+    private string _flavourText = "This is a bowl of soup that is too hot to be eaten safely. Conveniently for the purpose of testing items with multiple tags on them, that means that this is simultaneously a food, drink, healing, and harmful item.";
     public string FlavourText
     {
         get => _flavourText;
@@ -44,7 +44,7 @@ public class HealConsumableExample : MonoBehaviour, IConsumable
         set => _value = value;
     }
 
-    private List<int> _tags = new List<int>(){4};
+    private List<int> _tags = new List<int>(){4, 5, 6, 7};
     public List<int> Tags{
         get => _tags;
     }
@@ -59,5 +59,6 @@ public class HealConsumableExample : MonoBehaviour, IConsumable
     public void use(ICharacter<float> user)
     {
         user.Heal(10);
+        user.Damage(5);
     }
 }

@@ -37,6 +37,10 @@ public interface IInteractable
         set;
     }
 
+    List<int> Tags{
+        get;
+        //TODO: should this have a set?
+    }
     Sprite ItemImage
     {
         get;
