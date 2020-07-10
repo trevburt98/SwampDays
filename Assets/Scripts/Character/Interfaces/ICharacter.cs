@@ -34,6 +34,30 @@ public interface ICharacter<T>
         set;
     }
 
+    float PistolSkill
+    {
+        get;
+        set;
+    }
+        
+    float RifleSkill
+    {
+        get;
+        set;
+    }
+
+    float HeavyRifleSkill
+    {
+        get;
+        set;
+    }
+
+    float ShotgunSkill
+    {
+        get;
+        set;
+    }
+
     void Damage(T damageTaken);
 
     void Heal(T healthHealed);

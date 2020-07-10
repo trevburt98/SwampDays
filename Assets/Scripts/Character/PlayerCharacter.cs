@@ -64,6 +64,38 @@ namespace Character.PlayerCharacter
         }
         #endregion
 
+        #region Skill Declarations
+
+        private float _pistolSkill = 0;
+        public float PistolSkill
+        {
+            get => _pistolSkill;
+            set => _pistolSkill = value;
+        }
+
+        private float _rifleSkill = 0;
+        public float RifleSkill
+        {
+            get => _rifleSkill;
+            set => _rifleSkill = value;
+        }
+
+        private float _heavyRifleSkill = 0;
+        public float HeavyRifleSkill
+        {
+            get => _heavyRifleSkill;
+            set => _heavyRifleSkill = value;
+        }
+
+        private float _shotgunSkill = 0;
+        public float ShotgunSkill
+        {
+            get => _shotgunSkill;
+            set => _shotgunSkill = value;
+        }
+
+        #endregion
+
         public float maxHealth;
         public float currentHealth;
 
@@ -121,6 +153,7 @@ namespace Character.PlayerCharacter
             staminaUI.initStaminaUI(maxStamina);
 
             armourRating = 0;
+
         }
 
         // Update is called once per frame

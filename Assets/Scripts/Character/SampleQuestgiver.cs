@@ -72,6 +72,38 @@ public class SampleQuestgiver : MonoBehaviour, INpc
     }
     #endregion
 
+    #region Skill Declarations
+
+    private float _pistolSkill = 0;
+    public float PistolSkill
+    {
+        get => _pistolSkill;
+        set => _pistolSkill = value;
+    }
+
+    private float _rifleSkill = 0;
+    public float RifleSkill
+    {
+        get => _rifleSkill;
+        set => _rifleSkill = value;
+    }
+
+    private float _heavyRifleSkill = 0;
+    public float HeavyRifleSkill
+    {
+        get => _heavyRifleSkill;
+        set => _heavyRifleSkill = value;
+    }
+
+    private float _shotgunSkill = 0;
+    public float ShotgunSkill
+    {
+        get => _shotgunSkill;
+        set => _shotgunSkill = value;
+    }
+
+    #endregion
+
     [SerializeField] private QuestManager questManager;
 
     // Start is called before the first frame update
