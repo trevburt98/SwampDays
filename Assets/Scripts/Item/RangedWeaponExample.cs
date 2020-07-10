@@ -72,6 +72,10 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon
         set => _zoom = value;
     }
 
+    private List<int> _tags = new List<int>(){0};
+    public List<int> Tags{
+        get => _tags;
+    }
     [SerializeField] private Sprite _weaponImage;
     public Sprite ItemImage
     {

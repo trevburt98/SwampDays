@@ -65,6 +65,11 @@ public class HeadEquipExample : MonoBehaviour, IEquipment
         set => _durability = value;
     }
 
+    private List<int> _tags = new List<int>(){8};
+    public List<int> Tags{
+        get => _tags;
+    }
+
     [SerializeField] private Sprite _image;
     public Sprite ItemImage
     {
