@@ -73,7 +73,7 @@ namespace Character.PlayerCharacter
             set => _pistolSkill = value;
         }
 
-        private float _rifleSkill = 0;
+        private float _rifleSkill = 25;
         public float RifleSkill
         {
             get => _rifleSkill;
@@ -219,6 +219,15 @@ namespace Character.PlayerCharacter
             //Change the movements speed within the first person controller to reflect changes in the character
             fpsController.changeMoveSpeed(newMoveSpeed);
         }
+        #endregion
+
+        #region Skill Incrementers
+        public float increaseRifleSkill(float amountToIncrease)
+        {
+            RifleSkill += amountToIncrease;
+            return RifleSkill;
+        }
+
         #endregion
 
         #region Public Function
@@ -414,7 +423,7 @@ namespace Character.PlayerCharacter
         {
             if(Input.GetKeyDown(KeyCode.Mouse0))
             {
-                equipment.mainHand.GetComponent<IWeapon>().Attack();
+                equipment.mainHand.GetComponent<IWeapon>().Attack(this);
             }
             if (equipment.mainHand.GetComponent<IRangedWeapon>() != null)
             {

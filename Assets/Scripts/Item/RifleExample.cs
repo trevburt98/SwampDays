@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using Character.PlayerCharacter;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RangedWeaponExample : MonoBehaviour, IRangedWeapon
+public class RifleExample : MonoBehaviour, IRangedWeapon
 {
     #region Member Declarations
     private bool _equippable = true;
@@ -105,7 +106,7 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon
         set => _compatibleBulletArray = value;
     }
 
-    private float _accuracy = 2;
+    private float _accuracy = 5f;
     public float Accuracy
     {
         get => _accuracy;
@@ -144,14 +145,22 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon
 
     }
 
-    void IWeapon.Attack()
+
+    void IWeapon.Attack(ICharacter<float> character)
     {
         if(AmmoCount != 0)
         {
-            Debug.Log(transform.position);
+            //Calculate the modifier to apply onto weapons accuracy
+            float accuracyModifier = character.RifleSkill / (1250 + character.RifleSkill);
+            //Get the empty game object that represents where the bullet is fired from
             Transform startObject = transform.GetChild(0);
             RaycastHit hit;
-            Vector3 fwd = startObject.TransformDirection(Vector3.forward) * 10;
+            //Calculate the random x and y offsets to simulate sway
+            float xOffset = Random.Range(-Accuracy, Accuracy);
+            float yOffset = Random.Range(-Accuracy, Accuracy);
+            //Get the direction from the x and y offsets
+            Vector3 direction = new Vector3(xOffset, yOffset, Range);
+            Vector3 fwd = startObject.TransformDirection(direction);
             Vector3 start = startObject.position;
             Debug.DrawRay(start, fwd, Color.red, 5.0f);
             //Play the sound for this particular weapon
@@ -163,7 +172,7 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon
             AmmoCount--;
 
             //Raycast hit something
-            //If we want to do projectile physics this will change heavily
+            //TODO: If we want to do projectile physics this will change heavily
             if (Physics.Raycast(start, fwd, out hit, Range))
             {
                 //Check the hit's layer to determine what course of action to take
@@ -171,6 +180,12 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon
                 if (hit.transform.gameObject.layer == 9)
                 {
                     hit.transform.GetComponent<INpc>().Damage(BaseDamage);
+                    //On character hit and if the character hitting is the player character, increase player character's appropriate skill
+                    if(character is PlayerCharacter)
+                    {
+                        PlayerCharacter currentAsPlayerCharacter = character as PlayerCharacter;
+                        Debug.Log("Rifle skill is now " + currentAsPlayerCharacter.increaseRifleSkill(2));
+                    }
                 }
                 if(hit.transform.gameObject.layer == 11)
                 {

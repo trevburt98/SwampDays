@@ -34,7 +34,7 @@ public interface IWeapon : IInteractable
         set;
     }
 
-    void Attack();
+    void Attack(ICharacter<float> character);
 
     void Break();
 
