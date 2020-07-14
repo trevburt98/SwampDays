@@ -44,6 +44,13 @@ public class HarmConsumableExample : MonoBehaviour, IConsumable
         set => _value = value;
     }
 
+    private int _spaces = 1;
+    public int InventorySpaces
+    {
+        get => _spaces;
+        set => _spaces = value;
+    }
+
     private Sprite _itemImage;
     public Sprite ItemImage
     {

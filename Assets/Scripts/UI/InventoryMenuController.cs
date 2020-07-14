@@ -36,7 +36,7 @@ public class InventoryMenuController : MonoBehaviour
 
         GameObject newObj;
 
-        foreach (IInteractable item in player.inventory)
+        foreach (IInteractable item in player.bag.Inventory)
         {
             newObj = (GameObject)Instantiate(inventoryItemPrefab, transform);
             newObj.GetComponentInChildren<Text>().text = item.Name;
@@ -64,6 +64,12 @@ public class InventoryMenuController : MonoBehaviour
             GameObject obj = (GameObject)Resources.Load(item.ID);
             IWeapon equipment = obj.GetComponent<IWeapon>();
             equipButton.onClick.AddListener(delegate { EquipWeapon(equipment, true); });
+            toggleEquipButton(true);
+        } else if(item is IBag)
+        {
+            GameObject obj = (GameObject)Resources.Load(item.ID);
+            IBag bag = obj.GetComponent<IBag>();
+            equipButton.onClick.AddListener(delegate { EquipBag(bag); });
             toggleEquipButton(true);
         }
 
@@ -101,6 +107,15 @@ public class InventoryMenuController : MonoBehaviour
     void EquipWeapon(IWeapon weapon, bool mainHand)
     {
         equipmentManager.equipNewWeapon(weapon, mainHand);
+    }
+
+    void EquipBag(IBag bag)
+    {
+        //TODO: fix the duplicate bag issue and the reequipping deleting the inventory issue
+        bag.Inventory = new List<IInteractable>(player.bag.Inventory);
+        player.bag.Inventory.Clear();
+        bag.Inventory.Add(player.bag);
+        player.bag = bag;
     }
 
     void DropItem(IInteractable item)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -70,7 +71,7 @@ namespace Character.PlayerCharacter
         public int armourRating;
 
         public EquipmentManager equipment;
-        public List<IInteractable> inventory = new List<IInteractable>();
+        public IBag bag;
 
         //Reference to the first person controller attached to the character
         [SerializeField] private FirstPersonController fpsController;
@@ -223,7 +224,7 @@ namespace Character.PlayerCharacter
 
         public void removeFromInventory(IInteractable item)
         {
-            inventory.Remove(item);
+            bag.Remove(item);
             updateCarryingCapacity(-item.Weight);
         }
 
@@ -348,11 +349,26 @@ namespace Character.PlayerCharacter
                     //Throw up the prompt for this interaction
                     interactionPrompt.promptPickup(interactable.Name);
                     //If the player presses the interaction button
-                    if (Input.GetKeyDown(KeyCode.E))
-                    { 
-                        inventory.Add(interactable);
-                        updateCarryingCapacity(interactable.Weight);
-                        Destroy(hit.transform.gameObject);
+                    try
+                    {
+                        if (Input.GetKeyDown(KeyCode.E))
+                        {
+                            if (interactable is IBag && bag == null)
+                            {
+                                IBag bag = interactable as IBag;
+                                this.bag = bag;
+                                Destroy(hit.transform.gameObject);
+                            }
+                            else if (bag.Add(interactable))
+                            {
+                                updateCarryingCapacity(interactable.Weight);
+                                Destroy(hit.transform.gameObject);
+                            }
+                        }
+                    }
+                    catch (NullReferenceException e)
+                    {
+                        Debug.Log("no bag equipped");
                     }
                 }
                 //If the raycast instead hit an NPC that can be talked to

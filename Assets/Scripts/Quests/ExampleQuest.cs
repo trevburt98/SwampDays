@@ -85,7 +85,7 @@ public class ExampleQuest : MonoBehaviour, IQuest
 
         //This seems questionable, but y'know, whatever
         GameObject reward = Instantiate(Resources.Load("consHealEx")) as GameObject;
-        player.inventory.Add(reward.GetComponent<IInteractable>());
+        player.bag.Add(reward.GetComponent<IInteractable>());
         Destroy(reward);
     }
 

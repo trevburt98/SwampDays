@@ -66,7 +66,7 @@ public class EquipmentMenuController : MonoBehaviour
         GameObject newObj;
 
         //Repopulate the list
-        foreach(IInteractable item in player.inventory)
+        foreach(IInteractable item in player.bag.Inventory)
         {
             //If the item in the inventory is either an equipment or a weapon, display it in the equipment menu list
             if(item is IEquipment || item is IWeapon)
@@ -213,7 +213,7 @@ public class EquipmentMenuController : MonoBehaviour
             GameObject newObj;
 
             //Repopulate the list
-            foreach (IInteractable item in player.inventory)
+            foreach (IInteractable item in player.bag.Inventory)
             {
                 //If the item in the inventory is either an equipment or a weapon, display it in the equipment menu list
                 if (item is IEquipment)

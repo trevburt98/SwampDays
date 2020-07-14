@@ -65,6 +65,13 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon
         set => _value = value;
     }
 
+    private int _spaces = 3;
+    public int InventorySpaces
+    {
+        get => _spaces;
+        set => _spaces = value;
+    }
+
     [SerializeField] private float _zoom = 2f;
     public float Zoom
     {
@@ -101,7 +108,7 @@ public class RangedWeaponExample : MonoBehaviour, IRangedWeapon
         set => _compatibleBulletArray = value;
     }
 
-    private float _accuracy = 2;
+    private float _accuracy = 2f;
     public float Accuracy
     {
         get => _accuracy;
