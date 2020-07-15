@@ -1,4 +1,5 @@
 ﻿using Character.PlayerCharacter;
+using Character.Extensions;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -38,7 +39,7 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         set => _damage = value;
     }
 
-    private float _range = 10;
+    private float _range = 50;
     public float Range
     {
         get => _range;
@@ -64,13 +65,6 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
     {
         get => _value;
         set => _value = value;
-    }
-
-    [SerializeField] private float _zoom = 2f;
-    public float Zoom
-    {
-        get => _zoom;
-        set => _zoom = value;
     }
 
     private List<int> _tags = new List<int>(){0};
@@ -99,25 +93,12 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
     }
     [SerializeField] private AudioSource audioSource;
 
+    [SerializeField] private Animation anim;
     private int[] _compatibleBulletArray;
     public int[] BulletIDs
     {
         get => _compatibleBulletArray;
         set => _compatibleBulletArray = value;
-    }
-
-    private float _accuracy = 5f;
-    public float Accuracy
-    {
-        get => _accuracy;
-        set => _accuracy = value;
-    }
-
-    private int _magazineSize = 10;
-    public int MagazineSize
-    {
-        get => _magazineSize;
-        set => _magazineSize = value;
     }
 
     private int _ammoCount = 10;
@@ -134,6 +115,106 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         set => _ads = value;
     }
 
+    //Item Stats
+    private float _holsterSpeed = 3f;
+    public float HolsterSpeed{
+        get => _holsterSpeed;
+    }
+
+    private float _minHolsterSpeed = 1f;
+    public float MinHolsterSpeed{
+        get => _minHolsterSpeed;
+    }
+
+    private float _holsterSpeedModifier = 0;
+    public float HolsterSpeedModifier{
+        get => _holsterSpeedModifier;
+        set => _holsterSpeedModifier = value;
+    }
+
+    private float _accuracy = 5f;
+    public float Accuracy
+    {
+        get => _accuracy;
+    }
+
+    private float _minAccuracy = 1f;
+    public float MinAccuracy{
+        get => _minAccuracy;
+    }
+
+    private float _accuracyModifier = 0;
+    public float AccuracyModifier{
+        get => _accuracyModifier;
+        set => _accuracyModifier = value;
+    }
+
+    private float _adsSpeed = 1f;
+    public float ADSSpeed{
+        get => _adsSpeed;
+    }
+
+    private float _minADSSpeed = 0.1f;
+    public float MinADSSpeed{
+        get => _minADSSpeed;
+    }
+
+    private float _gunKick = 5f;
+    public float GunKick{
+        get => _gunKick;
+    }
+
+    private float _minGunKick = 1f;
+    public float MinGunKick{
+        get => _minGunKick;
+    }
+
+    private float _gunKickModifier = 0f;
+    public float GunKickModifier{
+        get => _gunKickModifier;
+        set => _gunKickModifier = value;
+    }
+
+    private float _reloadSpeed = 6f;
+    public float ReloadSpeed{
+        get => _reloadSpeed;
+    }
+
+    private float _minReloadSpeed = 2f;
+    public float MinReloadSpeed{
+        get => _minReloadSpeed;
+    }
+
+    private float _reloadSpeedModifier = 0;
+    public float ReloadSpeedModifier{
+        get => _reloadSpeedModifier;
+        set => _reloadSpeedModifier = value;
+    }
+
+    private int _magazineSize = 10;
+    public int MagazineSize
+    {
+        get => _magazineSize;
+    }
+
+    private int _magazineSizeModifier = 0;
+    public int MagazineSizeModifier{
+        get => _magazineSizeModifier;
+        set => _magazineSizeModifier = value;
+    }
+
+    [SerializeField] private float _zoom = 2f;
+    public float Zoom
+    {
+        get => _zoom;
+        set => _zoom = value;
+    }
+
+    private float _zoomModifier = 0;
+    public float ZoomModifier{
+        get => _zoomModifier;
+        set => _zoomModifier = value;
+    }
     #endregion
 
 
@@ -151,13 +232,14 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         if(AmmoCount != 0)
         {
             //Calculate the modifier to apply onto weapons accuracy
-            float accuracyModifier = character.RifleSkill / (1250 + character.RifleSkill);
+            float accuracyModifier = character.getRifleSkillModifier();
+            float modifiedAccuracy = Accuracy - ((Accuracy - MinAccuracy) * accuracyModifier);
             //Get the empty game object that represents where the bullet is fired from
             Transform startObject = transform.GetChild(0);
             RaycastHit hit;
             //Calculate the random x and y offsets to simulate sway
-            float xOffset = Random.Range(-Accuracy, Accuracy);
-            float yOffset = Random.Range(-Accuracy, Accuracy);
+            float xOffset = Random.Range(-modifiedAccuracy, modifiedAccuracy);
+            float yOffset = Random.Range(-modifiedAccuracy, modifiedAccuracy);
             //Get the direction from the x and y offsets
             Vector3 direction = new Vector3(xOffset, yOffset, Range);
             Vector3 fwd = startObject.TransformDirection(direction);
@@ -189,8 +271,8 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
                 }
                 if(hit.transform.gameObject.layer == 11)
                 {
-                    newHole = Instantiate(BulletHole, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal));
-                    Destroy(newHole, 3f);
+                    newHole = Instantiate(BulletHole, hit.point + Vector3.Scale(hit.normal, new Vector3(0.0001f, 0.0001f, 0.0001f)), Quaternion.FromToRotation(Vector3.up, hit.normal));
+                    Destroy(newHole, 60f);
                 }
             }
         }
@@ -200,20 +282,25 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         }
     }
 
-    void IRangedWeapon.AimDownSight()
+    void IRangedWeapon.AimDownSight(ICharacter<float> character)
     {
+        float timeToADS = ADSSpeed - ((ADSSpeed - MinADSSpeed) * character.getRifleSkillModifier());
         Transform hand = transform.parent;
         if (ADS){
             //TODO: change this to revert to a global or "default" fov value, probably chosen in settings by player
             Camera.main.fieldOfView = Camera.main.fieldOfView * Zoom;
-            hand.Translate(1, 0, 0);
+            anim["RifleADS"].normalizedTime = 1;
+            anim["RifleADS"].speed = -1 / timeToADS;
+            anim.CrossFade("RifleADS");
             ADS = false;
         }
         else
         {
             //TODO change this to be "default" fov value over zoom instead of current value
             Camera.main.fieldOfView = Camera.main.fieldOfView / Zoom;
-            hand.Translate(-1, 0, 0);
+            anim["RifleADS"].time = 0;
+            anim["RifleADS"].speed = 1 / timeToADS;
+            anim.CrossFade("RifleADS");
             ADS = true;
         }
         

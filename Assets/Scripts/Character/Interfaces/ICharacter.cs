@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public interface ICharacter<T>
 {
     string Name
@@ -39,7 +38,7 @@ public interface ICharacter<T>
         get;
         set;
     }
-        
+
     float RifleSkill
     {
         get;
