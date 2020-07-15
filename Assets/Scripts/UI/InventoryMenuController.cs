@@ -134,6 +134,7 @@ public class InventoryMenuController : MonoBehaviour
         bag.Inventory.Add(player.bag);
         //Set the player's inventory bag to the new bag
         player.bag = bag;
+        PopulateInventory();
     }
 
     void DropItem(IInteractable item)
