@@ -13,6 +13,8 @@ public class PlayerMenuController : MonoBehaviour
     public Button equipmentButton;
     public Button journalButton;
 
+    private int lastTab = 0;
+
     void Start()
     {
         inventoryButton.onClick.AddListener(switchToInventoryMenu);
@@ -21,17 +23,17 @@ public class PlayerMenuController : MonoBehaviour
     }
 
     //TODO: on opening a page, we need to ensure that we're still calling the correct populate function
-    public void openMenu(int pageToOpen)
+    public void openMenu()
     {
-        switch (pageToOpen)
+        switch (lastTab)
         {
-            case 1:
+            case 0:
                 switchToInventoryMenu();
                 break;
-            case 2:
+            case 1:
                 switchToEquipmentMenu();
                 break;
-            case 3:
+            case 2:
                 switchToJournalCanvas();
                 break;
             default:
@@ -53,6 +55,7 @@ public class PlayerMenuController : MonoBehaviour
         journalCanvas.interactable = false;
         journalCanvas.blocksRaycasts = false;
 
+        lastTab = 0;
         inventoryCanvas.GetComponentInChildren<InventoryMenuController>().PopulateInventory();
     }
 
@@ -70,6 +73,7 @@ public class PlayerMenuController : MonoBehaviour
         journalCanvas.interactable = false;
         journalCanvas.blocksRaycasts = false;
 
+        lastTab = 1;
         equipmentCanvas.GetComponentInChildren<EquipmentMenuController>().PopulateEquipment();
     }
 
@@ -87,6 +91,7 @@ public class PlayerMenuController : MonoBehaviour
         journalCanvas.interactable = true;
         journalCanvas.blocksRaycasts = true;
 
+        lastTab = 2;
         journalCanvas.GetComponentInChildren<JournalController>().PopulateJournal();
     }
 }

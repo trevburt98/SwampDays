@@ -78,6 +78,8 @@ namespace Character.PlayerCharacter
         [SerializeField] private Canvas HUDCanvasUI;
         //Reference to Player Menu UI Canvas
         [SerializeField] private Canvas playerMenuCanvas;
+        //Reference to the Player Menu Controller
+        [SerializeField] private PlayerMenuController playerMenuController;
         //Reference to the camera of the character
         [SerializeField] private Camera camera;
         //Reference to the hand gameobject
@@ -410,6 +412,7 @@ namespace Character.PlayerCharacter
             {
                 Cursor.lockState = CursorLockMode.Confined;
                 playerMenuCanvasGroup.alpha = 1;
+                playerMenuController.openMenu();
             }
             else
             {
@@ -419,6 +422,7 @@ namespace Character.PlayerCharacter
             Cursor.visible = inMenu;
             playerMenuCanvasGroup.interactable = inMenu;
             playerMenuCanvasGroup.blocksRaycasts = inMenu;
+            
         }
 
         private void beginConversation(INpc conversationPartner)
