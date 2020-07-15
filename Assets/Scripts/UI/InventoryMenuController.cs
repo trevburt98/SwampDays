@@ -67,6 +67,7 @@ public class InventoryMenuController : MonoBehaviour
             toggleEquipButton(true);
         } else if(item is IBag)
         {
+            Debug.Log("it's a bag");
             GameObject obj = (GameObject)Resources.Load(item.ID);
             IBag bag = obj.GetComponent<IBag>();
             equipButton.onClick.AddListener(delegate { EquipBag(bag); });
@@ -111,10 +112,27 @@ public class InventoryMenuController : MonoBehaviour
 
     void EquipBag(IBag bag)
     {
-        //TODO: fix the duplicate bag issue and the reequipping deleting the inventory issue
-        bag.Inventory = new List<IInteractable>(player.bag.Inventory);
+        //TODO: figure out what to do when the new bag has a smaller capacity than the new bag
+        //Copy the currentInventory into a temp array
+        IInteractable[] currentInventory = player.bag.Inventory.ToArray();
+        //Delete everything in the current inventory
         player.bag.Inventory.Clear();
+        //Add everything from the temp array into our current bag
+        bag.Inventory = new List<IInteractable>(currentInventory);
+        //There has to be a better way to do this, but I can't get the other stuff to work properly
+        //Debug.Log(bag.Inventory.Find(x => x.ID == bag.ID));
+        //Delete the duplicate bag from the new inventory
+        foreach (IInteractable item in bag.Inventory)
+        {
+            if(item.Name == bag.Name)
+            {
+                bag.Inventory.Remove(item);
+                break;
+            }
+        }
+        //Add the previous bag into the player inventory
         bag.Inventory.Add(player.bag);
+        //Set the player's inventory bag to the new bag
         player.bag = bag;
     }
 
