@@ -65,6 +65,13 @@ public class HeadEquipExample : MonoBehaviour, IEquipment
         set => _durability = value;
     }
 
+    private int _spaces = 3;
+    public int InventorySpaces
+    {
+        get => _spaces;
+        set => _spaces = value;
+    }
+
     [SerializeField] private Sprite _image;
     public Sprite ItemImage
     {

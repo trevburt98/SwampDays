@@ -37,6 +37,12 @@ public interface IInteractable
         set;
     }
 
+    int InventorySpaces
+    {
+        get;
+        set;
+    }
+
     Sprite ItemImage
     {
         get;
