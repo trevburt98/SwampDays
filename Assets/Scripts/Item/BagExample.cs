@@ -72,6 +72,10 @@ public class BagExample : MonoBehaviour, IBag
         set => _currentSpaces = value;
     }
 
+    private List<int> _tags = new List<int>(){10};
+    public List<int> Tags{
+        get => _tags;
+    }
     private List<IInteractable> _inventory;
     public List<IInteractable> Inventory
     {

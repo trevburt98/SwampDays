@@ -203,6 +203,7 @@ public class InventoryMenuController : MonoBehaviour
             case 7: return "Drink";
             case 8: return "Head Armor";
             case 9: return "Body Armor";
+            case 10: return "Bag";
             default: return null;
         }
     }

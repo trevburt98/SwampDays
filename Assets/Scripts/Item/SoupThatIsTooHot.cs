@@ -30,6 +30,11 @@ public class SoupThatIsTooHot : MonoBehaviour, IConsumable
         set => _flavourText = value;
     }
 
+    private int _spaces = 1;
+    public int InventorySpaces{
+        get => _spaces;
+        set => _spaces = value;
+    }
     private float _weight = 15.6f;
     public float Weight
     {
