@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public interface ICharacter<T>
 {
     string Name
@@ -29,6 +28,30 @@ public interface ICharacter<T>
     }
 
     int MoveSpeed
+    {
+        get;
+        set;
+    }
+
+    float PistolSkill
+    {
+        get;
+        set;
+    }
+
+    float RifleSkill
+    {
+        get;
+        set;
+    }
+
+    float HeavyRifleSkill
+    {
+        get;
+        set;
+    }
+
+    float ShotgunSkill
     {
         get;
         set;

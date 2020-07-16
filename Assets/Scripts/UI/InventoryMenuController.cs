@@ -46,6 +46,7 @@ public class InventoryMenuController : MonoBehaviour
 
     void LoadItemInfo(IInteractable item)
     {
+        //TODO: This can maybe use the item tag system?
         ClearItemInfo();
         if (item is IConsumable)
         {
@@ -74,7 +75,7 @@ public class InventoryMenuController : MonoBehaviour
             toggleEquipButton(true);
         }
 
-        itemDescription.text = item.FlavourText;
+        itemDescription.text = item.FlavourText +  "\n" + getTagList(item.Tags);
         itemImage.sprite = item.ItemImage;
 
         dropButton.onClick.AddListener(delegate { DropItem(item); });
@@ -172,5 +173,37 @@ public class InventoryMenuController : MonoBehaviour
         dropButton.GetComponent<Image>().enabled = toggleOn;
         dropButton.GetComponent<Button>().enabled = toggleOn;
         dropButton.GetComponentInChildren<Text>().enabled = toggleOn;
+    }
+
+    string getTagList(List<int> tags){
+        string tagList = "";
+        foreach(var tag in tags){
+            string tagString = convertTag(tag);
+            //TODO: Feels like there is a better way to do this
+            if (tagList != "" && tagString != null){
+                tagList += ", ";
+            }
+            if (tagString != null){
+                tagList += tagString;
+            }
+        }
+        return tagList;
+    }
+    string convertTag(int id){
+        //TODO: I started to do this with an enum but Stack Overflow said this and it is easy. verify that its cool
+        switch (id)
+        {
+            case 0: return "Rifle";
+            case 1: return "Handgun";
+            case 2: return "Ammunition";
+            case 3: return "Ingredient";
+            case 4: return "Healing Item";
+            case 5: return "Harmful Item";
+            case 6: return "Food";
+            case 7: return "Drink";
+            case 8: return "Head Armor";
+            case 9: return "Body Armor";
+            default: return null;
+        }
     }
 }

@@ -34,7 +34,21 @@ public interface IWeapon : IInteractable
         set;
     }
 
-    void Attack();
+    //Item Stats
+    float HolsterSpeed{
+        get;
+    }
+
+    float MinHolsterSpeed{
+        get;
+    }
+
+    float HolsterSpeedModifier{
+        get;
+        set;
+    }
+
+    void Attack(ICharacter<float> character);
 
     void Break();
 

@@ -65,6 +65,38 @@ namespace Character.PlayerCharacter
         }
         #endregion
 
+        #region Skill Declarations
+
+        private float _pistolSkill = 0;
+        public float PistolSkill
+        {
+            get => _pistolSkill;
+            set => _pistolSkill = value;
+        }
+
+        [SerializeField] private float _rifleSkill = 25;
+        public float RifleSkill
+        {
+            get => _rifleSkill;
+            set => _rifleSkill = value;
+        }
+
+        private float _heavyRifleSkill = 0;
+        public float HeavyRifleSkill
+        {
+            get => _heavyRifleSkill;
+            set => _heavyRifleSkill = value;
+        }
+
+        private float _shotgunSkill = 0;
+        public float ShotgunSkill
+        {
+            get => _shotgunSkill;
+            set => _shotgunSkill = value;
+        }
+
+        #endregion
+
         public float maxHealth;
         public float currentHealth;
 
@@ -124,6 +156,7 @@ namespace Character.PlayerCharacter
             staminaUI.initStaminaUI(maxStamina);
 
             armourRating = 0;
+
         }
 
         // Update is called once per frame
@@ -189,6 +222,15 @@ namespace Character.PlayerCharacter
             //Change the movements speed within the first person controller to reflect changes in the character
             fpsController.changeMoveSpeed(newMoveSpeed);
         }
+        #endregion
+
+        #region Skill Incrementers
+        public float increaseRifleSkill(float amountToIncrease)
+        {
+            RifleSkill += amountToIncrease;
+            return RifleSkill;
+        }
+
         #endregion
 
         #region Public Function
@@ -399,7 +441,7 @@ namespace Character.PlayerCharacter
         {
             if(Input.GetKeyDown(KeyCode.Mouse0))
             {
-                equipment.mainHand.GetComponent<IWeapon>().Attack();
+                equipment.mainHand.GetComponent<IWeapon>().Attack(this);
             }
             if (equipment.mainHand.GetComponent<IRangedWeapon>() != null)
             {
@@ -410,12 +452,12 @@ namespace Character.PlayerCharacter
             }
             if(Input.GetKeyDown(KeyCode.Mouse1))
             {
-                equipment.mainHand.GetComponent<IRangedWeapon>().AimDownSight();
+                equipment.mainHand.GetComponent<IRangedWeapon>().AimDownSight(this);
             }
             //add check for if ads is set to hold instead of toggle
             if(Input.GetKeyUp(KeyCode.Mouse1))
             {
-                equipment.mainHand.GetComponent<IRangedWeapon>().AimDownSight();
+                equipment.mainHand.GetComponent<IRangedWeapon>().AimDownSight(this);
             }
         }
 

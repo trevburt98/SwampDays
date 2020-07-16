@@ -50,8 +50,8 @@ public class EquipmentManager : MonoBehaviour
         GameObject obj = (GameObject)Resources.Load(newWeapon.ID);
         GameObject objInGame = GameObject.Instantiate(obj);
         objInGame.transform.parent = playerHand.transform;
-        objInGame.transform.localPosition = new Vector3(0, 0, 0);
-        objInGame.transform.localRotation = Quaternion.Euler(0, 90, 0);
+        objInGame.transform.localPosition = new Vector3(0, 2, 2);
+        objInGame.transform.localRotation = Quaternion.Euler(-90, 0, 0);
         objInGame.GetComponent<Rigidbody>().useGravity = false;
         objInGame.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
 
