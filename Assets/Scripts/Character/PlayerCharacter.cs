@@ -74,7 +74,7 @@ namespace Character.PlayerCharacter
             set => _pistolSkill = value;
         }
 
-        [SerializeField] private float _rifleSkill = 25;
+        [SerializeField] private float _rifleSkill = 0;
         public float RifleSkill
         {
             get => _rifleSkill;
@@ -447,7 +447,7 @@ namespace Character.PlayerCharacter
             {
                 if (Input.GetKeyDown(KeyCode.R))
                 {
-                    equipment.mainHand.GetComponent<IRangedWeapon>().Reload();
+                    equipment.mainHand.GetComponent<IRangedWeapon>().Reload(this);
                 }
             }
             if(Input.GetKeyDown(KeyCode.Mouse1))

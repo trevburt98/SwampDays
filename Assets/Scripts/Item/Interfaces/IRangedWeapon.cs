@@ -92,6 +92,6 @@ public interface IRangedWeapon : IWeapon
         set;
     }
 
-    void Reload();
+    void Reload(ICharacter<float> character);
     void AimDownSight(ICharacter<float> character);
 }

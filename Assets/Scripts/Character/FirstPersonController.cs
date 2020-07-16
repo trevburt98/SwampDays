@@ -314,5 +314,18 @@ namespace UnityStandardAssets.Characters.FirstPerson
             runSpeedModifier = 1;
             moveSpeedModifier = 1;
         }
+
+        public float getXSensitivity(){
+            return m_MouseLook.XSensitivity;
+        }
+        public float getYSensitivity(){
+            return m_MouseLook.YSensitivity;
+        }
+        public void setXSensitivity(float newX){
+            m_MouseLook.XSensitivity = newX;
+        }
+        public void setYSensitivity(float newY){
+            m_MouseLook.YSensitivity = newY;
+        }
     }
 }

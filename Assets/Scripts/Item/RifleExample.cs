@@ -3,10 +3,33 @@ using Character.Extensions;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class RifleExample : MonoBehaviour, IRangedWeapon
 {
     #region Member Declarations
+    private FirstPersonController firstPersonController;
+    private float _defaultYSens;
+    public float DefaultYSens{
+        get => _defaultYSens;
+        set => _defaultYSens = value;
+    }
+    private float _defaultXSens;
+    public float DefaultXSens{
+        get => _defaultXSens;
+        set => _defaultXSens = value;
+    }
+    private float _dfov;
+    public float DefaultFOV{
+        get => _dfov;
+        set => _dfov = value;
+    }
+
+    private float _gfov;
+    public float GoalFOV{
+        get => _gfov;
+        set => _gfov = value;
+    }
     private bool _equippable = true;
     public bool Equippable
     {
@@ -115,11 +138,18 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         set => _ammoCount = value;
     }
 
-    private bool _ads;
+    private bool _ads = false;
     public bool ADS
     {
         get => _ads;
         set => _ads = value;
+    }
+
+    private bool _adsInProgress = false;
+
+    public bool ADSInProgress{
+        get => _adsInProgress;
+        set => _adsInProgress = value;
     }
 
     //Item Stats
@@ -133,7 +163,7 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         get => _minHolsterSpeed;
     }
 
-    private float _holsterSpeedModifier = 0;
+    private float _holsterSpeedModifier = 1;
     public float HolsterSpeedModifier{
         get => _holsterSpeedModifier;
         set => _holsterSpeedModifier = value;
@@ -150,13 +180,23 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         get => _minAccuracy;
     }
 
-    private float _accuracyModifier = 0;
+    private float _accuracyModifier = 1;
     public float AccuracyModifier{
         get => _accuracyModifier;
         set => _accuracyModifier = value;
     }
 
-    private float _adsSpeed = 1f;
+    private float _adsAccuracyModifier = 0.5f;
+    public float ADSAccuracyModifier{
+        get => _adsAccuracyModifier;
+    }
+
+    private float _adsAccuracyModifierModifier = 1;
+    public float ADSAccuracyModifierModifier{
+        get => _adsAccuracyModifierModifier;
+        set => _adsAccuracyModifierModifier = value;
+    }
+    private float _adsSpeed = 0.75f;
     public float ADSSpeed{
         get => _adsSpeed;
     }
@@ -176,7 +216,7 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         get => _minGunKick;
     }
 
-    private float _gunKickModifier = 0f;
+    private float _gunKickModifier = 1;
     public float GunKickModifier{
         get => _gunKickModifier;
         set => _gunKickModifier = value;
@@ -192,7 +232,7 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         get => _minReloadSpeed;
     }
 
-    private float _reloadSpeedModifier = 0;
+    private float _reloadSpeedModifier = 1;
     public float ReloadSpeedModifier{
         get => _reloadSpeedModifier;
         set => _reloadSpeedModifier = value;
@@ -204,7 +244,7 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         get => _magazineSize;
     }
 
-    private int _magazineSizeModifier = 0;
+    private int _magazineSizeModifier = 1;
     public int MagazineSizeModifier{
         get => _magazineSizeModifier;
         set => _magazineSizeModifier = value;
@@ -230,17 +270,33 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
     
     public void Start()
     {
-
+        DefaultFOV = Camera.main.fieldOfView;
+        GoalFOV = DefaultFOV;
+        //TODO: Revisit this
+        firstPersonController = GameObject.Find("Character Test").GetComponent<FirstPersonController>();
+        DefaultXSens = firstPersonController.getXSensitivity();
+        DefaultYSens = firstPersonController.getYSensitivity();
     }
-
+    void Update(){
+        if (anim.IsPlaying("RifleADS")){
+            float fullZoom = DefaultFOV / Zoom;
+            Camera.main.fieldOfView = Mathf.Lerp(DefaultFOV, fullZoom, anim["RifleADS"].normalizedTime);
+        }
+    }
 
     void IWeapon.Attack(ICharacter<float> character)
     {
+        if (anim.IsPlaying("RifleADS") || anim.IsPlaying("RifleReload")){
+            return;
+        }
         if(AmmoCount != 0)
         {
             //Calculate the modifier to apply onto weapons accuracy
-            float accuracyModifier = character.getRifleSkillModifier();
-            float modifiedAccuracy = Accuracy - ((Accuracy - MinAccuracy) * accuracyModifier);
+            float skillModifier = character.getRifleSkillModifier();
+            float modifiedAccuracy = (Accuracy - ((Accuracy - MinAccuracy) * skillModifier)) * AccuracyModifier;
+            if (ADS){
+                modifiedAccuracy *= ADSAccuracyModifier * ADSAccuracyModifierModifier;
+            }
             //Get the empty game object that represents where the bullet is fired from
             Transform startObject = transform.GetChild(0);
             RaycastHit hit;
@@ -294,18 +350,21 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         float timeToADS = ADSSpeed - ((ADSSpeed - MinADSSpeed) * character.getRifleSkillModifier());
         Transform hand = transform.parent;
         if (ADS){
-            //TODO: change this to revert to a global or "default" fov value, probably chosen in settings by player
-            Camera.main.fieldOfView = Camera.main.fieldOfView * Zoom;
-            anim["RifleADS"].normalizedTime = 1;
+            firstPersonController.setXSensitivity(DefaultXSens);
+            firstPersonController.setYSensitivity(DefaultYSens);
+            GoalFOV = DefaultFOV;
+            if(!anim.IsPlaying("RifleADS")){
+                anim["RifleADS"].normalizedTime = 1;
+            }
             anim["RifleADS"].speed = -1 / timeToADS;
             anim.CrossFade("RifleADS");
             ADS = false;
         }
         else
         {
-            //TODO change this to be "default" fov value over zoom instead of current value
-            Camera.main.fieldOfView = Camera.main.fieldOfView / Zoom;
-            anim["RifleADS"].time = 0;
+            firstPersonController.setXSensitivity(DefaultXSens / Zoom);
+            firstPersonController.setYSensitivity(DefaultYSens / Zoom);
+            GoalFOV = Camera.main.fieldOfView / Zoom;
             anim["RifleADS"].speed = 1 / timeToADS;
             anim.CrossFade("RifleADS");
             ADS = true;
@@ -323,9 +382,11 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
     {
 
     }
-
-    void IRangedWeapon.Reload()
+    void IRangedWeapon.Reload(ICharacter<float> character)
     {
+        float timeToReload = ReloadSpeed - ((ReloadSpeed - MinReloadSpeed) * character.getRifleSkillModifier());
+        anim["RifleReload"].speed = 1 / timeToReload;
+        anim.CrossFade("RifleReload");
         AmmoCount = MagazineSize;
     }
 }
