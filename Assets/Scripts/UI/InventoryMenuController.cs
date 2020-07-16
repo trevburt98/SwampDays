@@ -67,7 +67,6 @@ public class InventoryMenuController : MonoBehaviour
             toggleEquipButton(true);
         } else if(item is IBag)
         {
-            Debug.Log("it's a bag");
             GameObject obj = (GameObject)Resources.Load(item.ID);
             IBag bag = obj.GetComponent<IBag>();
             equipButton.onClick.AddListener(delegate { EquipBag(bag); });

@@ -90,12 +90,24 @@ public class BagExample : MonoBehaviour, IBag
         CurrentSpaces -= item.InventorySpaces;
     }
 
+    //Add an item to the inventory of this bag, return whether or not the addition was successful
     public bool Add(IInteractable item)
     {
         bool ret = false;
+        //If we have enough space in the bag to add the given item
         if(CurrentSpaces + item.InventorySpaces <= MaxSpaces)
         {
-            Inventory.Add(item);
+            //If the item is both stackable and we currently have that item in inventory
+            if(item is IStackable && Inventory.Exists(x => x.ID == item.ID))
+            {
+                IStackable found = Inventory.Find(x => x.ID == item.ID) as IStackable;
+                Debug.Log(found.NumInStack);
+                found.ChangeNumInStack(1);
+
+            } else
+            {
+                Inventory.Add(item);
+            }
             CurrentSpaces += item.InventorySpaces;
             ret = true;
         } else
