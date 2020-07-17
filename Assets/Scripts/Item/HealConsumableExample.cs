@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HealConsumableExample : MonoBehaviour, IConsumable, IStackable
+public class HealConsumableExample : MonoBehaviour, IConsumable
 {
     private bool _equippable = false;
     public bool Equippable
@@ -60,7 +60,7 @@ public class HealConsumableExample : MonoBehaviour, IConsumable, IStackable
     }
 
     private int _maxStack = 10;
-    public int MaxInStack
+    public int MaxStack
     {
         get => _maxStack;
     }
@@ -72,14 +72,8 @@ public class HealConsumableExample : MonoBehaviour, IConsumable, IStackable
         set => _currentStack = value;
     }
 
-    public void use(ICharacter<float> user)
+    public void Use(ICharacter<float> user)
     {
         user.Heal(10);
-    }
-
-    public int ChangeNumInStack(int numToChange)
-    {
-        NumInStack += numToChange;
-        return NumInStack;
     }
 }

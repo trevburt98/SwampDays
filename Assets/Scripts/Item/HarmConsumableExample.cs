@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HarmConsumableExample : MonoBehaviour, IConsumable, IStackable
+public class HarmConsumableExample : MonoBehaviour, IConsumable
 {
     private bool _equippable = false;
     public bool Equippable
@@ -59,8 +59,8 @@ public class HarmConsumableExample : MonoBehaviour, IConsumable, IStackable
         set => _itemImage = value;
     }
 
-    private int _maxStack = 10;
-    public int MaxInStack
+    private int _maxStack = 2;
+    public int MaxStack
     {
         get => _maxStack;
     }
@@ -72,14 +72,8 @@ public class HarmConsumableExample : MonoBehaviour, IConsumable, IStackable
         set => _currentStack = value;
     }
 
-    public void use(ICharacter<float> user)
+    public void Use(ICharacter<float> user)
     {
         user.Damage(10);
-    }
-
-    public int ChangeNumInStack(int numToChange)
-    {
-        NumInStack += numToChange;
-        return NumInStack;
     }
 }

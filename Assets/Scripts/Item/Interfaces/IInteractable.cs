@@ -43,6 +43,17 @@ public interface IInteractable
         set;
     }
 
+    int MaxStack
+    {
+        get;
+    }
+
+    int NumInStack
+    {
+        get;
+        set;
+    }
+
     Sprite ItemImage
     {
         get;

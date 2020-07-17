@@ -72,6 +72,19 @@ public class HeadEquipExample : MonoBehaviour, IEquipment
         set => _spaces = value;
     }
 
+    private int _maxStack = 1;
+    public int MaxStack
+    {
+        get => _maxStack;
+    }
+
+    private int _currentStack = 1;
+    public int NumInStack
+    {
+        get => _currentStack;
+        set => _currentStack = value;
+    }
+
     [SerializeField] private Sprite _image;
     public Sprite ItemImage
     {

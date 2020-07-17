@@ -40,6 +40,10 @@ public class InventoryMenuController : MonoBehaviour
         {
             newObj = (GameObject)Instantiate(inventoryItemPrefab, transform);
             newObj.GetComponentInChildren<Text>().text = item.Name;
+            if (item.NumInStack > 1)
+            {
+                newObj.GetComponentInChildren<Text>().text += " x" + item.NumInStack;
+            }
             newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { LoadItemInfo(item); });
         }
     }
@@ -93,9 +97,12 @@ public class InventoryMenuController : MonoBehaviour
 
     void UseItem(IInteractable interactable, IConsumable item)
     {
-        item.use(player);
-        player.removeFromInventory(interactable);
-        ClearItemInfo();
+        item.Use(player);
+        if(--interactable.NumInStack <= 0)
+        {
+            player.removeFromInventory(interactable);
+            ClearItemInfo();
+        }
         PopulateInventory();
     }
 
@@ -118,17 +125,9 @@ public class InventoryMenuController : MonoBehaviour
         player.bag.Inventory.Clear();
         //Add everything from the temp array into our current bag
         bag.Inventory = new List<IInteractable>(currentInventory);
-        //There has to be a better way to do this, but I can't get the other stuff to work properly
-        //Debug.Log(bag.Inventory.Find(x => x.ID == bag.ID));
         //Delete the duplicate bag from the new inventory
-        foreach (IInteractable item in bag.Inventory)
-        {
-            if(item.Name == bag.Name)
-            {
-                bag.Inventory.Remove(item);
-                break;
-            }
-        }
+        IInteractable oldBag = bag.Inventory.Find(x => x.ID == bag.ID);
+        bag.Inventory.Remove(oldBag);
         //Add the previous bag into the player inventory
         bag.Inventory.Add(player.bag);
         //Set the player's inventory bag to the new bag
