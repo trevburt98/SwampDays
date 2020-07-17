@@ -9,6 +9,7 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
 {
     #region Member Declarations
     private FirstPersonController firstPersonController;
+    private PlayerCharacter characterG;
     private float _defaultYSens;
     public float DefaultYSens{
         get => _defaultYSens;
@@ -145,12 +146,7 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         set => _ads = value;
     }
 
-    private bool _adsInProgress = false;
-
-    public bool ADSInProgress{
-        get => _adsInProgress;
-        set => _adsInProgress = value;
-    }
+    private bool tADS = false;
 
     //Item Stats
     private float _holsterSpeed = 3f;
@@ -243,7 +239,6 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
     {
         get => _magazineSize;
     }
-
     private int _magazineSizeModifier = 1;
     public int MagazineSizeModifier{
         get => _magazineSizeModifier;
@@ -262,6 +257,11 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         get => _zoomModifier;
         set => _zoomModifier = value;
     }
+
+    private float _timeToFire = 1;
+    public float TimeToFire{
+        get => _timeToFire;
+    }
     #endregion
 
 
@@ -274,6 +274,7 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         GoalFOV = DefaultFOV;
         //TODO: Revisit this
         firstPersonController = GameObject.Find("Character Test").GetComponent<FirstPersonController>();
+        characterG = GameObject.Find("Character Test").GetComponent<PlayerCharacter>();
         DefaultXSens = firstPersonController.getXSensitivity();
         DefaultYSens = firstPersonController.getYSensitivity();
     }
@@ -282,18 +283,21 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
             float fullZoom = DefaultFOV / Zoom;
             Camera.main.fieldOfView = Mathf.Lerp(DefaultFOV, fullZoom, anim["RifleADS"].normalizedTime);
         }
+        if ((tADS && !ADS) || (!tADS && ADS)){
+            AimDownSight(characterG);
+        }
     }
 
     void IWeapon.Attack(ICharacter<float> character)
     {
-        if (anim.IsPlaying("RifleADS") || anim.IsPlaying("RifleReload")){
+        if (anim.isPlaying){
             return;
         }
         if(AmmoCount != 0)
         {
             //Calculate the modifier to apply onto weapons accuracy
-            float skillModifier = character.getRifleSkillModifier();
-            float modifiedAccuracy = (Accuracy - ((Accuracy - MinAccuracy) * skillModifier)) * AccuracyModifier;
+            //float modifiedAccuracy = (Accuracy - ((Accuracy - MinAccuracy) * skillModifier)) * AccuracyModifier;
+            float modifiedAccuracy = Mathf.Lerp(Accuracy, MinAccuracy, character.getRifleSkillModifier()) * AccuracyModifier;
             if (ADS){
                 modifiedAccuracy *= ADSAccuracyModifier * ADSAccuracyModifierModifier;
             }
@@ -338,6 +342,8 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
                     Destroy(newHole, 60f);
                 }
             }
+            anim["RifleFire"].speed = 1 / TimeToFire;
+            anim.Play("RifleFire");
         }
         else
         {
@@ -345,9 +351,17 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         }
     }
 
-    void IRangedWeapon.AimDownSight(ICharacter<float> character)
+    public void toggleADS(){
+        tADS = !tADS;
+    }
+
+    private void AimDownSight(ICharacter<float> character)
     {
-        float timeToADS = ADSSpeed - ((ADSSpeed - MinADSSpeed) * character.getRifleSkillModifier());
+        if (anim.isPlaying){
+            return;
+        }
+        //float timeToADS = ADSSpeed - ((ADSSpeed - MinADSSpeed) * character.getRifleSkillModifier());
+        float timeToADS = Mathf.Lerp(ADSSpeed, MinADSSpeed, character.getRifleSkillModifier());
         Transform hand = transform.parent;
         if (ADS){
             firstPersonController.setXSensitivity(DefaultXSens);
@@ -357,7 +371,7 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
                 anim["RifleADS"].normalizedTime = 1;
             }
             anim["RifleADS"].speed = -1 / timeToADS;
-            anim.CrossFade("RifleADS");
+            anim.Play("RifleADS");
             ADS = false;
         }
         else
@@ -366,7 +380,7 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
             firstPersonController.setYSensitivity(DefaultYSens / Zoom);
             GoalFOV = Camera.main.fieldOfView / Zoom;
             anim["RifleADS"].speed = 1 / timeToADS;
-            anim.CrossFade("RifleADS");
+            anim.Play("RifleADS");
             ADS = true;
         }
         
@@ -384,9 +398,13 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
     }
     void IRangedWeapon.Reload(ICharacter<float> character)
     {
-        float timeToReload = ReloadSpeed - ((ReloadSpeed - MinReloadSpeed) * character.getRifleSkillModifier());
+        if (anim.isPlaying){
+            return;
+        }
+        //float timeToReload = ReloadSpeed - ((ReloadSpeed - MinReloadSpeed) * character.getRifleSkillModifier());
+        float timeToReload = Mathf.Lerp(ReloadSpeed, MinReloadSpeed, character.getRifleSkillModifier()) * ReloadSpeedModifier;
         anim["RifleReload"].speed = 1 / timeToReload;
-        anim.CrossFade("RifleReload");
+        anim.Play("RifleReload");
         AmmoCount = MagazineSize;
     }
 }

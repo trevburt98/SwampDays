@@ -452,12 +452,12 @@ namespace Character.PlayerCharacter
             }
             if(Input.GetKeyDown(KeyCode.Mouse1))
             {
-                equipment.mainHand.GetComponent<IRangedWeapon>().AimDownSight(this);
+                equipment.mainHand.GetComponent<IRangedWeapon>().toggleADS();
             }
             //add check for if ads is set to hold instead of toggle
             if(Input.GetKeyUp(KeyCode.Mouse1))
             {
-                equipment.mainHand.GetComponent<IRangedWeapon>().AimDownSight(this);
+                equipment.mainHand.GetComponent<IRangedWeapon>().toggleADS();
             }
         }
 
