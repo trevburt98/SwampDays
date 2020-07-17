@@ -29,6 +29,7 @@ public class InventoryMenuController : MonoBehaviour
 
     public void PopulateInventory()
     {
+        //Delete the existing inventory
         foreach(Transform child in this.transform)
         {
             GameObject.Destroy(child.gameObject);
@@ -38,12 +39,16 @@ public class InventoryMenuController : MonoBehaviour
 
         foreach (IInteractable item in player.bag.Inventory)
         {
+            //Create a new inventroy list item
             newObj = (GameObject)Instantiate(inventoryItemPrefab, transform);
+            //Assign the text on the list item to the name of the item
             newObj.GetComponentInChildren<Text>().text = item.Name;
+            //If a stack of items, add the number in the stack to the name
             if (item.NumInStack > 1)
             {
                 newObj.GetComponentInChildren<Text>().text += " x" + item.NumInStack;
             }
+            //On click, populate the item information panel with that particular item's information
             newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { LoadItemInfo(item); });
         }
     }
@@ -97,12 +102,15 @@ public class InventoryMenuController : MonoBehaviour
 
     void UseItem(IInteractable interactable, IConsumable item)
     {
+        //Call the item's use function
         item.Use(player);
+        //Decrement the number in the items stack, if 0, remove that item from the player's inventory
         if(--interactable.NumInStack <= 0)
         {
             player.removeFromInventory(interactable);
             ClearItemInfo();
         }
+        //Reload the inventory
         PopulateInventory();
     }
 
@@ -137,10 +145,15 @@ public class InventoryMenuController : MonoBehaviour
 
     void DropItem(IInteractable item)
     {
+        //TODO: change this so it's directly in front of the player, rather than on the player
+        //Grab the position of the player
         Vector3 newPos = player.transform.position;
+        //Instantiate the object at the player's position
         GameObject.Instantiate(Resources.Load(item.ID), newPos, Quaternion.Euler(0, 0, 0));
+        //Remove the item from the inventory
         player.removeFromInventory(item);
         ClearItemInfo();
+        //Reload the inventory
         PopulateInventory();
     }
 

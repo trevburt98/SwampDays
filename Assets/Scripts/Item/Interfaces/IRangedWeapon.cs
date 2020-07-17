@@ -4,7 +4,13 @@ using UnityEngine;
 
 public interface IRangedWeapon : IWeapon
 {
-    int[] BulletIDs
+    string[] BulletIDs
+    {
+        get;
+        set;
+    }
+
+    int CurrentAmmoType
     {
         get;
         set;
@@ -40,6 +46,6 @@ public interface IRangedWeapon : IWeapon
         set;
     }
 
-    void Reload();
+    void Reload(int numToReload);
     void AimDownSight();
 }
