@@ -78,6 +78,26 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
     public List<int> Tags{
         get => _tags;
     }
+    
+    private int _maxStack = 1;
+    public int MaxStack
+    {
+        get => _maxStack;
+    }
+
+    private int _currentStack = 1;
+    public int NumInStack
+    {
+        get => _currentStack;
+        set => _currentStack = value;
+    }
+
+    [SerializeField] private float _zoom = 2f;
+    public float Zoom
+    {
+        get => _zoom;
+        set => _zoom = value;
+    }
     [SerializeField] private Sprite _weaponImage;
     public Sprite ItemImage
     {

@@ -1,4 +1,5 @@
 ﻿using Character.PlayerCharacter;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -62,7 +63,20 @@ public class HealConsumableExample : MonoBehaviour, IConsumable
         set => _itemImage = value;
     }
 
-    public void use(ICharacter<float> user)
+    private int _maxStack = 10;
+    public int MaxStack
+    {
+        get => _maxStack;
+    }
+
+    private int _currentStack = 1;
+    public int NumInStack
+    {
+        get => _currentStack;
+        set => _currentStack = value;
+    }
+
+    public void Use(ICharacter<float> user)
     {
         user.Heal(10);
     }

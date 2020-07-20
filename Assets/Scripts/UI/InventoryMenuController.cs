@@ -11,6 +11,9 @@ public class InventoryMenuController : MonoBehaviour
     public GameObject inventoryItemPrefab;
     public GameObject playerObject;
 
+    public Text bagName;
+    public Text numSpaces;
+
     public Image itemImage;
     public Text itemDescription;
     public Button useButton;
@@ -34,13 +37,36 @@ public class InventoryMenuController : MonoBehaviour
             GameObject.Destroy(child.gameObject);
         }
 
+        if(player.bag != null)
+        {
+            bagName.text = player.bag.Name;
+            numSpaces.text = (player.bag.MaxSpaces - player.bag.CurrentSpaces).ToString() + "/" + player.bag.MaxSpaces.ToString() + " inventory spaces";
+        }
+        else
+        {
+            bagName.text = "";
+            numSpaces.text = "";
+        }
+
+
+
         GameObject newObj;
 
-        foreach (IInteractable item in player.bag.Inventory)
+        try
         {
-            newObj = (GameObject)Instantiate(inventoryItemPrefab, transform);
-            newObj.GetComponentInChildren<Text>().text = item.Name;
-            newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { LoadItemInfo(item); });
+            foreach (IInteractable item in player.bag.Inventory)
+            {
+                newObj = (GameObject)Instantiate(inventoryItemPrefab, transform);
+                newObj.GetComponentInChildren<Text>().text = item.Name;
+                if (item.NumInStack > 1)
+                {
+                    newObj.GetComponentInChildren<Text>().text += " x" + item.NumInStack;
+                }
+                newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { LoadItemInfo(item); });
+            }
+        } catch(NullReferenceException e)
+        {
+            Debug.Log("no bag equipped and we haven't done personal inventory yet");
         }
     }
 
@@ -68,7 +94,6 @@ public class InventoryMenuController : MonoBehaviour
             toggleEquipButton(true);
         } else if(item is IBag)
         {
-            Debug.Log("it's a bag");
             GameObject obj = (GameObject)Resources.Load(item.ID);
             IBag bag = obj.GetComponent<IBag>();
             equipButton.onClick.AddListener(delegate { EquipBag(bag); });
@@ -95,9 +120,12 @@ public class InventoryMenuController : MonoBehaviour
 
     void UseItem(IInteractable interactable, IConsumable item)
     {
-        item.use(player);
-        player.removeFromInventory(interactable);
-        ClearItemInfo();
+        item.Use(player);
+        if(--interactable.NumInStack <= 0)
+        {
+            player.removeFromInventory(interactable);
+            ClearItemInfo();
+        }
         PopulateInventory();
     }
 
@@ -120,17 +148,9 @@ public class InventoryMenuController : MonoBehaviour
         player.bag.Inventory.Clear();
         //Add everything from the temp array into our current bag
         bag.Inventory = new List<IInteractable>(currentInventory);
-        //There has to be a better way to do this, but I can't get the other stuff to work properly
-        //Debug.Log(bag.Inventory.Find(x => x.ID == bag.ID));
         //Delete the duplicate bag from the new inventory
-        foreach (IInteractable item in bag.Inventory)
-        {
-            if(item.Name == bag.Name)
-            {
-                bag.Inventory.Remove(item);
-                break;
-            }
-        }
+        IInteractable oldBag = bag.Inventory.Find(x => x.ID == bag.ID);
+        bag.Inventory.Remove(oldBag);
         //Add the previous bag into the player inventory
         bag.Inventory.Add(player.bag);
         //Set the player's inventory bag to the new bag
@@ -141,7 +161,8 @@ public class InventoryMenuController : MonoBehaviour
     void DropItem(IInteractable item)
     {
         Vector3 newPos = player.transform.position;
-        GameObject.Instantiate(Resources.Load(item.ID), newPos, Quaternion.Euler(0, 0, 0));
+        GameObject newObj = GameObject.Instantiate(Resources.Load(item.ID), newPos, Quaternion.Euler(0, 0, 0)) as GameObject;
+        newObj.GetComponent<IInteractable>().NumInStack = item.NumInStack;
         player.removeFromInventory(item);
         ClearItemInfo();
         PopulateInventory();

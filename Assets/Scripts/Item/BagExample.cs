@@ -50,6 +50,18 @@ public class BagExample : MonoBehaviour, IBag
         set => _inventorySpaces = value;
     }
 
+    private int _maxStack = 1;
+    public int MaxStack
+    {
+        get => _maxStack;
+    }
+
+    private int _currentStack = 1;
+    public int NumInStack
+    {
+        get => _currentStack;
+        set => _currentStack = value;
+    }
 
     private Sprite _itemImage;
     public Sprite ItemImage
@@ -94,12 +106,35 @@ public class BagExample : MonoBehaviour, IBag
         CurrentSpaces -= item.InventorySpaces;
     }
 
+    //Add an item to the inventory of this bag, return whether or not the addition was successful
     public bool Add(IInteractable item)
     {
         bool ret = false;
+        //If we have enough space in the bag to add the given item
         if(CurrentSpaces + item.InventorySpaces <= MaxSpaces)
         {
-            Inventory.Add(item);
+            //If the item is both stackable and we currently have that item in inventory
+            if(Inventory.Exists(x => x.ID == item.ID))
+            {
+                List<IInteractable> found = Inventory.FindAll(x => x.ID == item.ID);
+                bool added = false;
+                foreach(IInteractable instance in found)
+                {
+                    if (!added && instance.NumInStack + item.NumInStack <= instance.MaxStack)
+                    {
+                        instance.NumInStack += item.NumInStack;
+                        added = true;
+                    }
+                }
+
+                if(!added)
+                {
+                    Inventory.Add(item);
+                }
+            } else
+            {
+                Inventory.Add(item);
+            }
             CurrentSpaces += item.InventorySpaces;
             ret = true;
         } else
