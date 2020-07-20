@@ -40,7 +40,7 @@ public class InventoryMenuController : MonoBehaviour
         if(player.bag != null)
         {
             bagName.text = player.bag.Name;
-            numSpaces.text = (player.bag.MaxSpaces - player.bag.CurrentSpaces).ToString() + "/" + player.bag.MaxSpaces.ToString() + " inventory spaces";
+            numSpaces.text = player.bag.CurrentSpaces.ToString() + "/" + player.bag.MaxSpaces.ToString() + " inventory spaces";
         }
         else
         {
