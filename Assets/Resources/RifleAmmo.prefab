@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7315355760084954343}
   - component: {fileID: 903892983197668276}
   - component: {fileID: 6761965283006530384}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: RifleAmmo
   m_TagString: Untagged
   m_Icon: {fileID: 0}

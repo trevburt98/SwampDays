@@ -161,7 +161,6 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         set => _holsterSpeedModifier = value;
     }
 
-    private float _accuracy = 5f;
     private float _accuracy = 2f;
     public float Accuracy
     {

@@ -50,6 +50,12 @@ public class RifleAmmoExample : MonoBehaviour, IAmmo
         set => _spaces = value;
     }
 
+    private List<int> _tags = new List<int>() { 2 };
+    public List<int> Tags
+    {
+        get => _tags;
+    }
+
     private Sprite _itemImage;
     public Sprite ItemImage
     {

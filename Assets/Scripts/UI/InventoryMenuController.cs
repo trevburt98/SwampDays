@@ -49,25 +49,25 @@ public class InventoryMenuController : MonoBehaviour
             numSpaces.text = "";
         }
 
-
-
         GameObject newObj;
 
         try
         {
             foreach (IInteractable item in player.bag.Inventory)
-            //Create a new inventroy list item
-            newObj = (GameObject)Instantiate(inventoryItemPrefab, transform);
-            //Assign the text on the list item to the name of the item
-            newObj.GetComponentInChildren<Text>().text = item.Name;
-            //If a stack of items, add the number in the stack to the name
-            if (item.NumInStack > 1)
             {
+                //Create a new inventroy list item
                 newObj = (GameObject)Instantiate(inventoryItemPrefab, transform);
+                //Assign the text on the list item to the name of the item
                 newObj.GetComponentInChildren<Text>().text = item.Name;
+                //If a stack of items, add the number in the stack to the name
                 if (item.NumInStack > 1)
                 {
-                    newObj.GetComponentInChildren<Text>().text += " x" + item.NumInStack;
+                    newObj = (GameObject)Instantiate(inventoryItemPrefab, transform);
+                    newObj.GetComponentInChildren<Text>().text = item.Name;
+                    if (item.NumInStack > 1)
+                    {
+                        newObj.GetComponentInChildren<Text>().text += " x" + item.NumInStack;
+                    }
                 }
                 newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { LoadItemInfo(item); });
             }
@@ -79,6 +79,7 @@ public class InventoryMenuController : MonoBehaviour
 
     void LoadItemInfo(IInteractable item)
     {
+        Debug.Log("loading");
         //TODO: This can maybe use the item tag system?
         ClearItemInfo();
         if (item is IConsumable)
