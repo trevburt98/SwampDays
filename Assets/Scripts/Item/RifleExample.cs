@@ -115,8 +115,9 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
     [SerializeField] private AudioSource audioSource;
 
     [SerializeField] private Animation anim;
-    private int[] _compatibleBulletArray;
-    public int[] BulletIDs
+
+    private string[] _compatibleBulletArray = { "rifleAmmoEx" };
+    public string[] BulletIDs
     {
         get => _compatibleBulletArray;
         set => _compatibleBulletArray = value;
@@ -127,6 +128,13 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
     {
         get => _ammoCount;
         set => _ammoCount = value;
+    }
+
+    private int _currentAmmo = 0;
+    public int CurrentAmmoType
+    {
+        get => _currentAmmo;
+        set => _currentAmmo = value;
     }
 
     private bool _ads;
@@ -154,6 +162,7 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
     }
 
     private float _accuracy = 5f;
+    private float _accuracy = 2f;
     public float Accuracy
     {
         get => _accuracy;
@@ -338,8 +347,8 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
 
     }
 
-    void IRangedWeapon.Reload()
+    void IRangedWeapon.Reload(int numToReload)
     {
-        AmmoCount = MagazineSize;
+        AmmoCount = numToReload;
     }
 }

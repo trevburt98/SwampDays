@@ -106,6 +106,11 @@ public class BagExample : MonoBehaviour, IBag
         CurrentSpaces -= item.InventorySpaces;
     }
 
+    public IInteractable Find(string itemID)
+    {
+        return Inventory.Find(x => x.ID == itemID);
+    }
+
     //Add an item to the inventory of this bag, return whether or not the addition was successful
     public bool Add(IInteractable item)
     {

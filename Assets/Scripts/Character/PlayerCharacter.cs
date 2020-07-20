@@ -439,15 +439,42 @@ namespace Character.PlayerCharacter
         //Update called whenever the player has an item currently equipped
         private void equippedUpdate()
         {
+            GameObject currentlyEquipped = equipment.mainHand;
+
             if(Input.GetKeyDown(KeyCode.Mouse0))
             {
                 equipment.mainHand.GetComponent<IWeapon>().Attack(this);
             }
-            if (equipment.mainHand.GetComponent<IRangedWeapon>() != null)
+
+            if (currentlyEquipped.GetComponent<IRangedWeapon>() != null)
             {
+                IRangedWeapon rangedWeapon = currentlyEquipped.GetComponent<IRangedWeapon>();
                 if (Input.GetKeyDown(KeyCode.R))
                 {
-                    equipment.mainHand.GetComponent<IRangedWeapon>().Reload();
+                    //Search our current bag for the ammo that our weapon currently has equipped
+                    IInteractable ammo = bag.Find(rangedWeapon.BulletIDs[rangedWeapon.CurrentAmmoType]);
+                    //If we find the ammo that we are looking for
+                    if(ammo.ID != null)
+                    {
+                        //If there is more than enough ammo in the bag to reload the gun to full
+                        if(ammo.NumInStack > rangedWeapon.MagazineSize)
+                        {
+                            //Reload to full
+                            rangedWeapon.Reload(rangedWeapon.MagazineSize);
+                            //Decrement the number in the ammo stack
+                            ammo.NumInStack -= rangedWeapon.MagazineSize;
+                            //Free up those bag spaces
+                            bag.CurrentSpaces -= (int)(ammo.Weight * rangedWeapon.MagazineSize);
+                        }
+                        //If we either don't have enough to reload the gun to full or can reload to exactly full
+                        else
+                        {
+                            //Reload the gun with all the ammo left in the stack
+                            rangedWeapon.Reload(ammo.NumInStack);
+                            //Remove the ammo from the bag
+                            bag.Remove(ammo);
+                        }
+                    }
                 }
             }
             if(Input.GetKeyDown(KeyCode.Mouse1))
