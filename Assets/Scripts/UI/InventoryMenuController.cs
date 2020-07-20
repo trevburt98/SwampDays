@@ -52,15 +52,21 @@ public class InventoryMenuController : MonoBehaviour
 
         GameObject newObj;
 
-        foreach (IInteractable item in player.bag.Inventory)
+        try
         {
-            newObj = (GameObject)Instantiate(inventoryItemPrefab, transform);
-            newObj.GetComponentInChildren<Text>().text = item.Name;
-            if (item.NumInStack > 1)
+            foreach (IInteractable item in player.bag.Inventory)
             {
-                newObj.GetComponentInChildren<Text>().text += " x" + item.NumInStack;
+                newObj = (GameObject)Instantiate(inventoryItemPrefab, transform);
+                newObj.GetComponentInChildren<Text>().text = item.Name;
+                if (item.NumInStack > 1)
+                {
+                    newObj.GetComponentInChildren<Text>().text += " x" + item.NumInStack;
+                }
+                newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { LoadItemInfo(item); });
             }
-            newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { LoadItemInfo(item); });
+        } catch(NullReferenceException e)
+        {
+            Debug.Log("no bag equipped and we haven't done personal inventory yet");
         }
     }
 
