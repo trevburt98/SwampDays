@@ -11,6 +11,9 @@ public class InventoryMenuController : MonoBehaviour
     public GameObject inventoryItemPrefab;
     public GameObject playerObject;
 
+    public Text bagName;
+    public Text numSpaces;
+
     public Image itemImage;
     public Text itemDescription;
     public Button useButton;
@@ -33,6 +36,19 @@ public class InventoryMenuController : MonoBehaviour
         {
             GameObject.Destroy(child.gameObject);
         }
+
+        if(player.bag != null)
+        {
+            bagName.text = player.bag.Name;
+            numSpaces.text = (player.bag.MaxSpaces - player.bag.CurrentSpaces).ToString() + "/" + player.bag.MaxSpaces.ToString() + " inventory spaces";
+        }
+        else
+        {
+            bagName.text = "";
+            numSpaces.text = "";
+        }
+
+
 
         GameObject newObj;
 
@@ -138,7 +154,8 @@ public class InventoryMenuController : MonoBehaviour
     void DropItem(IInteractable item)
     {
         Vector3 newPos = player.transform.position;
-        GameObject.Instantiate(Resources.Load(item.ID), newPos, Quaternion.Euler(0, 0, 0));
+        GameObject newObj = GameObject.Instantiate(Resources.Load(item.ID), newPos, Quaternion.Euler(0, 0, 0)) as GameObject;
+        newObj.GetComponent<IInteractable>().NumInStack = item.NumInStack;
         player.removeFromInventory(item);
         ClearItemInfo();
         PopulateInventory();
