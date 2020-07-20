@@ -35,6 +35,20 @@ public class SoupThatIsTooHot : MonoBehaviour, IConsumable
         get => _spaces;
         set => _spaces = value;
     }
+
+    private int _maxStack = 1;
+    public int MaxStack
+    {
+        get => _maxStack;
+    }
+
+    private int _currentStack = 1;
+    public int NumInStack
+    {
+        get => _currentStack;
+        set => _currentStack = value;
+    }
+
     private float _weight = 15.6f;
     public float Weight
     {
@@ -61,7 +75,7 @@ public class SoupThatIsTooHot : MonoBehaviour, IConsumable
         set => _itemImage = value;
     }
 
-    public void use(ICharacter<float> user)
+    public void Use(ICharacter<float> user)
     {
         user.Heal(10);
         user.Damage(5);

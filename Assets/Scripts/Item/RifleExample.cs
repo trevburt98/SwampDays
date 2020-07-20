@@ -92,12 +92,6 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         set => _currentStack = value;
     }
 
-    [SerializeField] private float _zoom = 2f;
-    public float Zoom
-    {
-        get => _zoom;
-        set => _zoom = value;
-    }
     [SerializeField] private Sprite _weaponImage;
     public Sprite ItemImage
     {
