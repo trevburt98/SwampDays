@@ -450,6 +450,11 @@ namespace Character.PlayerCharacter
                     equipment.mainHand.GetComponent<IRangedWeapon>().Reload(this);
                 }
             }
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                equipment.mainHand.SetActive(true);
+                equipment.mainHand.GetComponent<IRangedWeapon>().toggleHolster();
+            }
             if(Input.GetKeyDown(KeyCode.Mouse1))
             {
                 equipment.mainHand.GetComponent<IRangedWeapon>().toggleADS();

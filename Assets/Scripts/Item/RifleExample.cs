@@ -139,6 +139,9 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         set => _ammoCount = value;
     }
 
+    //Whether the rifle should be ADS'ing
+    private bool tADS = false;
+    //Whether the rifle is ADS'ing
     private bool _ads = false;
     public bool ADS
     {
@@ -146,7 +149,15 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         set => _ads = value;
     }
 
-    private bool tADS = false;
+    //Whether the rifle should be holstered
+    private bool tHolster = false;
+    //Whether the rifle is holstered
+    private bool _holster = false;
+    public bool Holster
+    {
+        get => _holster;
+        set => _holster = value;
+    }
 
     //Item Stats
     private float _holsterSpeed = 3f;
@@ -239,7 +250,7 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
     {
         get => _magazineSize;
     }
-    private int _magazineSizeModifier = 1;
+    private int _magazineSizeModifier = 0;
     public int MagazineSizeModifier{
         get => _magazineSizeModifier;
         set => _magazineSizeModifier = value;
@@ -286,11 +297,17 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         if ((tADS && !ADS) || (!tADS && ADS)){
             AimDownSight(characterG);
         }
+        if ((tHolster && !Holster) || (!tHolster && Holster)){
+            HolsterWeapon(characterG);
+        }
+        if  (Holster && !anim.isPlaying){
+            gameObject.SetActive(false);
+        }
     }
 
     void IWeapon.Attack(ICharacter<float> character)
     {
-        if (anim.isPlaying){
+        if (rifleBusy()){
             return;
         }
         if(AmmoCount != 0)
@@ -357,12 +374,11 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
 
     private void AimDownSight(ICharacter<float> character)
     {
-        if (anim.isPlaying){
+        if (rifleBusy()){
             return;
         }
         //float timeToADS = ADSSpeed - ((ADSSpeed - MinADSSpeed) * character.getRifleSkillModifier());
         float timeToADS = Mathf.Lerp(ADSSpeed, MinADSSpeed, character.getRifleSkillModifier());
-        Transform hand = transform.parent;
         if (ADS){
             firstPersonController.setXSensitivity(DefaultXSens);
             firstPersonController.setYSensitivity(DefaultYSens);
@@ -383,8 +399,32 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
             anim.Play("RifleADS");
             ADS = true;
         }
-        
-        
+    }
+
+    public void toggleHolster(){
+        tHolster = !tHolster;
+    }
+
+    private void HolsterWeapon(ICharacter<float> character)
+    {
+        if (anim.isPlaying){
+            return;
+        }
+        float timeToHolster = Mathf.Lerp(HolsterSpeed, MinHolsterSpeed, character.getRifleSkillModifier());
+        if (Holster){
+            if(!anim.IsPlaying("RifleHolster")){
+                anim["RifleHolster"].normalizedTime = 1;
+            }
+            anim["RifleHolster"].speed = -1 / timeToHolster;
+            anim.Play("RifleHolster");
+            Holster = false;
+        }
+        else
+        {
+            anim["RifleHolster"].speed = 1 / timeToHolster;
+            anim.Play("RifleHolster");
+            Holster = true;
+        }
     }
 
     void IWeapon.Break()
@@ -398,13 +438,23 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
     }
     void IRangedWeapon.Reload(ICharacter<float> character)
     {
-        if (anim.isPlaying){
+        if (rifleBusy()){
             return;
         }
         //float timeToReload = ReloadSpeed - ((ReloadSpeed - MinReloadSpeed) * character.getRifleSkillModifier());
         float timeToReload = Mathf.Lerp(ReloadSpeed, MinReloadSpeed, character.getRifleSkillModifier()) * ReloadSpeedModifier;
         anim["RifleReload"].speed = 1 / timeToReload;
         anim.Play("RifleReload");
-        AmmoCount = MagazineSize;
+        AmmoCount = MagazineSize + MagazineSizeModifier;
+    }
+
+    bool rifleBusy(){
+        if (anim.isPlaying){
+            return true;
+        }
+        if (Holster){
+            return true;
+        }
+        return false;
     }
 }

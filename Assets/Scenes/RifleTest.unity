@@ -425,7 +425,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1002564733}
   m_HandleRect: {fileID: 1002564732}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1991,8 +1991,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1222681454}
   m_HandleRect: {fileID: 1222681453}
   m_Direction: 0
-  m_Value: -25295022
-  m_Size: 0.97035056
+  m_Value: -11009.19
+  m_Size: 0.99995446
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4073,7 +4073,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 540484661}
   m_HandleRect: {fileID: 540484660}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -4792,7 +4792,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 455989440, y: 333.59274}
+  m_AnchoredPosition: {x: 0.67041016, y: 333.59253}
   m_SizeDelta: {x: 590, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &977819854
@@ -7796,7 +7796,7 @@ PrefabInstance:
     - target: {fileID: 6153173749503671365, guid: 5fe365231f1dd8b4c97bf471a71b618d,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -30
+      value: -155.1825
       objectReference: {fileID: 0}
     - target: {fileID: 6153173749503671365, guid: 5fe365231f1dd8b4c97bf471a71b618d,
         type: 3}
@@ -7806,7 +7806,7 @@ PrefabInstance:
     - target: {fileID: 6153173749503671365, guid: 5fe365231f1dd8b4c97bf471a71b618d,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -45
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7151486635618225750, guid: 5fe365231f1dd8b4c97bf471a71b618d,
         type: 3}
@@ -7815,9 +7815,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8212435003981208870, guid: 5fe365231f1dd8b4c97bf471a71b618d,
         type: 3}
+      propertyPath: m_Animations.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8212435003981208870, guid: 5fe365231f1dd8b4c97bf471a71b618d,
+        type: 3}
       propertyPath: m_Animation
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 8212435003981208870, guid: 5fe365231f1dd8b4c97bf471a71b618d,
+        type: 3}
+      propertyPath: m_Animations.Array.data[3]
+      value: 
+      objectReference: {fileID: 7400000, guid: 81b1b733013bb4943a1fc16f8001ef8a, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5fe365231f1dd8b4c97bf471a71b618d, type: 3}
 --- !u!1 &1731669521
