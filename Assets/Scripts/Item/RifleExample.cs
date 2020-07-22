@@ -9,25 +9,29 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
 {
     #region Member Declarations
     private FirstPersonController firstPersonController;
-    private PlayerCharacter characterG;
+    private ICharacter<float> characterG;
     private float _defaultYSens;
-    public float DefaultYSens{
+    public float DefaultYSens
+    {
         get => _defaultYSens;
         set => _defaultYSens = value;
     }
     private float _defaultXSens;
-    public float DefaultXSens{
+    public float DefaultXSens
+    {
         get => _defaultXSens;
         set => _defaultXSens = value;
     }
     private float _dfov;
-    public float DefaultFOV{
+    public float DefaultFOV
+    {
         get => _dfov;
         set => _dfov = value;
     }
 
     private float _gfov;
-    public float GoalFOV{
+    public float GoalFOV
+    {
         get => _gfov;
         set => _gfov = value;
     }
@@ -37,33 +41,33 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         get => _equippable;
     }
 
-    private string _weaponId = "rWeapEx";
+    [SerializeField] private string _weaponId = "rWeapEx";
     public string ID
     {
         get => _weaponId;
     }
 
-    private string _weaponName = "Example Ranged Weapon";
+    [SerializeField] private string _weaponName = "Example Ranged Weapon";
     public string Name
     {
         get => _weaponName;
     }
 
-    private string _flavourText = "Example implementation of a ranged weapon. Used to create a workflow for future weapons";
+    [SerializeField] private string _flavourText = "Example implementation of a ranged weapon. Used to create a workflow for future weapons";
     public string FlavourText
     {
         get => _flavourText;
         set => _flavourText = value;
     }
 
-    private float _damage = 10;
+    [SerializeField] private float _damage = 10;
     public float BaseDamage
     {
         get => _damage;
         set => _damage = value;
     }
 
-    private float _range = 50;
+    [SerializeField] private float _range = 50;
     public float Range
     {
         get => _range;
@@ -77,29 +81,30 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         set => _durability = value;
     }
 
-    private float _weight = 20;
+    [SerializeField] private float _weight = 20;
     public float Weight
     {
         get => _weight;
         set => _weight = value;
     }
 
-    private int _value = 100;
+    [SerializeField] private int _value = 100;
     public int MonetaryValue
     {
         get => _value;
         set => _value = value;
     }
 
-    private int _spaces = 3;
+    [SerializeField] private int _spaces = 3;
     public int InventorySpaces
     {
         get => _spaces;
         set => _spaces = value;
     }
 
-    private List<int> _tags = new List<int>(){0};
-    public List<int> Tags{
+    private List<int> _tags = new List<int>() { 0 };
+    public List<int> Tags
+    {
         get => _tags;
     }
     [SerializeField] private Sprite _weaponImage;
@@ -149,9 +154,6 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         set => _ads = value;
     }
 
-    //Whether the rifle should be holstered
-    private bool tHolster = false;
-    //Whether the rifle is holstered
     private bool _holster = false;
     public bool Holster
     {
@@ -160,109 +162,126 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
     }
 
     private float _gunKickAcc = 0;
-    public float GunKickAcc{
+    public float GunKickAcc
+    {
         get => _gunKickAcc;
         set => _gunKickAcc = value;
     }
 
     //Item Stats
-    private float _holsterSpeed = 3f;
-    public float HolsterSpeed{
+    [SerializeField] private float _holsterSpeed = 3f;
+    public float HolsterSpeed
+    {
         get => _holsterSpeed;
     }
 
-    private float _minHolsterSpeed = 1f;
-    public float MinHolsterSpeed{
+    [SerializeField] private float _minHolsterSpeed = 1f;
+    public float MinHolsterSpeed
+    {
         get => _minHolsterSpeed;
     }
 
     private float _holsterSpeedModifier = 1;
-    public float HolsterSpeedModifier{
+    public float HolsterSpeedModifier
+    {
         get => _holsterSpeedModifier;
         set => _holsterSpeedModifier = value;
     }
 
-    private float _accuracy = 5f;
+    [SerializeField] private float _accuracy = 5f;
     public float Accuracy
     {
         get => _accuracy;
     }
 
-    private float _minAccuracy = 1f;
-    public float MinAccuracy{
+    [SerializeField] private float _minAccuracy = 1f;
+    public float MinAccuracy
+    {
         get => _minAccuracy;
     }
 
     private float _accuracyModifier = 1;
-    public float AccuracyModifier{
+    public float AccuracyModifier
+    {
         get => _accuracyModifier;
         set => _accuracyModifier = value;
     }
 
-    private float _adsAccuracyModifier = 0.5f;
-    public float ADSAccuracyModifier{
+    [SerializeField] private float _adsAccuracyModifier = 0.5f;
+    public float ADSAccuracyModifier
+    {
         get => _adsAccuracyModifier;
     }
 
     private float _adsAccuracyModifierModifier = 1;
-    public float ADSAccuracyModifierModifier{
+    public float ADSAccuracyModifierModifier
+    {
         get => _adsAccuracyModifierModifier;
         set => _adsAccuracyModifierModifier = value;
     }
-    private float _adsSpeed = 0.75f;
-    public float ADSSpeed{
+    [SerializeField] private float _adsSpeed = 0.75f;
+    public float ADSSpeed
+    {
         get => _adsSpeed;
     }
 
-    private float _minADSSpeed = 0.1f;
-    public float MinADSSpeed{
+    [SerializeField] private float _minADSSpeed = 0.1f;
+    public float MinADSSpeed
+    {
         get => _minADSSpeed;
     }
 
-    private float _gunKick = 1f;
-    public float GunKick{
+    [SerializeField] private float _gunKick = 1f;
+    public float GunKick
+    {
         get => _gunKick;
     }
 
-    private float _minGunKick = .1f;
-    public float MinGunKick{
+    [SerializeField] private float _minGunKick = .1f;
+    public float MinGunKick
+    {
         get => _minGunKick;
     }
 
     private float _gunKickModifier = 1;
-    public float GunKickModifier{
+    public float GunKickModifier
+    {
         get => _gunKickModifier;
         set => _gunKickModifier = value;
     }
 
-    private float _reloadSpeed = 6f;
-    public float ReloadSpeed{
+    [SerializeField] private float _reloadSpeed = 6f;
+    public float ReloadSpeed
+    {
         get => _reloadSpeed;
     }
 
-    private float _minReloadSpeed = 2f;
-    public float MinReloadSpeed{
+    [SerializeField] private float _minReloadSpeed = 2f;
+    public float MinReloadSpeed
+    {
         get => _minReloadSpeed;
     }
 
     private float _reloadSpeedModifier = 1;
-    public float ReloadSpeedModifier{
+    public float ReloadSpeedModifier
+    {
         get => _reloadSpeedModifier;
         set => _reloadSpeedModifier = value;
     }
 
-    private int _magazineSize = 10;
+    [SerializeField] private int _magazineSize = 10;
     public int MagazineSize
     {
         get => _magazineSize;
     }
     private int _magazineSizeModifier = 0;
-    public int MagazineSizeModifier{
+    public int MagazineSizeModifier
+    {
         get => _magazineSizeModifier;
         set => _magazineSizeModifier = value;
     }
 
-    [SerializeField] private float _zoom = 2f;
+    [SerializeField] private float _zoom = 1.5f;
     public float Zoom
     {
         get => _zoom;
@@ -270,48 +289,51 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
     }
 
     private float _zoomModifier = 0;
-    public float ZoomModifier{
+    public float ZoomModifier
+    {
         get => _zoomModifier;
         set => _zoomModifier = value;
     }
 
-    private float _timeToFire = 0.1f;
-    public float TimeToFire{
+    [SerializeField] private float _timeToFire = 0.5f;
+    public float TimeToFire
+    {
         get => _timeToFire;
     }
     #endregion
 
 
-    public GameObject BulletHole;
-    public GameObject newHole;
-    
+    [SerializeField] public GameObject BulletHole;
+
     public void Start()
     {
         DefaultFOV = Camera.main.fieldOfView;
         GoalFOV = DefaultFOV;
         //TODO: Revisit this
         firstPersonController = GameObject.Find("Character Test").GetComponent<FirstPersonController>();
-        characterG = GameObject.Find("Character Test").GetComponent<PlayerCharacter>();
         DefaultXSens = firstPersonController.getXSensitivity();
         DefaultYSens = firstPersonController.getYSensitivity();
     }
-    void Update(){
-        if (anim.IsPlaying("RifleADS")){
+    void Update()
+    {
+        if (anim.IsPlaying("RifleADS"))
+        {
             float fullZoom = DefaultFOV / Zoom;
             Camera.main.fieldOfView = Mathf.Lerp(DefaultFOV, fullZoom, anim["RifleADS"].normalizedTime);
         }
-        if ((tADS && !ADS) || (!tADS && ADS)){
+        if ((tADS && !ADS) || (!tADS && ADS))
+        {
             AimDownSight(characterG);
         }
-        if ((tHolster && !Holster) || (!tHolster && Holster)){
-            HolsterWeapon(characterG);
-        }
-        if  (Holster && !anim.isPlaying){
+        if (Holster && !anim.isPlaying)
+        {
             gameObject.SetActive(false);
         }
-        if(GunKickAcc > 0){
+        if (GunKickAcc > 0)
+        {
             GunKickAcc -= (1f + Mathf.Sqrt(GunKickAcc)) * Time.deltaTime;
-            if (GunKickAcc < 0){
+            if (GunKickAcc < 0)
+            {
                 GunKickAcc = 0;
             }
             Debug.Log(GunKickAcc);
@@ -320,124 +342,127 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
 
     void IWeapon.Attack(ICharacter<float> character)
     {
-        if (rifleBusy()){
-            return;
-        }
-        if(AmmoCount != 0)
+        if (!rifleBusy())
         {
-            //Calculate the modifier to apply onto weapons accuracy
-            float modifiedAccuracy = Mathf.Lerp(Accuracy, MinAccuracy, character.getRifleSkillModifier()) * AccuracyModifier;
-            modifiedAccuracy += GunKickAcc;
-            if (ADS){
-                modifiedAccuracy *= ADSAccuracyModifier * ADSAccuracyModifierModifier;
-            }
-            //Get the empty game object that represents where the bullet is fired from
-            Transform startObject = transform.GetChild(0);
-            RaycastHit hit;
-            //Calculate the random x and y offsets to simulate sway
-            float xOffset = Random.Range(-modifiedAccuracy, modifiedAccuracy);
-            float yOffset = Random.Range(-modifiedAccuracy, modifiedAccuracy);
-            //Get the direction from the x and y offsets
-            Vector3 direction = new Vector3(xOffset, yOffset, Range);
-            Vector3 fwd = startObject.TransformDirection(direction);
-            Vector3 start = startObject.position;
-            Debug.DrawRay(start, fwd, Color.red, 5.0f);
-            //Play the sound for this particular weapon
-            audioSource.PlayOneShot(Sound, 0.1f);
-            Debug.Log("pew pew");
-
-            //Update AmmoCount
-            Debug.Log(AmmoCount);
-            AmmoCount--;
-
-            //Raycast hit something
-            //TODO: If we want to do projectile physics this will change heavily
-            if (Physics.Raycast(start, fwd, out hit, Range))
+            if (AmmoCount != 0)
             {
-                //Check the hit's layer to determine what course of action to take
-                //Hit layer 9: NPC. Call the NPC's damage function
-                if (hit.transform.gameObject.layer == 9)
+                //Calculate the modifier to apply onto weapons accuracy
+                float modifiedAccuracy = Mathf.Lerp(Accuracy, MinAccuracy, character.getRifleSkillModifier()) * AccuracyModifier;
+                modifiedAccuracy += GunKickAcc;
+                if (ADS)
                 {
-                    hit.transform.GetComponent<INpc>().Damage(BaseDamage);
-                    //On character hit and if the character hitting is the player character, increase player character's appropriate skill
-                    if(character is PlayerCharacter)
+                    modifiedAccuracy *= ADSAccuracyModifier * ADSAccuracyModifierModifier;
+                }
+                //Get the empty game object that represents where the bullet is fired from
+                Transform startObject = transform.GetChild(0);
+                RaycastHit hit;
+                //Calculate the random x and y offsets to simulate sway
+                float xOffset = Random.Range(-modifiedAccuracy, modifiedAccuracy);
+                float yOffset = Random.Range(-modifiedAccuracy, modifiedAccuracy);
+                //Get the direction from the x and y offsets
+                Vector3 direction = new Vector3(xOffset, yOffset, Range);
+                Vector3 fwd = startObject.TransformDirection(direction);
+                Vector3 start = startObject.position;
+                Debug.DrawRay(start, fwd, Color.red, 5.0f);
+                //Play the sound for this particular weapon
+                audioSource.PlayOneShot(Sound, 0.1f);
+                Debug.Log("pew pew");
+
+                //Update AmmoCount
+                Debug.Log(AmmoCount);
+                AmmoCount--;
+
+                //Raycast hit something
+                //TODO: If we want to do projectile physics this will change heavily
+                if (Physics.Raycast(start, fwd, out hit, Range))
+                {
+                    //Check the hit's layer to determine what course of action to take
+                    //Hit layer 9: NPC. Call the NPC's damage function
+                    if (hit.transform.gameObject.layer == 9)
                     {
-                        PlayerCharacter currentAsPlayerCharacter = character as PlayerCharacter;
-                        Debug.Log("Rifle skill is now " + currentAsPlayerCharacter.increaseRifleSkill(2));
+                        hit.transform.GetComponent<INpc>().Damage(BaseDamage);
+                        //On character hit and if the character hitting is the player character, increase player character's appropriate skill
+                        if (character is PlayerCharacter)
+                        {
+                            PlayerCharacter currentAsPlayerCharacter = character as PlayerCharacter;
+                            Debug.Log("Rifle skill is now " + currentAsPlayerCharacter.increaseRifleSkill(2));
+                        }
+                    }
+                    if (hit.transform.gameObject.layer == 11)
+                    {
+                        GameObject newHole = Instantiate(BulletHole, hit.point + Vector3.Scale(hit.normal, new Vector3(0.0001f, 0.0001f, 0.0001f)), Quaternion.FromToRotation(Vector3.up, hit.normal));
+                        Destroy(newHole, 60f);
                     }
                 }
-                if(hit.transform.gameObject.layer == 11)
-                {
-                    newHole = Instantiate(BulletHole, hit.point + Vector3.Scale(hit.normal, new Vector3(0.0001f, 0.0001f, 0.0001f)), Quaternion.FromToRotation(Vector3.up, hit.normal));
-                    Destroy(newHole, 60f);
-                }
+                GunKickAcc += Mathf.Lerp(GunKick, MinGunKick, character.getRifleSkillModifier()) * GunKickModifier;
+                anim["RifleFire"].speed = 1 / TimeToFire;
+                anim.Play("RifleFire");
             }
-            GunKickAcc += Mathf.Lerp(GunKick, MinGunKick, character.getRifleSkillModifier()) * GunKickModifier;
-            anim["RifleFire"].speed = 1 / TimeToFire;
-            anim.Play("RifleFire");
-        }
-        else
-        {
-            Debug.Log("out of ammo");
+            else
+            {
+                Debug.Log("out of ammo");
+            }
         }
     }
 
-    public void toggleADS(){
+    public void toggleADS(ICharacter<float> character)
+    {
+        characterG = character;
         tADS = !tADS;
     }
 
     private void AimDownSight(ICharacter<float> character)
     {
-        if (rifleBusy()){
-            return;
-        }
-        //float timeToADS = ADSSpeed - ((ADSSpeed - MinADSSpeed) * character.getRifleSkillModifier());
-        float timeToADS = Mathf.Lerp(ADSSpeed, MinADSSpeed, character.getRifleSkillModifier());
-        if (ADS){
-            firstPersonController.setXSensitivity(DefaultXSens);
-            firstPersonController.setYSensitivity(DefaultYSens);
-            GoalFOV = DefaultFOV;
-            if(!anim.IsPlaying("RifleADS")){
-                anim["RifleADS"].normalizedTime = 1;
-            }
-            anim["RifleADS"].speed = -1 / timeToADS;
-            anim.Play("RifleADS");
-            ADS = false;
-        }
-        else
+        if (!rifleBusy())
         {
-            firstPersonController.setXSensitivity(DefaultXSens / Zoom);
-            firstPersonController.setYSensitivity(DefaultYSens / Zoom);
-            GoalFOV = Camera.main.fieldOfView / Zoom;
-            anim["RifleADS"].speed = 1 / timeToADS;
-            anim.Play("RifleADS");
-            ADS = true;
+            float timeToADS = Mathf.Lerp(ADSSpeed, MinADSSpeed, character.getRifleSkillModifier());
+            if (ADS)
+            {
+                firstPersonController.setXSensitivity(DefaultXSens);
+                firstPersonController.setYSensitivity(DefaultYSens);
+                GoalFOV = DefaultFOV;
+                if (!anim.IsPlaying("RifleADS"))
+                {
+                    anim["RifleADS"].normalizedTime = 1;
+                }
+                anim["RifleADS"].speed = -1 / timeToADS;
+                anim.Play("RifleADS");
+                ADS = false;
+            }
+            else
+            {
+                firstPersonController.setXSensitivity(DefaultXSens / Zoom);
+                firstPersonController.setYSensitivity(DefaultYSens / Zoom);
+                GoalFOV = Camera.main.fieldOfView / Zoom;
+                anim["RifleADS"].speed = 1 / timeToADS;
+                anim.Play("RifleADS");
+                ADS = true;
+            }
         }
     }
 
-    public void toggleHolster(){
-        tHolster = !tHolster;
-    }
-
-    private void HolsterWeapon(ICharacter<float> character)
+    public void HolsterWeapon(ICharacter<float> character)
     {
-        if (anim.isPlaying){
-            return;
-        }
-        float timeToHolster = Mathf.Lerp(HolsterSpeed, MinHolsterSpeed, character.getRifleSkillModifier());
-        if (Holster){
-            if(!anim.IsPlaying("RifleHolster")){
-                anim["RifleHolster"].normalizedTime = 1;
-            }
-            anim["RifleHolster"].speed = -1 / timeToHolster;
-            anim.Play("RifleHolster");
-            Holster = false;
-        }
-        else
+        //TODO: Maybe holstering should force an un-ADS but the code could be spaghetti with current implementations
+        if (!anim.isPlaying && !ADS)
         {
-            anim["RifleHolster"].speed = 1 / timeToHolster;
-            anim.Play("RifleHolster");
-            Holster = true;
+            float timeToHolster = Mathf.Lerp(HolsterSpeed, MinHolsterSpeed, character.getRifleSkillModifier());
+            if (Holster)
+            {
+                if (!anim.IsPlaying("RifleHolster"))
+                {
+                    anim["RifleHolster"].normalizedTime = 1;
+                }
+                anim["RifleHolster"].speed = -1 / timeToHolster;
+                anim.Play("RifleHolster");
+                Holster = false;
+            }
+            else
+            {
+                anim["RifleHolster"].speed = 1 / timeToHolster;
+                anim.Play("RifleHolster");
+                Holster = true;
+            }
         }
     }
 
@@ -452,23 +477,25 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
     }
     void IRangedWeapon.Reload(ICharacter<float> character)
     {
-        if (rifleBusy()){
-            return;
+        //TODO: Maybe reloading should force an un-ADS but the code could be spaghetti with current implementations
+        if (!rifleBusy() && !ADS)
+        {
+            float timeToReload = Mathf.Lerp(ReloadSpeed, MinReloadSpeed, character.getRifleSkillModifier()) * ReloadSpeedModifier;
+            anim["RifleReload"].speed = 1 / timeToReload;
+            anim.Play("RifleReload");
+            AmmoCount = MagazineSize + MagazineSizeModifier;
         }
-        //float timeToReload = ReloadSpeed - ((ReloadSpeed - MinReloadSpeed) * character.getRifleSkillModifier());
-        float timeToReload = Mathf.Lerp(ReloadSpeed, MinReloadSpeed, character.getRifleSkillModifier()) * ReloadSpeedModifier;
-        anim["RifleReload"].speed = 1 / timeToReload;
-        anim.Play("RifleReload");
-        AmmoCount = MagazineSize + MagazineSizeModifier;
     }
 
-    bool rifleBusy(){
-        if (anim.isPlaying){
+    bool rifleBusy()
+    {
+        if (anim.isPlaying || Holster)
+        {
             return true;
         }
-        if (Holster){
-            return true;
+        else
+        {
+            return false;
         }
-        return false;
     }
 }

@@ -453,16 +453,16 @@ namespace Character.PlayerCharacter
             if (Input.GetKeyDown(KeyCode.Q))
             {
                 equipment.mainHand.SetActive(true);
-                equipment.mainHand.GetComponent<IRangedWeapon>().toggleHolster();
+                equipment.mainHand.GetComponent<IRangedWeapon>().HolsterWeapon(this);
             }
             if(Input.GetKeyDown(KeyCode.Mouse1))
             {
-                equipment.mainHand.GetComponent<IRangedWeapon>().toggleADS();
+                equipment.mainHand.GetComponent<IRangedWeapon>().toggleADS(this);
             }
             //add check for if ads is set to hold instead of toggle
             if(Input.GetKeyUp(KeyCode.Mouse1))
             {
-                equipment.mainHand.GetComponent<IRangedWeapon>().toggleADS();
+                equipment.mainHand.GetComponent<IRangedWeapon>().toggleADS(this);
             }
         }
 

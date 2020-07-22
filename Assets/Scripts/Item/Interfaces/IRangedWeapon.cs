@@ -92,7 +92,7 @@ public interface IRangedWeapon : IWeapon
     }
 
     void Reload(ICharacter<float> character);
-    void toggleADS();
+    void toggleADS(ICharacter<float> character);
 
-    void toggleHolster();
+    void HolsterWeapon(ICharacter<float> character);
 }
