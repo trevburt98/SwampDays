@@ -460,7 +460,7 @@ namespace Character.PlayerCharacter
                         if(ammo.NumInStack > rangedWeapon.MagazineSize)
                         {
                             //Reload to full
-                            rangedWeapon.Reload(rangedWeapon.MagazineSize);
+                            rangedWeapon.Reload(rangedWeapon.MagazineSize, this);
                             //Decrement the number in the ammo stack
                             ammo.NumInStack -= rangedWeapon.MagazineSize;
                             //Free up those bag spaces
