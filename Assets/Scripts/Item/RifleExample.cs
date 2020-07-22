@@ -159,6 +159,12 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         set => _holster = value;
     }
 
+    private float _gunKickAcc = 0;
+    public float GunKickAcc{
+        get => _gunKickAcc;
+        set => _gunKickAcc = value;
+    }
+
     //Item Stats
     private float _holsterSpeed = 3f;
     public float HolsterSpeed{
@@ -213,12 +219,12 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         get => _minADSSpeed;
     }
 
-    private float _gunKick = 5f;
+    private float _gunKick = 1f;
     public float GunKick{
         get => _gunKick;
     }
 
-    private float _minGunKick = 1f;
+    private float _minGunKick = .1f;
     public float MinGunKick{
         get => _minGunKick;
     }
@@ -269,7 +275,7 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         set => _zoomModifier = value;
     }
 
-    private float _timeToFire = 1;
+    private float _timeToFire = 0.1f;
     public float TimeToFire{
         get => _timeToFire;
     }
@@ -303,6 +309,13 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         if  (Holster && !anim.isPlaying){
             gameObject.SetActive(false);
         }
+        if(GunKickAcc > 0){
+            GunKickAcc -= (1f + Mathf.Sqrt(GunKickAcc)) * Time.deltaTime;
+            if (GunKickAcc < 0){
+                GunKickAcc = 0;
+            }
+            Debug.Log(GunKickAcc);
+        }
     }
 
     void IWeapon.Attack(ICharacter<float> character)
@@ -313,8 +326,8 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         if(AmmoCount != 0)
         {
             //Calculate the modifier to apply onto weapons accuracy
-            //float modifiedAccuracy = (Accuracy - ((Accuracy - MinAccuracy) * skillModifier)) * AccuracyModifier;
             float modifiedAccuracy = Mathf.Lerp(Accuracy, MinAccuracy, character.getRifleSkillModifier()) * AccuracyModifier;
+            modifiedAccuracy += GunKickAcc;
             if (ADS){
                 modifiedAccuracy *= ADSAccuracyModifier * ADSAccuracyModifierModifier;
             }
@@ -359,6 +372,7 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
                     Destroy(newHole, 60f);
                 }
             }
+            GunKickAcc += Mathf.Lerp(GunKick, MinGunKick, character.getRifleSkillModifier()) * GunKickModifier;
             anim["RifleFire"].speed = 1 / TimeToFire;
             anim.Play("RifleFire");
         }
