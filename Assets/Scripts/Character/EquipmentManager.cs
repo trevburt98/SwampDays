@@ -54,6 +54,7 @@ public class EquipmentManager : MonoBehaviour
             newWeapon.transform.localRotation = Quaternion.Euler(-90, 0, 0);
             newWeapon.GetComponent<Rigidbody>().useGravity = false;
             newWeapon.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+            newWeapon.SetActive(true);
 
             mainHand = newWeapon;
             ret = true;
