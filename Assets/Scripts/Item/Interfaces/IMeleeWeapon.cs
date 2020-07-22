@@ -2,21 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IMeleeWeapon<T> : IWeapon
+public interface IMeleeWeapon : IWeapon
 {
     float StrengthMultiplier
     {
-        set;
-        get;
-    }
-
-    float blockDamageReduction
-    {
         get;
         set;
     }
 
-    float strengthMultiplier
+    float BlockDamageReduction
     {
         get;
         set;

@@ -152,6 +152,12 @@ public class InventoryMenuController : MonoBehaviour
     void EquipWeapon(GameObject weapon, bool mainHand)
     {
         equipmentManager.equipNewWeapon(weapon, mainHand);
+        if(weapon is IMeleeWeapon)
+        {
+            Collider weaponCollider;
+            weaponCollider = GetComponent<Collider>();
+            weaponCollider.isTrigger = true;
+        }
     }
 
     void EquipBag(GameObject newBag)

@@ -57,6 +57,7 @@ public interface IInteractable
         get;
         //TODO: should this have a set?
     }
+
     int MaxStack
     {
         get;
