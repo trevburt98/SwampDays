@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BagExample : MonoBehaviour, IBag
@@ -106,22 +107,34 @@ public class BagExample : MonoBehaviour, IBag
         CurrentSpaces -= item.InventorySpaces;
     }
 
-    public IInteractable Find(string itemID)
+    public GameObject Find(string itemID)
     {
-        return Inventory.Find(x => x.ID == itemID);
+        GameObject ret = null;
+        //TODO: take into account stackables, find the one with the lowest(?) numinstack
+        foreach(Transform child in gameObject.transform)
+        {
+            if(child.GetComponent<IInteractable>().ID == itemID)
+            {
+                ret = child.gameObject;
+            }
+        }
+        return ret;
     }
 
     //Add an item to the inventory of this bag, return whether or not the addition was successful
-    public bool Add(IInteractable item)
+    public bool Add(GameObject itemToAdd)
     {
+        List<IInteractable> inventoryList = GetComponentsInChildren<IInteractable>().ToList();
+        IInteractable item = itemToAdd.GetComponent<IInteractable>();
+
         bool ret = false;
         //If we have enough space in the bag to add the given item
         if(CurrentSpaces + item.InventorySpaces <= MaxSpaces)
         {
             //If the item is both stackable and we currently have that item in inventory
-            if(Inventory.Exists(x => x.ID == item.ID))
+            if(inventoryList.Exists(x => x.ID == item.ID))
             {
-                List<IInteractable> found = Inventory.FindAll(x => x.ID == item.ID);
+                List<IInteractable> found = inventoryList.FindAll(x => x.ID == item.ID);
                 bool added = false;
                 foreach(IInteractable instance in found)
                 {
@@ -134,11 +147,13 @@ public class BagExample : MonoBehaviour, IBag
 
                 if(!added)
                 {
-                    Inventory.Add(item);
+                    itemToAdd.SetActive(false);
+                    itemToAdd.transform.parent = gameObject.transform;
                 }
             } else
             {
-                Inventory.Add(item);
+                itemToAdd.SetActive(false);
+                itemToAdd.transform.parent = gameObject.transform;
             }
             CurrentSpaces += item.InventorySpaces;
             ret = true;

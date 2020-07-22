@@ -24,7 +24,7 @@ public interface IBag : IInteractable
 
     void Remove(IInteractable item);
 
-    IInteractable Find(string itemID);
+    GameObject Find(string itemID);
 
-    bool Add(IInteractable item);
+    bool Add(GameObject itemToAdd);
 }

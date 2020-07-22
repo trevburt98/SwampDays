@@ -103,7 +103,7 @@ namespace Character.PlayerCharacter
         public int armourRating;
 
         public EquipmentManager equipment;
-        public IBag bag;
+        public GameObject bag;
 
         //Reference to the first person controller attached to the character
         [SerializeField] private FirstPersonController fpsController;
@@ -268,7 +268,7 @@ namespace Character.PlayerCharacter
 
         public void removeFromInventory(IInteractable item)
         {
-            bag.Remove(item);
+            //bag.Remove(item);
             updateCarryingCapacity(-item.Weight);
         }
 
@@ -399,14 +399,17 @@ namespace Character.PlayerCharacter
                         {
                             if (interactable is IBag && bag == null)
                             {
-                                IBag bag = interactable as IBag;
-                                this.bag = bag;
-                                Destroy(hit.transform.gameObject);
+                                //IBag bag = interactable as IBag;
+                                //this.bag = bag;
+                                //Destroy(hit.transform.gameObject);
+                                hit.transform.gameObject.SetActive(false);
+                                hit.transform.parent = gameObject.transform;
+                                bag = hit.transform.gameObject;
                             }
-                            else if (bag.Add(interactable))
+                            else if (bag.GetComponent<IBag>().Add(hit.transform.gameObject))
                             {
                                 updateCarryingCapacity(interactable.Weight);
-                                Destroy(hit.transform.gameObject);
+                                //Destroy(hit.transform.gameObject);
                             }
                         }
                     }
@@ -449,33 +452,33 @@ namespace Character.PlayerCharacter
             if (currentlyEquipped.GetComponent<IRangedWeapon>() != null)
             {
                 IRangedWeapon rangedWeapon = currentlyEquipped.GetComponent<IRangedWeapon>();
-                if (Input.GetKeyDown(KeyCode.R))
-                {
-                    //Search our current bag for the ammo that our weapon currently has equipped
-                    IInteractable ammo = bag.Find(rangedWeapon.BulletIDs[rangedWeapon.CurrentAmmoType]);
-                    //If we find the ammo that we are looking for
-                    if(ammo.ID != null)
-                    {
-                        //If there is more than enough ammo in the bag to reload the gun to full
-                        if(ammo.NumInStack > rangedWeapon.MagazineSize)
-                        {
-                            //Reload to full
-                            rangedWeapon.Reload(rangedWeapon.MagazineSize);
-                            //Decrement the number in the ammo stack
-                            ammo.NumInStack -= rangedWeapon.MagazineSize;
-                            //Free up those bag spaces
-                            bag.CurrentSpaces -= (int)(ammo.Weight * rangedWeapon.MagazineSize);
-                        }
-                        //If we either don't have enough to reload the gun to full or can reload to exactly full
-                        else
-                        {
-                            //Reload the gun with all the ammo left in the stack
-                            rangedWeapon.Reload(ammo.NumInStack);
-                            //Remove the ammo from the bag
-                            bag.Remove(ammo);
-                        }
-                    }
-                }
+                //if (Input.GetKeyDown(KeyCode.R))
+                //{
+                //    //Search our current bag for the ammo that our weapon currently has equipped
+                //    IInteractable ammo = bag.Find(rangedWeapon.BulletIDs[rangedWeapon.CurrentAmmoType]);
+                //    //If we find the ammo that we are looking for
+                //    if(ammo.ID != null)
+                //    {
+                //        //If there is more than enough ammo in the bag to reload the gun to full
+                //        if(ammo.NumInStack > rangedWeapon.MagazineSize)
+                //        {
+                //            //Reload to full
+                //            rangedWeapon.Reload(rangedWeapon.MagazineSize);
+                //            //Decrement the number in the ammo stack
+                //            ammo.NumInStack -= rangedWeapon.MagazineSize;
+                //            //Free up those bag spaces
+                //            bag.CurrentSpaces -= (int)(ammo.Weight * rangedWeapon.MagazineSize);
+                //        }
+                //        //If we either don't have enough to reload the gun to full or can reload to exactly full
+                //        else
+                //        {
+                //            //Reload the gun with all the ammo left in the stack
+                //            rangedWeapon.Reload(ammo.NumInStack);
+                //            //Remove the ammo from the bag
+                //            bag.Remove(ammo);
+                //        }
+                //    }
+                //}
             }
             if(Input.GetKeyDown(KeyCode.Mouse1))
             {

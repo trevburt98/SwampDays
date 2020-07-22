@@ -37,11 +37,12 @@ public class EquipmentMenuController : MonoBehaviour
 
         //TODO: Change this so that it doesn't use a switch statement, maybe an array of references to the different images?
         //Populate the buttons with the images of the equipments that are currently equipped
-        foreach(IEquipment equipment in equipmentManager.equipmentArray)
+        foreach (GameObject equipmentObj in equipmentManager.equipmentArray)
         {
-            if(equipment != null)
+            if(equipmentObj != null)
             {
-                switch(equipment.EquipSlot)
+                IEquipment equipment = equipmentObj.GetComponent<IEquipment>();
+                switch (equipment.EquipSlot)
                 {
                     case 0:
                         headButton.GetComponent<Image>().sprite = equipment.ItemImage;
@@ -66,62 +67,63 @@ public class EquipmentMenuController : MonoBehaviour
         GameObject newObj;
 
         //Repopulate the list
-        foreach(IInteractable item in player.bag.Inventory)
+        foreach (Transform itemObj in player.bag.transform)
         {
+            IInteractable item = itemObj.gameObject.GetComponent<IInteractable>();
             //If the item in the inventory is either an equipment or a weapon, display it in the equipment menu list
-            if(item is IEquipment || item is IWeapon)
+            if (item is IEquipment || item is IWeapon)
             {
                 newObj = (GameObject)Instantiate(inventoryItemPrefab, transform);
                 newObj.GetComponentInChildren<Text>().text = item.Name;
-                newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { LoadItemInfo(item); });
+                newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { LoadItemInfo(itemObj.gameObject, item); });
             }
         }
 
         prevFiltered = -1;
     }
 
-    void LoadItemInfo(IInteractable item)
+    void LoadItemInfo(GameObject itemObj, IInteractable item)
     {
         equipmentName.text = item.Name;
         equipmentDescription.text = item.FlavourText;
         clearButtons();
 
-        if(item is IEquipment)
+        if (item is IEquipment)
         {
-            IEquipment itemAsEquipment = item as IEquipment;
-            IEquipment currentlyEquipped = null;
+            IEquipment equipment = itemObj.GetComponent<IEquipment>();
+            GameObject currentlyEquipped = null;
             //Check if anything is equipped in the selected item's equipment slot
-            currentlyEquipped = equipmentManager.equipmentArray[itemAsEquipment.EquipSlot];
+            currentlyEquipped = equipmentManager.equipmentArray[equipment.EquipSlot];
 
             //If there is nothing currently equipped in that particular slot
             if (currentlyEquipped == null)
             {
                 toggleEquipButton(true);
                 toggleUnequipButton(false);
-                equipButton.onClick.AddListener(delegate { EquipItem(itemAsEquipment); });
+                equipButton.onClick.AddListener(delegate { EquipItem(itemObj, equipment); });
             }
             //If something is equipped in that slot
             else
             {
-                //Compare the two hash codes to determine if these are the exact same item
-                if (currentlyEquipped.GetHashCode() == item.GetHashCode())
+                if (currentlyEquipped == itemObj)
                 {
                     toggleEquipButton(false);
                     toggleUnequipButton(true);
-                    unequipButton.onClick.AddListener(delegate { UnequipItem(itemAsEquipment); });
-                } else
+                    unequipButton.onClick.AddListener(delegate { UnequipItem(equipment); });
+                }
+                else
                 {
                     toggleEquipButton(true);
                     toggleUnequipButton(false);
-                    equipButton.onClick.AddListener(delegate { EquipItem(itemAsEquipment); });
+                    equipButton.onClick.AddListener(delegate { EquipItem(itemObj, equipment); });
                 }
             }
         }
     }
 
-    void EquipItem(IEquipment equipment)
+    void EquipItem(GameObject equipmentObj, IEquipment equipment)
     {
-        equipmentManager.equipNewEquipment(equipment, equipment.EquipSlot);
+        equipmentManager.equipNewEquipment(equipmentObj, equipment.EquipSlot);
         //TODO: Same as the previous switch statement
         switch (equipment.EquipSlot)
         {
@@ -143,6 +145,7 @@ public class EquipmentMenuController : MonoBehaviour
                 break;
         }
         toggleUnequipButton(true);
+        unequipButton.onClick.AddListener(delegate { UnequipItem(equipment); });
         toggleEquipButton(false);
     }
 
@@ -173,7 +176,7 @@ public class EquipmentMenuController : MonoBehaviour
         toggleEquipButton(true);
     }
 
-    void EquipWeapon(IWeapon weapon, bool mainHand)
+    void EquipWeapon(GameObject weapon, bool mainHand)
     {
         equipmentManager.equipNewWeapon(weapon, mainHand);
     }
@@ -213,8 +216,9 @@ public class EquipmentMenuController : MonoBehaviour
             GameObject newObj;
 
             //Repopulate the list
-            foreach (IInteractable item in player.bag.Inventory)
+            foreach (GameObject obj in player.bag.transform)
             {
+                IInteractable item = obj.GetComponent<IInteractable>();
                 //If the item in the inventory is either an equipment or a weapon, display it in the equipment menu list
                 if (item is IEquipment)
                 {
@@ -223,7 +227,7 @@ public class EquipmentMenuController : MonoBehaviour
                     {
                         newObj = (GameObject)Instantiate(inventoryItemPrefab, transform);
                         newObj.GetComponentInChildren<Text>().text = item.Name;
-                        newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { LoadItemInfo(item); });
+                        newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { LoadItemInfo(obj, item); });
                     }
                 }
             }
