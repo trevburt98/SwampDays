@@ -452,33 +452,41 @@ namespace Character.PlayerCharacter
             if (currentlyEquipped.GetComponent<IRangedWeapon>() != null)
             {
                 IRangedWeapon rangedWeapon = currentlyEquipped.GetComponent<IRangedWeapon>();
-                //if (Input.GetKeyDown(KeyCode.R))
-                //{
-                //    //Search our current bag for the ammo that our weapon currently has equipped
-                //    IInteractable ammo = bag.Find(rangedWeapon.BulletIDs[rangedWeapon.CurrentAmmoType]);
-                //    //If we find the ammo that we are looking for
-                //    if(ammo.ID != null)
-                //    {
-                //        //If there is more than enough ammo in the bag to reload the gun to full
-                //        if(ammo.NumInStack > rangedWeapon.MagazineSize)
-                //        {
-                //            //Reload to full
-                //            rangedWeapon.Reload(rangedWeapon.MagazineSize);
-                //            //Decrement the number in the ammo stack
-                //            ammo.NumInStack -= rangedWeapon.MagazineSize;
-                //            //Free up those bag spaces
-                //            bag.CurrentSpaces -= (int)(ammo.Weight * rangedWeapon.MagazineSize);
-                //        }
-                //        //If we either don't have enough to reload the gun to full or can reload to exactly full
-                //        else
-                //        {
-                //            //Reload the gun with all the ammo left in the stack
-                //            rangedWeapon.Reload(ammo.NumInStack);
-                //            //Remove the ammo from the bag
-                //            bag.Remove(ammo);
-                //        }
-                //    }
-                //}
+                IBag bagInventory = bag.GetComponent<IBag>();
+                if (Input.GetKeyDown(KeyCode.R))
+                {
+                    //Search our current bag for the ammo that our weapon currently has equipped
+                    GameObject ammoObj = bagInventory.Find(rangedWeapon.BulletIDs[rangedWeapon.CurrentAmmoType]);
+                    try
+                    {
+                        IAmmo ammo = ammoObj.GetComponent<IAmmo>();
+                        //If we find the ammo that we are looking for
+                        if (ammo.ID != null)
+                        {
+                            //If there is more than enough ammo in the bag to reload the gun to full
+                            if (ammo.NumInStack > rangedWeapon.MagazineSize)
+                            {
+                                //Reload to full
+                                rangedWeapon.Reload(rangedWeapon.MagazineSize);
+                                //Decrement the number in the ammo stack
+                                ammo.NumInStack -= rangedWeapon.MagazineSize;
+                                //Free up those bag spaces
+                                bagInventory.CurrentSpaces -= (int)(ammo.Weight * rangedWeapon.MagazineSize);
+                            }
+                            //If we either don't have enough to reload the gun to full or can reload to exactly full
+                            else
+                            {
+                                //Reload the gun with all the ammo left in the stack
+                                rangedWeapon.Reload(ammo.NumInStack);
+                                //Remove the ammo from the bag
+                                bagInventory.Remove(ammoObj);
+                            }
+                        }
+                    } catch(NullReferenceException e)
+                    {
+                        Debug.Log("don't have the right ammo");
+                    }
+                }
             }
             if(Input.GetKeyDown(KeyCode.Mouse1))
             {

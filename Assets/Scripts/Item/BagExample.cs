@@ -101,10 +101,11 @@ public class BagExample : MonoBehaviour, IBag
         Inventory = new List<IInteractable>(MaxSpaces);
     }
 
-    public void Remove(IInteractable item)
+    public void Remove(GameObject item)
     {
-        Inventory.Remove(item);
-        CurrentSpaces -= item.InventorySpaces;
+        CurrentSpaces -= item.GetComponent<IInteractable>().InventorySpaces;
+        item.transform.parent = null;
+        Destroy(item);
     }
 
     public GameObject Find(string itemID)

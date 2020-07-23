@@ -22,7 +22,7 @@ public interface IBag : IInteractable
         set;
     }
 
-    void Remove(IInteractable item);
+    void Remove(GameObject item);
 
     GameObject Find(string itemID);
 
