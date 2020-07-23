@@ -14,7 +14,7 @@ public class EquipmentManager : MonoBehaviour
     //2 - Arms
     //3 - Legs
     //4 - Feet
-    public IEquipment[] equipmentArray = new IEquipment[5];
+    public GameObject[] equipmentArray = new GameObject[5];
 
     public GameObject mainHand;
     public GameObject offHand;
@@ -30,38 +30,42 @@ public class EquipmentManager : MonoBehaviour
         offHand = null;
     }
 
-    public void equipNewEquipment(IEquipment newEquipment, int equipmentSlot)
+    public void equipNewEquipment(GameObject newEquipment, int equipmentSlot)
     {
         equipmentArray[equipmentSlot] = newEquipment;
-
-        player.armourRating += newEquipment.ArmourValue;
+        player.armourRating += newEquipment.GetComponent<IEquipment>().ArmourValue;
         Debug.Log(player.armourRating);
     }
 
     public void unequipEquipment(int spotToUnequip)
     {
-        player.armourRating -= equipmentArray[spotToUnequip].ArmourValue;
+        player.armourRating -= equipmentArray[spotToUnequip].GetComponent<IEquipment>().ArmourValue;
         equipmentArray[spotToUnequip] = null;
         Debug.Log(player.armourRating);
     }
 
-    public void equipNewWeapon(IWeapon newWeapon, bool inMainHand)
+    public bool equipNewWeapon(GameObject newWeapon, bool inMainHand)
     {
-        GameObject obj = (GameObject)Resources.Load(newWeapon.ID);
-        GameObject objInGame = GameObject.Instantiate(obj);
-        objInGame.transform.parent = playerHand.transform;
-        objInGame.transform.localPosition = new Vector3(0, 2, 2);
-        objInGame.transform.localRotation = Quaternion.Euler(0, 0, 0);
-        objInGame.GetComponent<Rigidbody>().useGravity = false;
-        objInGame.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
 
-        if (inMainHand)
+        bool ret = false;
+        if (inMainHand && mainHand == null)
         {
-            mainHand = objInGame;
-        }
-        else
+            newWeapon.transform.parent = playerHand.transform;
+            newWeapon.transform.localPosition = new Vector3(0, 2, 2);
+            newWeapon.transform.localRotation = Quaternion.Euler(-90, 0, 0);
+            newWeapon.GetComponent<Rigidbody>().useGravity = false;
+            newWeapon.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+            newWeapon.SetActive(true);
+
+            mainHand = newWeapon;
+            ret = true;
+        } else if (offHand == null)
         {
-            offHand = objInGame;
+            //TODO: put the stuff in the offhand
+            offHand = newWeapon;
+            ret = true;
         }
+
+        return ret;
     }
 }

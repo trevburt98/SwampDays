@@ -22,6 +22,7 @@ public class InventoryMenuController : MonoBehaviour
 
     private PlayerCharacter player;
     private EquipmentManager equipmentManager;
+    private IBag playerBag;
 
     private void Start()
     {
@@ -35,15 +36,21 @@ public class InventoryMenuController : MonoBehaviour
         //Delete the existing inventory
         foreach(Transform child in this.transform)
         {
-            GameObject.Destroy(child.gameObject);
+            Destroy(child.gameObject);
+        }
+
+        List<GameObject> inventoryList = new List<GameObject>();
+        foreach(Transform child in player.bag.transform)
+        {
+            inventoryList.Add(child.gameObject);
         }
 
         if(player.bag != null)
         {
-            bagName.text = player.bag.Name;
-            numSpaces.text = player.bag.CurrentSpaces.ToString() + "/" + player.bag.MaxSpaces.ToString() + " inventory spaces";
-        }
-        else
+            playerBag = player.bag.GetComponent<IBag>();
+            bagName.text = playerBag.Name;
+            numSpaces.text = playerBag.CurrentSpaces.ToString() + "/" + playerBag.MaxSpaces.ToString() + " inventory spaces";
+        } else
         {
             bagName.text = "";
             numSpaces.text = "";
@@ -53,8 +60,9 @@ public class InventoryMenuController : MonoBehaviour
 
         try
         {
-            foreach (IInteractable item in player.bag.Inventory)
+            foreach (GameObject obj in inventoryList)
             {
+                IInteractable item = obj.GetComponent<IInteractable>();
                 //Create a new inventroy list item
                 newObj = (GameObject)Instantiate(inventoryItemPrefab, transform);
                 //Assign the text on the list item to the name of the item
@@ -69,7 +77,7 @@ public class InventoryMenuController : MonoBehaviour
                         newObj.GetComponentInChildren<Text>().text += " x" + item.NumInStack;
                     }
                 }
-                newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { LoadItemInfo(item); });
+                newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { LoadItemInfo(obj, item); });
             }
         } catch(NullReferenceException e)
         {
@@ -77,41 +85,34 @@ public class InventoryMenuController : MonoBehaviour
         }
     }
 
-    void LoadItemInfo(IInteractable item)
+    void LoadItemInfo(GameObject itemObj, IInteractable itemInfo)
     {
-        Debug.Log("loading");
         //TODO: This can maybe use the item tag system?
         ClearItemInfo();
-        if (item is IConsumable)
+        if (itemInfo is IConsumable)
         {
-            GameObject obj = (GameObject)Resources.Load(item.ID);
-            IConsumable consumable = obj.GetComponent<IConsumable>();
-            useButton.onClick.AddListener(delegate { UseItem(item, consumable); });
+            useButton.onClick.AddListener(delegate { UseItem(itemObj); });
             toggleUseButton(true);
-        } else if(item is IEquipment)
+        } else if(itemInfo is IEquipment)
         {
-            GameObject obj = (GameObject)Resources.Load(item.ID);
-            IEquipment equipment = obj.GetComponent<IEquipment>();
-            equipButton.onClick.AddListener(delegate { EquipItem(equipment); });
+            equipButton.onClick.AddListener(delegate { EquipItem(itemObj); });
             toggleEquipButton(true);
-        } else if(item is IWeapon)
+        } else if(itemInfo is IWeapon)
         {
-            GameObject obj = (GameObject)Resources.Load(item.ID);
-            IWeapon equipment = obj.GetComponent<IWeapon>();
-            equipButton.onClick.AddListener(delegate { EquipWeapon(equipment, true); });
+            equipButton.onClick.AddListener(delegate { EquipWeapon(itemObj, true); });
             toggleEquipButton(true);
-        } else if(item is IBag)
+        } else if(itemInfo is IBag)
         {
-            GameObject obj = (GameObject)Resources.Load(item.ID);
-            IBag bag = obj.GetComponent<IBag>();
-            equipButton.onClick.AddListener(delegate { EquipBag(bag); });
+            //GameObject obj = (GameObject)Resources.Load(item.ID);
+            //IBag bag = obj.GetComponent<IBag>();
+            equipButton.onClick.AddListener(delegate { EquipBag(itemObj); });
             toggleEquipButton(true);
         }
 
-        itemDescription.text = item.FlavourText +  "\n" + getTagList(item.Tags);
-        itemImage.sprite = item.ItemImage;
+        itemDescription.text = itemInfo.FlavourText +  "\n" + getTagList(itemInfo.Tags);
+        itemImage.sprite = itemInfo.ItemImage;
 
-        dropButton.onClick.AddListener(delegate { DropItem(item); });
+        dropButton.onClick.AddListener(delegate { DropItem(itemObj); });
         toggleDropButton(true);
     }
 
@@ -126,60 +127,72 @@ public class InventoryMenuController : MonoBehaviour
         toggleAllButtons(false);
     }
 
-    void UseItem(IInteractable interactable, IConsumable item)
+    void UseItem(GameObject obj)
     {
+        IConsumable item = obj.GetComponent<IConsumable>();
         //Call the item's use function
         item.Use(player);
         //Decrement the number in the items stack, if 0, remove that item from the player's inventory
-        if(--interactable.NumInStack <= 0)
+        if(--item.NumInStack <= 0)
         {
-            player.removeFromInventory(interactable);
             ClearItemInfo();
+            //This prevents the issue where the object isn't destroyed quickly enough for the next inventory population, causing it to still appear in the inventory menu
+            obj.transform.parent = null;
+            Destroy(obj);
         }
         //Reload the inventory
         PopulateInventory();
     }
 
-    void EquipItem(IEquipment equipment)
+    void EquipItem(GameObject equipment)
     {
-        equipmentManager.equipNewEquipment(equipment, equipment.EquipSlot);
+        equipmentManager.equipNewEquipment(equipment, equipment.GetComponent<IEquipment>().EquipSlot);
     }
 
-    void EquipWeapon(IWeapon weapon, bool mainHand)
+    void EquipWeapon(GameObject weapon, bool mainHand)
     {
         equipmentManager.equipNewWeapon(weapon, mainHand);
     }
 
-    void EquipBag(IBag bag)
+    void EquipBag(GameObject newBag)
     {
         //TODO: figure out what to do when the new bag has a smaller capacity than the new bag
-        //Copy the currentInventory into a temp array
-        IInteractable[] currentInventory = player.bag.Inventory.ToArray();
-        //Delete everything in the current inventory
-        player.bag.Inventory.Clear();
-        //Add everything from the temp array into our current bag
-        bag.Inventory = new List<IInteractable>(currentInventory);
-        //Delete the duplicate bag from the new inventory
-        IInteractable oldBag = bag.Inventory.Find(x => x.ID == bag.ID);
-        bag.Inventory.Remove(oldBag);
-        //Add the previous bag into the player inventory
-        bag.Inventory.Add(player.bag);
-        //Set the player's inventory bag to the new bag
-        player.bag = bag;
+        //Change the new bag's parent to the player
+        newBag.transform.parent = player.transform;
+        //Change the old bag's parent to the new bag
+        player.bag.transform.parent = newBag.transform;
+
+        //Get the inventory in the old bag
+        //Not a huge fan of this, but I can't find a better way to do it
+        List<GameObject> currentBagInventory = new List<GameObject>();
+        foreach (Transform child in player.bag.transform)
+        {
+            if (child.gameObject != newBag)
+            {
+                currentBagInventory.Add(child.gameObject);
+            }
+        }
+        //Set each of the old inventory's parents to the new bag
+        foreach(GameObject item in currentBagInventory)
+        {
+            item.transform.parent = newBag.transform;
+        }
+        //Set the reference to the bag in player to the new bag
+        player.bag = newBag;
         PopulateInventory();
     }
 
-    void DropItem(IInteractable item)
+    void DropItem(GameObject item)
     {
         //TODO: change this so it's directly in front of the player, rather than on the player
         //Grab the position of the player
         Vector3 newPos = player.transform.position;
-        GameObject newObj = GameObject.Instantiate(Resources.Load(item.ID), newPos, Quaternion.Euler(0, 0, 0)) as GameObject;
-        newObj.GetComponent<IInteractable>().NumInStack = item.NumInStack;
-        //Instantiate the object at the player's position
-        GameObject.Instantiate(Resources.Load(item.ID), newPos, Quaternion.Euler(0, 0, 0));
-        //Remove the item from the inventory
-        player.removeFromInventory(item);
+        //Set the item's new position to the player's position
+        item.transform.position = newPos;
+        //Set the item's parent to nothing
+        item.transform.parent = null;
+        //Set the item to be active
+        item.SetActive(true);
         ClearItemInfo();
         //Reload the inventory
         PopulateInventory();

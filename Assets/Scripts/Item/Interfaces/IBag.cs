@@ -22,9 +22,9 @@ public interface IBag : IInteractable
         set;
     }
 
-    void Remove(IInteractable item);
+    void Remove(GameObject item);
 
-    IInteractable Find(string itemID);
+    GameObject Find(string itemID);
 
-    bool Add(IInteractable item);
+    bool Add(GameObject itemToAdd);
 }
