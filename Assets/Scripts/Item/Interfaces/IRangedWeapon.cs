@@ -21,9 +21,8 @@ public interface IRangedWeapon : IWeapon
         get;
         set;
     }
-    
-    bool ADS
-    {
+
+    bool Holster{
         get;
         set;
     }
@@ -98,6 +97,8 @@ public interface IRangedWeapon : IWeapon
         set;
     }
 
-    void Reload(int numToReload);
-    void AimDownSight(ICharacter<float> character);
+    void Reload(int numToReload, ICharacter<float> character);
+    void toggleADS(ICharacter<float> character);
+
+    void HolsterWeapon(ICharacter<float> character);
 }

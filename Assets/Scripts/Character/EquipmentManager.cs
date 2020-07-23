@@ -46,6 +46,7 @@ public class EquipmentManager : MonoBehaviour
 
     public bool equipNewWeapon(GameObject newWeapon, bool inMainHand)
     {
+
         bool ret = false;
         if (inMainHand && mainHand == null)
         {

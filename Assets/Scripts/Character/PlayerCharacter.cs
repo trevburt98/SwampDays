@@ -74,7 +74,7 @@ namespace Character.PlayerCharacter
             set => _pistolSkill = value;
         }
 
-        [SerializeField] private float _rifleSkill = 25;
+        [SerializeField] private float _rifleSkill = 0;
         public float RifleSkill
         {
             get => _rifleSkill;
@@ -488,14 +488,19 @@ namespace Character.PlayerCharacter
                     }
                 }
             }
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                equipment.mainHand.SetActive(true);
+                equipment.mainHand.GetComponent<IRangedWeapon>().HolsterWeapon(this);
+            }
             if(Input.GetKeyDown(KeyCode.Mouse1))
             {
-                equipment.mainHand.GetComponent<IRangedWeapon>().AimDownSight(this);
+                equipment.mainHand.GetComponent<IRangedWeapon>().toggleADS(this);
             }
             //add check for if ads is set to hold instead of toggle
             if(Input.GetKeyUp(KeyCode.Mouse1))
             {
-                equipment.mainHand.GetComponent<IRangedWeapon>().AimDownSight(this);
+                equipment.mainHand.GetComponent<IRangedWeapon>().toggleADS(this);
             }
         }
 
