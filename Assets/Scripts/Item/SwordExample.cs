@@ -137,6 +137,13 @@ public class SwordExample : MonoBehaviour, IMeleeWeapon
         set => _blockDamageReduction = value;
     }
 
+    private bool _blocking;
+    public bool Blocking
+    {
+        get => _blocking;
+        set => _blocking = value;
+    }
+
     private int _maxStack;
     public int MaxStack
     {
@@ -174,9 +181,24 @@ public class SwordExample : MonoBehaviour, IMeleeWeapon
         Debug.Log("Gyaaaah!!!");
     }
 
-    void IMeleeWeapon.Block()
+    //Block (shamelessly copied from ADS)
+    void IMeleeWeapon.Block(ICharacter<float> character)
     {
-
+        Transform hand = transform.parent;
+        if (Blocking)
+        {
+            anim["Block"].normalizedTime = 1;
+            anim["Block"].speed = -1;
+            anim.CrossFade("Block");
+            Blocking = false;
+        }
+        else
+        {
+            anim["Block"].time = 0;
+            anim["Block"].speed = 1;
+            anim.CrossFade("Block");
+            Blocking = true;
+        }
     }
 
     void IMeleeWeapon.HeavyAttack(ICharacter<float> character)
@@ -184,7 +206,7 @@ public class SwordExample : MonoBehaviour, IMeleeWeapon
         //Swing your mighty sword
         Transform hand = transform.parent;
         anim["BigOlThonk"].time = 0;
-        anim["BigOlThonk"].speed = 20;
+        anim["BigOlThonk"].speed = 1;
         anim.CrossFade("BigOlThonk");
         Debug.Log("AAAAAAAAAA!!!");
     }
@@ -213,6 +235,7 @@ public class SwordExample : MonoBehaviour, IMeleeWeapon
                 Debug.Log("harder daddy");
             }
         }
+
         if (anim.IsPlaying("BigOlThonk"))
         {
             Debug.Log("hit");
@@ -220,7 +243,7 @@ public class SwordExample : MonoBehaviour, IMeleeWeapon
             //Hit layer 9: NPC. Call the NPC's damage function
             if (weaponCollider.gameObject.layer == 9)
             {
-                weaponCollider.gameObject.GetComponent<INpc>().Damage(BaseDamage);
+                weaponCollider.gameObject.GetComponent<INpc>().Damage(BaseDamage*20);
                 Debug.Log("SWEET MERCIFUL JESUS! MAKE IT STOP!");
             }
         }

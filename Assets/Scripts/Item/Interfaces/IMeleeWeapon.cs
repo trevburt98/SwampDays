@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IMeleeWeapon<T> : IWeapon
+public interface IMeleeWeapon : IWeapon
 {
     float StrengthMultiplier
     {
@@ -10,19 +10,19 @@ public interface IMeleeWeapon<T> : IWeapon
         get;
     }
 
-    float blockDamageReduction
+    float BlockDamageReduction
     {
         get;
         set;
     }
 
-    float strengthMultiplier
+    bool Blocking
     {
         get;
         set;
     }
 
-    void Block();
+    void Block(ICharacter<float> character);
 
-    void HeavyAttack();
+    void HeavyAttack(ICharacter<float> character);
 }

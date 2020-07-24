@@ -449,6 +449,21 @@ namespace Character.PlayerCharacter
                 equipment.mainHand.GetComponent<IWeapon>().Attack(this);
             }
 
+            if(Input.GetKeyDown(KeyCode.LeftShift))
+            {
+                equipment.mainHand.GetComponent<IMeleeWeapon>().Block(this);
+            }
+            //add check for if block is set to hold instead of toggle
+            if (Input.GetKeyUp(KeyCode.LeftShift))
+            {
+                equipment.mainHand.GetComponent<IMeleeWeapon>().Block(this);
+            }
+
+            if (Input.GetKeyDown(KeyCode.LeftAlt))
+            {
+                equipment.mainHand.GetComponent<IMeleeWeapon>().HeavyAttack(this);
+            }
+
             if (currentlyEquipped.GetComponent<IRangedWeapon>() != null)
             {
                 IRangedWeapon rangedWeapon = currentlyEquipped.GetComponent<IRangedWeapon>();
