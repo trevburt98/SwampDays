@@ -57,6 +57,12 @@ public interface ICharacter<T>
         set;
     }
 
+    GameObject Bag
+    {
+        get;
+        set;
+    }
+
     void Damage(T damageTaken);
 
     void Heal(T healthHealed);

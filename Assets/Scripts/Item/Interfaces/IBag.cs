@@ -2,14 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IBag : IInteractable
+public interface IBag : IItem
 {
-    List<IInteractable> Inventory
-    {
-        get;
-        set;
-    }
-
     int MaxSpaces
     {
         get;
@@ -17,6 +11,12 @@ public interface IBag : IInteractable
     }
 
     int CurrentSpaces
+    {
+        get;
+        set;
+    }
+
+    float TotalWeight
     {
         get;
         set;

@@ -75,6 +75,11 @@ public class SoupThatIsTooHot : MonoBehaviour, IConsumable
         set => _itemImage = value;
     }
 
+    public void Interact(GameObject user)
+    {
+
+    }
+
     public void Use(ICharacter<float> user)
     {
         user.Heal(10);

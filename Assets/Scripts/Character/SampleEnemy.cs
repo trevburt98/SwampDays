@@ -70,6 +70,13 @@ public class SampleEnemy : MonoBehaviour, INpc
         get => _currentLinePtr;
         set => CurrentLinePtr = value;
     }
+
+    private GameObject _bag;
+    public GameObject Bag
+    {
+        get => _bag;
+        set => _bag = value;
+    }
     #endregion
 
     #region Skill Declarations

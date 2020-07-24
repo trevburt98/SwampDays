@@ -70,6 +70,13 @@ public class SampleQuestgiver : MonoBehaviour, INpc
         get => _currentLinePtr;
         set => _currentLinePtr = value;
     }
+
+    private GameObject _bag;
+    public GameObject Bag
+    {
+        get;
+        set;
+    }
     #endregion
 
     #region Skill Declarations

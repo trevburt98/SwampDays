@@ -40,14 +40,14 @@ public class InventoryMenuController : MonoBehaviour
         }
 
         List<GameObject> inventoryList = new List<GameObject>();
-        foreach(Transform child in player.bag.transform)
+        foreach(Transform child in player.Bag.transform)
         {
             inventoryList.Add(child.gameObject);
         }
 
-        if(player.bag != null)
+        if(player.Bag != null)
         {
-            playerBag = player.bag.GetComponent<IBag>();
+            playerBag = player.Bag.GetComponent<IBag>();
             bagName.text = playerBag.Name;
             numSpaces.text = playerBag.CurrentSpaces.ToString() + "/" + playerBag.MaxSpaces.ToString() + " inventory spaces";
         } else
@@ -62,7 +62,7 @@ public class InventoryMenuController : MonoBehaviour
         {
             foreach (GameObject obj in inventoryList)
             {
-                IInteractable item = obj.GetComponent<IInteractable>();
+                IItem item = obj.GetComponent<IItem>();
                 //Create a new inventroy list item
                 newObj = (GameObject)Instantiate(inventoryItemPrefab, transform);
                 //Assign the text on the list item to the name of the item
@@ -85,7 +85,7 @@ public class InventoryMenuController : MonoBehaviour
         }
     }
 
-    void LoadItemInfo(GameObject itemObj, IInteractable itemInfo)
+    void LoadItemInfo(GameObject itemObj, IItem itemInfo)
     {
         //TODO: This can maybe use the item tag system?
         ClearItemInfo();
@@ -160,12 +160,12 @@ public class InventoryMenuController : MonoBehaviour
         //Change the new bag's parent to the player
         newBag.transform.parent = player.transform;
         //Change the old bag's parent to the new bag
-        player.bag.transform.parent = newBag.transform;
+        player.Bag.transform.parent = newBag.transform;
 
         //Get the inventory in the old bag
         //Not a huge fan of this, but I can't find a better way to do it
         List<GameObject> currentBagInventory = new List<GameObject>();
-        foreach (Transform child in player.bag.transform)
+        foreach (Transform child in player.Bag.transform)
         {
             if (child.gameObject != newBag)
             {
@@ -178,7 +178,7 @@ public class InventoryMenuController : MonoBehaviour
             item.transform.parent = newBag.transform;
         }
         //Set the reference to the bag in player to the new bag
-        player.bag = newBag;
+        player.Bag = newBag;
         PopulateInventory();
     }
 

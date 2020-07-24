@@ -76,6 +76,11 @@ public class HealConsumableExample : MonoBehaviour, IConsumable
         set => _currentStack = value;
     }
 
+    public void Interact(GameObject user)
+    {
+
+    }
+
     public void Use(ICharacter<float> user)
     {
         user.Heal(10);

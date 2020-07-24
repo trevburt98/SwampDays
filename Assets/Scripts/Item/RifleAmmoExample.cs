@@ -87,4 +87,9 @@ public class RifleAmmoExample : MonoBehaviour, IAmmo
     {
         get => _effect;
     }
+
+    public void Interact(GameObject user)
+    {
+
+    }
 }

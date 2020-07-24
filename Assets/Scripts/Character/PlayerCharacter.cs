@@ -63,6 +63,13 @@ namespace Character.PlayerCharacter
             get => _stamina;
             set => _stamina = value;
         }
+
+        private GameObject _bag;
+        public GameObject Bag
+        {
+            get => _bag;
+            set => _bag = value;
+        }
         #endregion
 
         #region Skill Declarations
@@ -103,7 +110,6 @@ namespace Character.PlayerCharacter
         public int armourRating;
 
         public EquipmentManager equipment;
-        public GameObject bag;
 
         //Reference to the first person controller attached to the character
         [SerializeField] private FirstPersonController fpsController;
@@ -266,7 +272,7 @@ namespace Character.PlayerCharacter
             Debug.Log("Did " + damageDone + " damage!");
         }
 
-        public void removeFromInventory(IInteractable item)
+        public void removeFromInventory(IItem item)
         {
             //bag.Remove(item);
             updateCarryingCapacity(-item.Weight);
@@ -288,11 +294,10 @@ namespace Character.PlayerCharacter
             }
             staminaUI.changeStaminaUI(Stamina);
         }
-        #endregion
 
-        #region Private Functions
+        
         //Change the amount that is currently being carried
-        private void updateCarryingCapacity(float newCarryingCapacity)
+        public void updateCarryingCapacity(float newCarryingCapacity)
         {
             int prevTier = currentTier;
             currentCarryingCapacity += newCarryingCapacity;
@@ -334,7 +339,9 @@ namespace Character.PlayerCharacter
                 applyCurrentTier();
             }
         }
+        #endregion
 
+        #region Private Functions
         //Calculate the various carrying tiers
         //TODO: overhaul with an actual algorithm
         private void calculateCarryingTier()
@@ -388,47 +395,59 @@ namespace Character.PlayerCharacter
                 //If the raycast hit an interactable object
                 if(hit.transform.GetComponent<IInteractable>() != null)
                 {
-                    IInteractable interactable = hit.transform.gameObject.GetComponent<IInteractable>();
-
-                    //Throw up the prompt for this interaction
-                    interactionPrompt.promptPickup(interactable.Name);
-                    //If the player presses the interaction button
+                    IItem item = hit.transform.gameObject.GetComponent<IItem>();
+                    interactionPrompt.promptPickup(item.Name);
                     try
                     {
                         if (Input.GetKeyDown(KeyCode.E))
                         {
-                            if (interactable is IBag && bag == null)
-                            {
-                                //IBag bag = interactable as IBag;
-                                //this.bag = bag;
-                                //Destroy(hit.transform.gameObject);
-                                hit.transform.gameObject.SetActive(false);
-                                hit.transform.parent = gameObject.transform;
-                                bag = hit.transform.gameObject;
-                            }
-                            else if (bag.GetComponent<IBag>().Add(hit.transform.gameObject))
-                            {
-                                updateCarryingCapacity(interactable.Weight);
-                                //Destroy(hit.transform.gameObject);
-                            }
+                            hit.transform.GetComponent<IInteractable>().Interact(this.transform.gameObject);
                         }
-                    }
-                    catch (NullReferenceException e)
+                    } catch(NullReferenceException e)
                     {
-                        Debug.Log("no bag equipped");
+                        Debug.Log("for whatever reason you can't pick this up");
                     }
-                }
-                //If the raycast instead hit an NPC that can be talked to
-                else if(hit.transform.gameObject.GetComponent<INpc>() != null)
-                {
-                    INpc npc = hit.transform.gameObject.GetComponent<INpc>();
+                //    
 
-                    //Throw up the prompt to talk to that specific NPC
-                    interactionPrompt.promptTalk(npc.Name);
-                    if(Input.GetKeyDown(KeyCode.E))
-                    {
-                        beginConversation(npc);    
-                    }
+                //    //Throw up the prompt for this interaction
+                //    interactionPrompt.promptPickup(item.Name);
+                //    //If the player presses the interaction button
+                //    try
+                //    {
+                //        if (Input.GetKeyDown(KeyCode.E))
+                //        {
+                //            if (item is IBag && bag == null)
+                //            {
+                //                //IBag bag = interactable as IBag;
+                //                //this.bag = bag;
+                //                //Destroy(hit.transform.gameObject);
+                //                hit.transform.gameObject.SetActive(false);
+                //                hit.transform.parent = gameObject.transform;
+                //                bag = hit.transform.gameObject;
+                //            }
+                //            else if (bag.GetComponent<IBag>().Add(hit.transform.gameObject))
+                //            {
+                //                updateCarryingCapacity(item.Weight);
+                //                //Destroy(hit.transform.gameObject);
+                //            }
+                //        }
+                //    }
+                //    catch (NullReferenceException e)
+                //    {
+                //        Debug.Log("no bag equipped");
+                //    }
+                //}
+                ////If the raycast instead hit an NPC that can be talked to
+                //else if(hit.transform.gameObject.GetComponent<INpc>() != null)
+                //{
+                //    INpc npc = hit.transform.gameObject.GetComponent<INpc>();
+
+                //    //Throw up the prompt to talk to that specific NPC
+                //    interactionPrompt.promptTalk(npc.Name);
+                //    if(Input.GetKeyDown(KeyCode.E))
+                //    {
+                //        beginConversation(npc);    
+                //    }
                 }
             }
             //Otherwise, remove the interaction prompt from the screen
@@ -452,7 +471,7 @@ namespace Character.PlayerCharacter
             if (currentlyEquipped.GetComponent<IRangedWeapon>() != null)
             {
                 IRangedWeapon rangedWeapon = currentlyEquipped.GetComponent<IRangedWeapon>();
-                IBag bagInventory = bag.GetComponent<IBag>();
+                IBag bagInventory = Bag.GetComponent<IBag>();
                 if (Input.GetKeyDown(KeyCode.R))
                 {
                     //Search our current bag for the ammo that our weapon currently has equipped

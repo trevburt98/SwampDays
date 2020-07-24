@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Character.PlayerCharacter;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -89,21 +90,34 @@ public class BagExample : MonoBehaviour, IBag
     public List<int> Tags{
         get => _tags;
     }
-    private List<IInteractable> _inventory;
-    public List<IInteractable> Inventory
+
+    private float _totalWeight = 2f;
+    public float TotalWeight
     {
-        get => _inventory;
-        set => _inventory = value;
+        get => _totalWeight;
+        set => _totalWeight = value;
     }
 
-    void Start()
+
+    public void Interact(GameObject user)
     {
-        Inventory = new List<IInteractable>(MaxSpaces);
+        ICharacter<float> character = user.GetComponent<ICharacter<float>>();
+        if(character.Bag == null)
+        {
+            transform.gameObject.SetActive(false);
+            transform.parent = gameObject.transform;
+            character.Bag = transform.gameObject;
+        } else if(character.Bag.GetComponent<IBag>().Add(transform.gameObject) && character is PlayerCharacter)
+        {
+            PlayerCharacter player = user.GetComponent<PlayerCharacter>();
+            player.updateCarryingCapacity(Weight);
+        }
     }
 
     public void Remove(GameObject item)
     {
-        CurrentSpaces -= item.GetComponent<IInteractable>().InventorySpaces;
+        CurrentSpaces -= item.GetComponent<IItem>().InventorySpaces;
+        TotalWeight -= item.GetComponent<IItem>().Weight;
         item.transform.parent = null;
         Destroy(item);
     }
@@ -114,7 +128,7 @@ public class BagExample : MonoBehaviour, IBag
         //TODO: take into account stackables, find the one with the lowest(?) numinstack
         foreach(Transform child in gameObject.transform)
         {
-            if(child.GetComponent<IInteractable>().ID == itemID)
+            if(child.GetComponent<IItem>().ID == itemID)
             {
                 ret = child.gameObject;
             }
@@ -125,8 +139,8 @@ public class BagExample : MonoBehaviour, IBag
     //Add an item to the inventory of this bag, return whether or not the addition was successful
     public bool Add(GameObject itemToAdd)
     {
-        List<IInteractable> inventoryList = GetComponentsInChildren<IInteractable>().ToList();
-        IInteractable item = itemToAdd.GetComponent<IInteractable>();
+        List<IItem> inventoryList = GetComponentsInChildren<IItem>().ToList();
+        IItem item = itemToAdd.GetComponent<IItem>();
 
         bool ret = false;
         //If we have enough space in the bag to add the given item
@@ -135,9 +149,9 @@ public class BagExample : MonoBehaviour, IBag
             //If the item is both stackable and we currently have that item in inventory
             if(inventoryList.Exists(x => x.ID == item.ID))
             {
-                List<IInteractable> found = inventoryList.FindAll(x => x.ID == item.ID);
+                List<IItem> found = inventoryList.FindAll(x => x.ID == item.ID);
                 bool added = false;
-                foreach(IInteractable instance in found)
+                foreach(IItem instance in found)
                 {
                     if (!added && instance.NumInStack + item.NumInStack <= instance.MaxStack)
                     {
@@ -157,6 +171,7 @@ public class BagExample : MonoBehaviour, IBag
                 itemToAdd.transform.parent = gameObject.transform;
             }
             CurrentSpaces += item.InventorySpaces;
+            TotalWeight += item.Weight;
             ret = true;
         } else
         {

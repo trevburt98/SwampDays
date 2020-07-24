@@ -77,6 +77,11 @@ public class HarmConsumableExample : MonoBehaviour, IConsumable
         set => _currentStack = value;
     }
 
+    public void Interact(GameObject user)
+    {
+
+    }
+
     public void Use(ICharacter<float> user)
     {
         user.Damage(10);
