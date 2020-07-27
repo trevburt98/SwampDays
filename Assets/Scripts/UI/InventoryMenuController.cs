@@ -70,12 +70,7 @@ public class InventoryMenuController : MonoBehaviour
                 //If a stack of items, add the number in the stack to the name
                 if (item.NumInStack > 1)
                 {
-                    newObj = (GameObject)Instantiate(inventoryItemPrefab, transform);
-                    newObj.GetComponentInChildren<Text>().text = item.Name;
-                    if (item.NumInStack > 1)
-                    {
-                        newObj.GetComponentInChildren<Text>().text += " x" + item.NumInStack;
-                    }
+                    newObj.GetComponentInChildren<Text>().text += " x" + item.NumInStack;
                 }
                 newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { LoadItemInfo(obj, item); });
             }
@@ -132,14 +127,12 @@ public class InventoryMenuController : MonoBehaviour
         IConsumable item = obj.GetComponent<IConsumable>();
         //Call the item's use function
         item.Use(player);
-        //Decrement the number in the items stack, if 0, remove that item from the player's inventory
-        if(--item.NumInStack <= 0)
+
+        if (player.Bag.GetComponent<IBag>().Remove(obj, playerObject) <= 0)
         {
             ClearItemInfo();
-            //This prevents the issue where the object isn't destroyed quickly enough for the next inventory population, causing it to still appear in the inventory menu
-            obj.transform.parent = null;
-            Destroy(obj);
         }
+
         //Reload the inventory
         PopulateInventory();
     }
@@ -184,15 +177,7 @@ public class InventoryMenuController : MonoBehaviour
 
     void DropItem(GameObject item)
     {
-        //TODO: change this so it's directly in front of the player, rather than on the player
-        //Grab the position of the player
-        Vector3 newPos = player.transform.position;
-        //Set the item's new position to the player's position
-        item.transform.position = newPos;
-        //Set the item's parent to nothing
-        item.transform.parent = null;
-        //Set the item to be active
-        item.SetActive(true);
+        player.Bag.GetComponent<IBag>().Drop(item, playerObject);
         ClearItemInfo();
         //Reload the inventory
         PopulateInventory();

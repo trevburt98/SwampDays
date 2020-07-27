@@ -57,6 +57,12 @@ public interface ICharacter<T>
         set;
     }
 
+    float HarvestSkill
+    {
+        get;
+        set;
+    }
+
     GameObject Bag
     {
         get;

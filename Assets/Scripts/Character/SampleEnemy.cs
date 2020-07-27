@@ -109,6 +109,12 @@ public class SampleEnemy : MonoBehaviour, INpc
         set => _shotgunSkill = value;
     }
 
+    private float _harvestSkill = 0;
+    public float HarvestSkill
+    {
+        get => _harvestSkill;
+        set => _harvestSkill = value;
+    }
     #endregion
 
     public float maxHealth;

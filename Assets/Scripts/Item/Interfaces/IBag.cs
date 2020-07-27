@@ -22,9 +22,11 @@ public interface IBag : IItem
         set;
     }
 
-    void Remove(GameObject item);
+    int Remove(GameObject item, GameObject user);
 
     GameObject Find(string itemID);
 
-    bool Add(GameObject itemToAdd);
+    bool Add(GameObject itemToAdd, GameObject user);
+
+    void Drop(GameObject item, GameObject user);
 }

@@ -102,6 +102,13 @@ namespace Character.PlayerCharacter
             set => _shotgunSkill = value;
         }
 
+        [SerializeField] private float _harvestSkill = 0;
+        public float HarvestSkill
+        {
+            get => _harvestSkill;
+            set => _harvestSkill = value;
+        }
+
         #endregion
 
         public float maxHealth;
@@ -300,7 +307,7 @@ namespace Character.PlayerCharacter
         public void updateCarryingCapacity(float newCarryingCapacity)
         {
             int prevTier = currentTier;
-            currentCarryingCapacity += newCarryingCapacity;
+            currentCarryingCapacity = newCarryingCapacity;
 
             //Zero check
             if(currentCarryingCapacity < 0)
@@ -395,13 +402,13 @@ namespace Character.PlayerCharacter
                 //If the raycast hit an interactable object
                 if(hit.transform.GetComponent<IInteractable>() != null)
                 {
-                    IItem item = hit.transform.gameObject.GetComponent<IItem>();
-                    interactionPrompt.promptPickup(item.Name);
+                    IInteractable interactable = hit.transform.gameObject.GetComponent<IInteractable>();
+                    interactionPrompt.promptPickup(interactable.Name);
                     try
                     {
                         if (Input.GetKeyDown(KeyCode.E))
                         {
-                            hit.transform.GetComponent<IInteractable>().Interact(this.transform.gameObject);
+                            hit.transform.GetComponent<IInteractable>().Interact(gameObject);
                         }
                     } catch(NullReferenceException e)
                     {
@@ -498,7 +505,7 @@ namespace Character.PlayerCharacter
                                 //Reload the gun with all the ammo left in the stack
                                 rangedWeapon.Reload(ammo.NumInStack, this);
                                 //Remove the ammo from the bag
-                                bagInventory.Remove(ammoObj);
+                                bagInventory.Remove(ammoObj, transform.gameObject);
                             }
                         }
                     } catch(NullReferenceException e)

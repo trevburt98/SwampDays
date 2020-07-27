@@ -14,11 +14,6 @@ public interface IItem : IInteractable
         get;
     }
 
-    string Name
-    {
-        get;
-    }
-
     string FlavourText
     {
         get;

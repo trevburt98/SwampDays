@@ -29,5 +29,11 @@ namespace Character.Extensions
             float skill = character.ShotgunSkill;
             return skill / (1250 + skill);
         }
+
+        public static float getHarvestSkill(this ICharacter<float> character)
+        {
+            float skill = character.HarvestSkill;
+            return skill / (1250 + skill);
+        }
     }
 }

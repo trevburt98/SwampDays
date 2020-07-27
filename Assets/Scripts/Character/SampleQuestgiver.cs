@@ -109,6 +109,13 @@ public class SampleQuestgiver : MonoBehaviour, INpc
         set => _shotgunSkill = value;
     }
 
+    private float _harvestSkill = 0;
+    public float HarvestSkill
+    {
+        get => _harvestSkill;
+        set => _harvestSkill = value;
+    }
+
     #endregion
 
     [SerializeField] private QuestManager questManager;

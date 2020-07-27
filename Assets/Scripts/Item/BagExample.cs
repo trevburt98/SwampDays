@@ -98,28 +98,50 @@ public class BagExample : MonoBehaviour, IBag
         set => _totalWeight = value;
     }
 
-
+    //TODO: avoid repeating the player's update carrying capacity call
     public void Interact(GameObject user)
     {
         ICharacter<float> character = user.GetComponent<ICharacter<float>>();
         if(character.Bag == null)
         {
             transform.gameObject.SetActive(false);
-            transform.parent = gameObject.transform;
+            transform.parent = user.gameObject.transform;
             character.Bag = transform.gameObject;
-        } else if(character.Bag.GetComponent<IBag>().Add(transform.gameObject) && character is PlayerCharacter)
+            if(character is PlayerCharacter)
+            {
+                PlayerCharacter player = user.GetComponent<PlayerCharacter>();
+                player.updateCarryingCapacity(TotalWeight);
+            }
+        } else
         {
-            PlayerCharacter player = user.GetComponent<PlayerCharacter>();
-            player.updateCarryingCapacity(Weight);
+            character.Bag.GetComponent<IBag>().Add(transform.gameObject, user);
         }
     }
 
-    public void Remove(GameObject item)
+    public int Remove(GameObject itemToRemove, GameObject user)
     {
-        CurrentSpaces -= item.GetComponent<IItem>().InventorySpaces;
-        TotalWeight -= item.GetComponent<IItem>().Weight;
-        item.transform.parent = null;
-        Destroy(item);
+        IItem item = itemToRemove.GetComponent<IItem>();
+
+        //Decrement the number in the items stack, if 0, remove that item from the player's inventory
+        CurrentSpaces -= item.InventorySpaces;
+        TotalWeight -= item.Weight;
+        int ret = --item.NumInStack;
+
+        if (ret <= 0)
+        {
+            //This prevents the issue where the object isn't destroyed quickly enough for the next inventory population, causing it to still appear in the inventory menu
+            itemToRemove.transform.parent = null;
+            Destroy(itemToRemove);
+        }
+
+
+        if(user.GetComponent<ICharacter<float>>() is PlayerCharacter)
+        {
+            PlayerCharacter player = user.GetComponent<PlayerCharacter>();
+            player.updateCarryingCapacity(TotalWeight);
+        }
+
+        return ret;
     }
 
     public GameObject Find(string itemID)
@@ -137,17 +159,21 @@ public class BagExample : MonoBehaviour, IBag
     }
 
     //Add an item to the inventory of this bag, return whether or not the addition was successful
-    public bool Add(GameObject itemToAdd)
+    public bool Add(GameObject itemToAdd, GameObject user)
     {
-        List<IItem> inventoryList = GetComponentsInChildren<IItem>().ToList();
+        List<IItem> inventoryList = gameObject.GetComponentsInChildren<IItem>(true).ToList();
         IItem item = itemToAdd.GetComponent<IItem>();
 
         bool ret = false;
         //If we have enough space in the bag to add the given item
         if(CurrentSpaces + item.InventorySpaces <= MaxSpaces)
         {
+            CurrentSpaces += item.InventorySpaces;
+            TotalWeight += item.Weight;
+            ret = true;
+
             //If the item is both stackable and we currently have that item in inventory
-            if(inventoryList.Exists(x => x.ID == item.ID))
+            if (inventoryList.Exists(x => x.ID == item.ID))
             {
                 List<IItem> found = inventoryList.FindAll(x => x.ID == item.ID);
                 bool added = false;
@@ -157,6 +183,7 @@ public class BagExample : MonoBehaviour, IBag
                     {
                         instance.NumInStack += item.NumInStack;
                         added = true;
+                        Destroy(itemToAdd);
                     }
                 }
 
@@ -170,13 +197,37 @@ public class BagExample : MonoBehaviour, IBag
                 itemToAdd.SetActive(false);
                 itemToAdd.transform.parent = gameObject.transform;
             }
-            CurrentSpaces += item.InventorySpaces;
-            TotalWeight += item.Weight;
-            ret = true;
+
+            if(user.GetComponent<ICharacter<float>>() is PlayerCharacter)
+            {
+                PlayerCharacter player = user.GetComponent<PlayerCharacter>();
+                player.updateCarryingCapacity(TotalWeight);
+            }
         } else
         {
             Debug.Log("too full");
         }
         return ret;
+    }
+
+    public void Drop(GameObject item, GameObject user)
+    {
+        //TODO: change this so it's directly in front of the player, rather than on the player
+        //Grab the position of the player
+        Vector3 newPos = user.transform.position;
+        //Set the item's new position to the player's position
+        item.transform.position = newPos;
+        //Set the item's parent to nothing
+        item.transform.parent = null;
+        //Set the item to be active
+        item.SetActive(true);
+
+        TotalWeight -= item.GetComponent<IItem>().Weight;
+
+        if(user.GetComponent<ICharacter<float>>() is PlayerCharacter)
+        {
+            PlayerCharacter player = user.GetComponent<PlayerCharacter>();
+            player.updateCarryingCapacity(TotalWeight);
+        }
     }
 }

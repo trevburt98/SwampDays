@@ -365,10 +365,7 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
     public void Interact(GameObject user)
     {
         ICharacter<float> character = user.GetComponent<ICharacter<float>>();
-        if(character.Bag.GetComponent<IBag>().Add(transform.gameObject) && character is PlayerCharacter)
-        {
-            user.GetComponent<PlayerCharacter>().updateCarryingCapacity(Weight);
-        }
+        character.Bag.GetComponent<IBag>().Add(transform.gameObject, user);
     }
 
     void IWeapon.Attack(ICharacter<float> character)
