@@ -33,6 +33,7 @@ public class InventoryMenuController : MonoBehaviour
 
     public void PopulateInventory()
     {
+        player = playerObject.GetComponent<PlayerCharacter>();
         //Delete the existing inventory
         foreach(Transform child in this.transform)
         {

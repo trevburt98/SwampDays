@@ -24,6 +24,12 @@ public class InteractionPrompt : MonoBehaviour
         text.text = outString;
     }
 
+    public void displayPrompt(string Prompt)
+    {
+        string outString = "[E] " + Prompt;
+        text.text = outString;
+    }
+
     public void removePrompt()
     {
         text.text = "";

@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 public class PlayerMenuController : MonoBehaviour
 {
-    public CanvasGroup inventoryCanvas;
-    public CanvasGroup equipmentCanvas;
-    public CanvasGroup journalCanvas;
+    public GameObject inventoryCanvas;
+    public GameObject equipmentCanvas;
+    public GameObject journalCanvas;
 
     public Button inventoryButton;
     public Button equipmentButton;
@@ -43,17 +43,11 @@ public class PlayerMenuController : MonoBehaviour
 
     void switchToInventoryMenu()
     {
-        inventoryCanvas.alpha = 1;
-        inventoryCanvas.interactable = true;
-        inventoryCanvas.blocksRaycasts = true;
+        inventoryCanvas.SetActive(true);
 
-        equipmentCanvas.alpha = 0;
-        equipmentCanvas.interactable = false;
-        equipmentCanvas.blocksRaycasts = false;
+        equipmentCanvas.SetActive(false);
 
-        journalCanvas.alpha = 0;
-        journalCanvas.interactable = false;
-        journalCanvas.blocksRaycasts = false;
+        journalCanvas.SetActive(false);
 
         lastTab = 0;
         inventoryCanvas.GetComponentInChildren<InventoryMenuController>().PopulateInventory();
@@ -61,17 +55,11 @@ public class PlayerMenuController : MonoBehaviour
 
     void switchToEquipmentMenu()
     {
-        inventoryCanvas.alpha = 0;
-        inventoryCanvas.interactable = false;
-        inventoryCanvas.blocksRaycasts = false;
+        inventoryCanvas.SetActive(false);
 
-        equipmentCanvas.alpha = 1;
-        equipmentCanvas.interactable = true;
-        equipmentCanvas.blocksRaycasts = true;
+        equipmentCanvas.SetActive(true);
 
-        journalCanvas.alpha = 0;
-        journalCanvas.interactable = false;
-        journalCanvas.blocksRaycasts = false;
+        journalCanvas.SetActive(false);
 
         lastTab = 1;
         equipmentCanvas.GetComponentInChildren<EquipmentMenuController>().PopulateEquipment();
@@ -79,17 +67,11 @@ public class PlayerMenuController : MonoBehaviour
 
     void switchToJournalCanvas()
     {
-        inventoryCanvas.alpha = 0;
-        inventoryCanvas.interactable = false;
-        inventoryCanvas.blocksRaycasts = false;
+        inventoryCanvas.SetActive(false);
 
-        equipmentCanvas.alpha = 0;
-        equipmentCanvas.interactable = false;
-        equipmentCanvas.blocksRaycasts = false;
+        equipmentCanvas.SetActive(false);
 
-        journalCanvas.alpha = 1;
-        journalCanvas.interactable = true;
-        journalCanvas.blocksRaycasts = true;
+        journalCanvas.SetActive(true);
 
         lastTab = 2;
         journalCanvas.GetComponentInChildren<JournalController>().PopulateJournal();
