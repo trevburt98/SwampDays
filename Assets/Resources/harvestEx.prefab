@@ -110,7 +110,6 @@ MonoBehaviour:
   minHarvest: 1
   maxHarvest: 5
   skillMax: 3
-  prefab: {fileID: 6807786864689065984, guid: eafb5ea7c762cfd4dab346182fab4fae, type: 3}
   prefabList:
   - prefab: {fileID: 6807786864689065984, guid: eafb5ea7c762cfd4dab346182fab4fae,
       type: 3}
@@ -118,3 +117,4 @@ MonoBehaviour:
   - prefab: {fileID: 6165893918700333163, guid: c699f1bf070135242a8f78f0eb6fa45b,
       type: 3}
     chance: 0.25
+  defaultPrefab: 0

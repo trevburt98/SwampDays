@@ -50,25 +50,38 @@ public class Harvestable : MonoBehaviour, IInteractable
         float skillHarvest = Mathf.Lerp(0, skillMax, user.GetComponent<ICharacter<float>>().getHarvestSkill());
         int harvest = (int)Math.Floor((baseHarvest + skillHarvest) * abundance);
 
-        bool defaultInstantiated = false;        
+        bool defaultInstantiated = false;
+        //TODO: replace the repeated if statements but I don't really feel like doing that right now
         for(int i = 0; i < harvest; i++)
         {
-            GameObject newObj = new GameObject();
+            GameObject newObj;
             if(!defaultInstantiated)
             {
                 newObj = GameObject.Instantiate(prefabList[defaultPrefab].prefab);
+                if (!user.GetComponent<ICharacter<float>>().Bag.GetComponent<IBag>().Add(newObj, user))
+                {
+                    //We can change this to a drop if we want to
+                    Destroy(newObj);
+                }
+                defaultInstantiated = true;
             } else
             {
                 double random = rand.NextDouble();
-
+                double current = 0;
+                foreach(prefabStruct prefab in prefabList)
+                {
+                    if(random >= current && random <= current + prefab.chance)
+                    {
+                        newObj = GameObject.Instantiate(prefab.prefab);
+                        if (!user.GetComponent<ICharacter<float>>().Bag.GetComponent<IBag>().Add(newObj, user))
+                        {
+                            //We can change this to a drop if we want to
+                            Destroy(newObj);
+                        }
+                    }
+                    current += prefab.chance;
+                }
             }
-
-
-            //GameObject newObj = GameObject.Instantiate(prefab);
-            //if(!user.GetComponent<ICharacter<float>>().Bag.GetComponent<IBag>().Add(newObj, user))
-            //{
-            //    Destroy(newObj);
-            //}
         }
     }
 }
