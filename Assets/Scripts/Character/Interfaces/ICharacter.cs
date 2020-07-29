@@ -57,6 +57,18 @@ public interface ICharacter<T>
         set;
     }
 
+    float HarvestSkill
+    {
+        get;
+        set;
+    }
+
+    GameObject Bag
+    {
+        get;
+        set;
+    }
+
     void Damage(T damageTaken);
 
     void Heal(T healthHealed);

@@ -97,5 +97,10 @@ public class HeadEquipExample : MonoBehaviour, IEquipment
         set => _image = value;
     }
 
+    public void Interact(GameObject user)
+    {
+        ICharacter<float> character = user.GetComponent<ICharacter<float>>();
+        character.Bag.GetComponent<IBag>().Add(transform.gameObject, user);
+    }
     #endregion
 }

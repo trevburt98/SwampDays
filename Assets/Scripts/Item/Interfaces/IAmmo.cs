@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IAmmo : IInteractable
+public interface IAmmo : IItem
 {
     float DamageMultiplier
     {

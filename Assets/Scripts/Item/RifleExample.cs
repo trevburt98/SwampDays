@@ -362,6 +362,12 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         }
     }
 
+    public void Interact(GameObject user)
+    {
+        ICharacter<float> character = user.GetComponent<ICharacter<float>>();
+        character.Bag.GetComponent<IBag>().Add(transform.gameObject, user);
+    }
+
     void IWeapon.Attack(ICharacter<float> character)
     {
         if (!rifleBusy())
