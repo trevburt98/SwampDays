@@ -117,7 +117,7 @@ namespace Character.PlayerCharacter
         [SerializeField] private Camera camera;
         //Reference to the hand gameobject
         [SerializeField] private GameObject hand;
-        [SerializeField] private GameObject alchemyMenu;
+        [SerializeField] private AlchemyMenuController alchemyController;
         //Reference to the health readout on the UI
         private HealthReadout healthUI;
         //Reference to the stamina readout on the UI
@@ -176,7 +176,7 @@ namespace Character.PlayerCharacter
                 else
                 {
                     TogglePlayerMenu(false);
-                    ToggleAlchemyMenu(false);
+                    ToggleAlchemyMenu(false, null);
                 }
 
             }
@@ -549,12 +549,12 @@ namespace Character.PlayerCharacter
             }
         }
 
-        public void ToggleAlchemyMenu(bool newInMenu)
+        public void ToggleAlchemyMenu(bool newInMenu, List<AlchemyBase> baseList)
         {
-            if (newInMenu != alchemyMenu.activeInHierarchy)
+            if (newInMenu != alchemyController.gameObject.activeInHierarchy)
             {
                 fpsController.inMenu = inMenu = newInMenu;
-                alchemyMenu.SetActive(inMenu);
+                alchemyController.ToggleAlchemyMenu(newInMenu, baseList);
                 Cursor.visible = inMenu;
                 if (inMenu)
                 {
