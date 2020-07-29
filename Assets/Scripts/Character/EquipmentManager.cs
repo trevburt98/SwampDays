@@ -51,8 +51,8 @@ public class EquipmentManager : MonoBehaviour
         if (inMainHand && mainHand == null)
         {
             newWeapon.transform.parent = playerHand.transform;
-            newWeapon.transform.localPosition = new Vector3(0, 2, 2);
-            newWeapon.transform.localRotation = Quaternion.Euler(-90, 0, 0);
+            newWeapon.transform.localPosition = new Vector3(0, 0, 3);
+            newWeapon.transform.localRotation = Quaternion.Euler(0, 0, 0);
             newWeapon.GetComponent<Rigidbody>().useGravity = false;
             newWeapon.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
             newWeapon.SetActive(true);

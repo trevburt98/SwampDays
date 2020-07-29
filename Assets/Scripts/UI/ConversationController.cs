@@ -42,21 +42,22 @@ public class ConversationController : MonoBehaviour
 
     public void toggleConversationCanvas(bool toggle)
     {
-        CanvasGroup canvasGroup = GetComponent<CanvasGroup>();
+        //CanvasGroup canvasGroup = GetComponent<CanvasGroup>();
+        gameObject.SetActive(toggle);
 
         if(toggle)
         {
-            canvasGroup.alpha = 1;
+           // canvasGroup.alpha = 1;
             Debug.Log(currentPartner);
             swapConversationPtr(currentPartner.startConversation());
         } else
         {
-            canvasGroup.alpha = 0;
+            //canvasGroup.alpha = 0;
             clearConversation();
         }
 
-        canvasGroup.interactable = toggle;
-        canvasGroup.blocksRaycasts = toggle;
+        //canvasGroup.interactable = toggle;
+        //canvasGroup.blocksRaycasts = toggle;
     }
 
     void swapConversationPtr(int newPtr)

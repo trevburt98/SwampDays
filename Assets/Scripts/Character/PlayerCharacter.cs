@@ -123,14 +123,14 @@ namespace Character.PlayerCharacter
         //Reference to HUD UI canvas
         [SerializeField] private Canvas HUDCanvasUI;
         //Reference to Player Menu UI Canvas
-        [SerializeField] private Canvas playerMenuCanvas;
+        [SerializeField] private GameObject playerMenuCanvas;
         //Reference to the Player Menu Controller
         [SerializeField] private PlayerMenuController playerMenuController;
         //Reference to the camera of the character
         [SerializeField] private Camera camera;
         //Reference to the hand gameobject
         [SerializeField] private GameObject hand;
-
+        [SerializeField] private AlchemyMenuController alchemyController;
         //Reference to the health readout on the UI
         private HealthReadout healthUI;
         //Reference to the stamina readout on the UI
@@ -175,9 +175,23 @@ namespace Character.PlayerCharacter
         // Update is called once per frame
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Tab))
+            if (Input.GetKeyDown(KeyCode.Tab) && !inMenu)
             {
-                TogglePlayerMenu(!inMenu);
+                TogglePlayerMenu(true);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                if (!inMenu)
+                {
+                    //TODO: Do a pause
+                }
+                else
+                {
+                    TogglePlayerMenu(false);
+                    ToggleAlchemyMenu(false, null);
+                }
+
             }
 
             if (!inMenu)
@@ -257,7 +271,7 @@ namespace Character.PlayerCharacter
         public void Heal(float healthHealed)
         {
             currentHealth += healthHealed;
-            if(currentHealth >= maxHealth)
+            if (currentHealth >= maxHealth)
             {
                 currentHealth = maxHealth;
             }
@@ -290,12 +304,12 @@ namespace Character.PlayerCharacter
         public void updateStamina(float staminaChange)
         {
             Stamina += staminaChange;
-            if(Stamina < 0)
+            if (Stamina < 0)
             {
                 Stamina = 0;
             }
 
-            if(Stamina > maxStamina)
+            if (Stamina > maxStamina)
             {
                 Stamina = maxStamina;
             }
@@ -310,17 +324,17 @@ namespace Character.PlayerCharacter
             currentCarryingCapacity = newCarryingCapacity;
 
             //Zero check
-            if(currentCarryingCapacity < 0)
+            if (currentCarryingCapacity < 0)
             {
                 currentCarryingCapacity = 0;
             }
 
             //Need to increase our current tier
-            if(currentCarryingCapacity > tier[currentTier])
+            if (currentCarryingCapacity > tier[currentTier])
             {
-                for(int i = currentTier; i < tier.Length; i++)
+                for (int i = currentTier; i < tier.Length; i++)
                 {
-                    if(currentCarryingCapacity <= tier[i] || i == 4)
+                    if (currentCarryingCapacity <= tier[i] || i == 4)
                     {
                         currentTier = i;
                         break;
@@ -328,11 +342,11 @@ namespace Character.PlayerCharacter
                 }
             }
             //Need to decrease our current tier
-            else if(currentTier > 0 && currentCarryingCapacity <= tier[currentTier - 1])
+            else if (currentTier > 0 && currentCarryingCapacity <= tier[currentTier - 1])
             {
-                for(int i = currentTier; i >= 0; i--)
+                for (int i = currentTier; i >= 0; i--)
                 {
-                    if(currentCarryingCapacity >= tier[i])
+                    if (currentCarryingCapacity >= tier[i])
                     {
                         currentTier = i;
                         break;
@@ -341,7 +355,7 @@ namespace Character.PlayerCharacter
             }
 
             //If we've changed tiers, apply the effects of the current tier to the player
-            if(prevTier != currentTier)
+            if (prevTier != currentTier)
             {
                 applyCurrentTier();
             }
@@ -366,26 +380,26 @@ namespace Character.PlayerCharacter
         {
             int i = currentTier;
             fpsController.resetModifiers();
-            if(i == 4)
+            if (i == 4)
             {
                 fpsController.moveSpeedModifier = 0.75f;
                 i--;
             }
-            if(i == 3)
+            if (i == 3)
             {
                 fpsController.runSpeedModifier = 0.75f;
                 i--;
             }
-            if(i == 2)
+            if (i == 2)
             {
                 fpsController.staminaUseModifier = 1.25f;
                 i--;
             }
-            if(i == 1)
+            if (i == 1)
             {
                 fpsController.staminaRecoveryModifier = 0.75f;
             }
-        }  
+        }
 
         //Function to handle the raycast checking for interactables and the pickup of items
         private void interactableRayCast()
@@ -400,7 +414,7 @@ namespace Character.PlayerCharacter
             if (Physics.Raycast(camera.transform.position, forward, out hit, 10, layerMask))
             {
                 //If the raycast hit an interactable object
-                if(hit.transform.GetComponent<IInteractable>() != null)
+                if (hit.transform.GetComponent<IInteractable>() != null)
                 {
                     IInteractable interactable = hit.transform.gameObject.GetComponent<IInteractable>();
                     interactionPrompt.promptPickup(interactable.Name);
@@ -410,9 +424,32 @@ namespace Character.PlayerCharacter
                         {
                             hit.transform.GetComponent<IInteractable>().Interact(gameObject);
                         }
-                    } catch(NullReferenceException e)
+                    }
+                    catch (NullReferenceException e)
                     {
-                        Debug.Log("for whatever reason you can't pick this up");
+                        Debug.Log("no bag equipped");
+                    }
+                }
+                //If the raycast instead hit an NPC that can be talked to
+                else if (hit.transform.gameObject.GetComponent<INpc>() != null)
+                {
+                    INpc npc = hit.transform.gameObject.GetComponent<INpc>();
+
+                    //Throw up the prompt to talk to that specific NPC
+                    interactionPrompt.promptTalk(npc.Name);
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        beginConversation(npc);
+                    }
+                }
+                //TODO: Remove this when merging with the IInteractable changes
+                else if (hit.transform.gameObject.GetComponent<AlchemyTable>() != null)
+                {
+                    interactionPrompt.displayPrompt("Do Alchemy");
+                    AlchemyTable alchemyTable = hit.transform.gameObject.GetComponent<AlchemyTable>();
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        alchemyTable.Interact(this);
                     }
                 //    
 
@@ -470,7 +507,7 @@ namespace Character.PlayerCharacter
         {
             GameObject currentlyEquipped = equipment.mainHand;
 
-            if(Input.GetKeyDown(KeyCode.Mouse0))
+            if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 equipment.mainHand.GetComponent<IWeapon>().Attack(this);
             }
@@ -508,7 +545,8 @@ namespace Character.PlayerCharacter
                                 bagInventory.Remove(ammoObj, transform.gameObject);
                             }
                         }
-                    } catch(NullReferenceException e)
+                    }
+                    catch (NullReferenceException e)
                     {
                         Debug.Log("don't have the right ammo");
                     }
@@ -519,12 +557,12 @@ namespace Character.PlayerCharacter
                 equipment.mainHand.SetActive(true);
                 equipment.mainHand.GetComponent<IRangedWeapon>().HolsterWeapon(this);
             }
-            if(Input.GetKeyDown(KeyCode.Mouse1))
+            if (Input.GetKeyDown(KeyCode.Mouse1))
             {
                 equipment.mainHand.GetComponent<IRangedWeapon>().toggleADS(this);
             }
             //add check for if ads is set to hold instead of toggle
-            if(Input.GetKeyUp(KeyCode.Mouse1))
+            if (Input.GetKeyUp(KeyCode.Mouse1))
             {
                 equipment.mainHand.GetComponent<IRangedWeapon>().toggleADS(this);
             }
@@ -533,23 +571,40 @@ namespace Character.PlayerCharacter
         //Opens the player menu, disables character movement, displays mouse
         private void TogglePlayerMenu(bool newInMenu)
         {
-            fpsController.inMenu = inMenu = newInMenu;
-            CanvasGroup playerMenuCanvasGroup = playerMenuCanvas.GetComponent<CanvasGroup>();
-            if (inMenu)
+            if (newInMenu != playerMenuCanvas.activeInHierarchy)
             {
-                Cursor.lockState = CursorLockMode.Confined;
-                playerMenuCanvasGroup.alpha = 1;
-                playerMenuController.openMenu();
+                fpsController.inMenu = inMenu = newInMenu;
+                playerMenuCanvas.gameObject.SetActive(inMenu);
+                Cursor.visible = inMenu;
+                if (inMenu)
+                {
+                    Cursor.lockState = CursorLockMode.Confined;
+                    playerMenuController.openMenu();
+                }
+                else
+                {
+                    Cursor.lockState = CursorLockMode.Locked;
+                }
             }
-            else
+        }
+
+        public void ToggleAlchemyMenu(bool newInMenu, List<AlchemyBase> baseList)
+        {
+            if (newInMenu != alchemyController.gameObject.activeInHierarchy)
             {
-                Cursor.lockState = CursorLockMode.Locked;
-                playerMenuCanvasGroup.alpha = 0;
+                fpsController.inMenu = inMenu = newInMenu;
+                alchemyController.ToggleAlchemyMenu(newInMenu, baseList);
+                Cursor.visible = inMenu;
+                if (inMenu)
+                {
+                    Cursor.lockState = CursorLockMode.Confined;
+                }
+                else
+                {
+                    Cursor.lockState = CursorLockMode.Locked;
+                }
             }
-            Cursor.visible = inMenu;
-            playerMenuCanvasGroup.interactable = inMenu;
-            playerMenuCanvasGroup.blocksRaycasts = inMenu;
-            
+
         }
 
         private void beginConversation(INpc conversationPartner)
