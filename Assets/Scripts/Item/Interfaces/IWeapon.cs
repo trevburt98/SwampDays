@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IWeapon : IInteractable
+public interface IWeapon : IItem
 {
     float BaseDamage
     {

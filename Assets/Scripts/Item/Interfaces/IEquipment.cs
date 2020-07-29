@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public interface IEquipment : IInteractable
+public interface IEquipment : IItem
 {
     //0 - Head
     //1 - Torso

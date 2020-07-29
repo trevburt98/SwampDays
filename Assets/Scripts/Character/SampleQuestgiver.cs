@@ -70,6 +70,13 @@ public class SampleQuestgiver : MonoBehaviour, INpc
         get => _currentLinePtr;
         set => _currentLinePtr = value;
     }
+
+    private GameObject _bag;
+    public GameObject Bag
+    {
+        get;
+        set;
+    }
     #endregion
 
     #region Skill Declarations
@@ -100,6 +107,13 @@ public class SampleQuestgiver : MonoBehaviour, INpc
     {
         get => _shotgunSkill;
         set => _shotgunSkill = value;
+    }
+
+    private float _harvestSkill = 0;
+    public float HarvestSkill
+    {
+        get => _harvestSkill;
+        set => _harvestSkill = value;
     }
 
     #endregion

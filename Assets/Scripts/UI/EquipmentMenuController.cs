@@ -67,9 +67,9 @@ public class EquipmentMenuController : MonoBehaviour
         GameObject newObj;
 
         //Repopulate the list
-        foreach (Transform itemObj in player.bag.transform)
+        foreach (Transform itemObj in player.Bag.transform)
         {
-            IInteractable item = itemObj.gameObject.GetComponent<IInteractable>();
+            IItem item = itemObj.gameObject.GetComponent<IItem>();
             //If the item in the inventory is either an equipment or a weapon, display it in the equipment menu list
             if (item is IEquipment || item is IWeapon)
             {
@@ -82,7 +82,7 @@ public class EquipmentMenuController : MonoBehaviour
         prevFiltered = -1;
     }
 
-    void LoadItemInfo(GameObject itemObj, IInteractable item)
+    void LoadItemInfo(GameObject itemObj, IItem item)
     {
         equipmentName.text = item.Name;
         equipmentDescription.text = item.FlavourText;
@@ -216,9 +216,9 @@ public class EquipmentMenuController : MonoBehaviour
             GameObject newObj;
 
             //Repopulate the list
-            foreach (GameObject obj in player.bag.transform)
+            foreach (GameObject obj in player.Bag.transform)
             {
-                IInteractable item = obj.GetComponent<IInteractable>();
+                IItem item = obj.GetComponent<IItem>();
                 //If the item in the inventory is either an equipment or a weapon, display it in the equipment menu list
                 if (item is IEquipment)
                 {

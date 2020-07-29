@@ -70,6 +70,13 @@ public class SampleEnemy : MonoBehaviour, INpc
         get => _currentLinePtr;
         set => CurrentLinePtr = value;
     }
+
+    private GameObject _bag;
+    public GameObject Bag
+    {
+        get => _bag;
+        set => _bag = value;
+    }
     #endregion
 
     #region Skill Declarations
@@ -102,6 +109,12 @@ public class SampleEnemy : MonoBehaviour, INpc
         set => _shotgunSkill = value;
     }
 
+    private float _harvestSkill = 0;
+    public float HarvestSkill
+    {
+        get => _harvestSkill;
+        set => _harvestSkill = value;
+    }
     #endregion
 
     public float maxHealth;

@@ -2,14 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IBag : IInteractable
+public interface IBag : IItem
 {
-    List<IInteractable> Inventory
-    {
-        get;
-        set;
-    }
-
     int MaxSpaces
     {
         get;
@@ -22,9 +16,17 @@ public interface IBag : IInteractable
         set;
     }
 
-    void Remove(GameObject item);
+    float TotalWeight
+    {
+        get;
+        set;
+    }
+
+    int Remove(GameObject item, GameObject user);
 
     GameObject Find(string itemID);
 
-    bool Add(GameObject itemToAdd);
+    bool Add(GameObject itemToAdd, GameObject user);
+
+    void Drop(GameObject item, GameObject user);
 }
