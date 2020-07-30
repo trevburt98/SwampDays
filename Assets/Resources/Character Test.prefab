@@ -1146,6 +1146,7 @@ MonoBehaviour:
   playerMenuController: {fileID: 0}
   camera: {fileID: 2437034965261296925}
   hand: {fileID: 5007775752722039148}
+  alchemyController: {fileID: 0}
   conversationController: {fileID: 2437034965516316540}
   strength: 5
   endurance: 5

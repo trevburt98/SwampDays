@@ -175,24 +175,29 @@ namespace Character.PlayerCharacter
         // Update is called once per frame
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Tab) && !inMenu)
+            if (Input.GetKeyDown(KeyCode.Tab))
             {
-                TogglePlayerMenu(true);
+                inMenu = !inMenu;
+                TogglePlayerMenu(inMenu);
             }
+            //if (Input.GetKeyDown(KeyCode.Tab) && !inMenu)
+            //{
+            //    TogglePlayerMenu(true);
+            //}
 
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                if (!inMenu)
-                {
-                    //TODO: Do a pause
-                }
-                else
-                {
-                    TogglePlayerMenu(false);
-                    ToggleAlchemyMenu(false, null);
-                }
+            //if (Input.GetKeyDown(KeyCode.Escape))
+            //{
+            //    if (!inMenu)
+            //    {
+            //        //TODO: Do a pause
+            //    }
+            //    else
+            //    {
+            //        TogglePlayerMenu(false);
+            //        ToggleAlchemyMenu(false, null);
+            //    }
 
-            }
+            //}
 
             if (!inMenu)
             {
