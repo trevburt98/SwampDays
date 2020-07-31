@@ -593,12 +593,12 @@ namespace Character.PlayerCharacter
             }
         }
 
-        public void ToggleAlchemyMenu(bool newInMenu, List<AlchemyBase> baseList)
+        public void ToggleAlchemyMenu(bool newInMenu, List<AlchemyBase> baseList, int numIngredients)
         {
             if (newInMenu != alchemyController.gameObject.activeInHierarchy)
             {
                 fpsController.inMenu = inMenu = newInMenu;
-                alchemyController.ToggleAlchemyMenu(newInMenu, baseList);
+                alchemyController.ToggleAlchemyMenu(newInMenu, baseList, numIngredients);
                 Cursor.visible = inMenu;
                 if (inMenu)
                 {

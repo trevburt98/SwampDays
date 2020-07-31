@@ -51,7 +51,7 @@ public class HealConsumableExample : MonoBehaviour, IConsumable
         get => _spaces;
         set => _spaces = value;
     }
-    private List<int> _tags = new List<int>(){4};
+    private List<int> _tags = new List<int>(){3, 4};
     public List<int> Tags{
         get => _tags;
     }

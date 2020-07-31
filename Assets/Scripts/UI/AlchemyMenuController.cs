@@ -8,14 +8,20 @@ using UnityEngine.UI;
 
 public class AlchemyMenuController : MonoBehaviour
 {
+    public GameObject selectedIngredientButton;
+
     public GameObject basePanel;
     public GameObject baseButtonPrefab;
 
+    public GameObject selectedPanel;
     public GameObject inventoryPanel;
+    public GameObject ingredientButton;
 
     public PlayerCharacter player;
 
     private AlchemyBase selectedBase;
+
+    private Button currentButton;
 
     // Start is called before the first frame update
     void Start()
@@ -29,7 +35,7 @@ public class AlchemyMenuController : MonoBehaviour
         
     }
 
-    public void ToggleAlchemyMenu(bool active, List<AlchemyBase> baseList)
+    public void ToggleAlchemyMenu(bool active, List<AlchemyBase> baseList, int numIngredients)
     {
         try
         {
@@ -41,6 +47,14 @@ public class AlchemyMenuController : MonoBehaviour
                 newObj.GetComponentInChildren<Text>().text = alchemyBase.BaseName;
                 newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { SetSelectedBase(alchemyBase); });
             }
+
+            for(int i = 0; i < numIngredients; i++)
+            {
+                GameObject newObj = GameObject.Instantiate(selectedIngredientButton);
+                newObj.transform.parent = selectedPanel.transform;
+            }
+
+            PopulateApplicableInventory();
         } catch(NullReferenceException e)
         {
             Debug.Log("closing");
@@ -56,6 +70,24 @@ public class AlchemyMenuController : MonoBehaviour
 
     private void PopulateApplicableInventory()
     {
-        
+        foreach(Transform trans in player.Bag.transform)
+        {
+            IItem item = trans.gameObject.GetComponent<IItem>();
+            foreach(int tag in item.Tags)
+            {
+                if (tag == 3)
+                {
+                    GameObject newObj = GameObject.Instantiate(ingredientButton);
+                    newObj.transform.parent = inventoryPanel.transform;
+                    newObj.GetComponentInChildren<Text>().text = item.Name;
+                    newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { SetSelectedIngredient(item); });
+                }
+            }
+        }
+    }
+
+    private void SetSelectedIngredient(IItem ingredient)
+    {
+        Debug.Log("setting " + ingredient.Name);
     }
 }

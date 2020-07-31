@@ -52,7 +52,7 @@ public class HarmConsumableExample : MonoBehaviour, IConsumable
         set => _spaces = value;
     }
 
-    private List<int> _tags = new List<int>(){5};
+    private List<int> _tags = new List<int>(){3, 5};
     public List<int> Tags{
         get => _tags;
     }
