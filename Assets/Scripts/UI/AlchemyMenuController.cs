@@ -22,6 +22,7 @@ public class AlchemyMenuController : MonoBehaviour
     private AlchemyBase selectedBase;
 
     private Button currentButton;
+    List<GameObject> currentButtons;
 
     // Start is called before the first frame update
     void Start()
@@ -52,6 +53,7 @@ public class AlchemyMenuController : MonoBehaviour
             {
                 GameObject newObj = GameObject.Instantiate(selectedIngredientButton);
                 newObj.transform.parent = selectedPanel.transform;
+                currentButtons.Add(newObj);
             }
 
             PopulateApplicableInventory();
