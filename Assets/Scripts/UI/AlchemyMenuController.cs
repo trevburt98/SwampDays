@@ -21,13 +21,13 @@ public class AlchemyMenuController : MonoBehaviour
 
     private AlchemyBase selectedBase;
 
-    private Button currentButton;
     List<GameObject> currentButtons;
+    List<IItem> currentIngredients;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -49,11 +49,15 @@ public class AlchemyMenuController : MonoBehaviour
                 newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { SetSelectedBase(alchemyBase); });
             }
 
+            currentButtons = new List<GameObject>();
+            currentIngredients = new List<IItem>();
+
             for(int i = 0; i < numIngredients; i++)
             {
                 GameObject newObj = GameObject.Instantiate(selectedIngredientButton);
                 newObj.transform.parent = selectedPanel.transform;
                 currentButtons.Add(newObj);
+                currentIngredients.Add(null);
             }
 
             PopulateApplicableInventory();
@@ -82,14 +86,32 @@ public class AlchemyMenuController : MonoBehaviour
                     GameObject newObj = GameObject.Instantiate(ingredientButton);
                     newObj.transform.parent = inventoryPanel.transform;
                     newObj.GetComponentInChildren<Text>().text = item.Name;
-                    newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { SetSelectedIngredient(item); });
+                    newObj.GetComponentInChildren<Button>().onClick.AddListener(delegate { SetSelectedIngredient(item, newObj); });
                 }
             }
         }
     }
 
-    private void SetSelectedIngredient(IItem ingredient)
+    private void SetSelectedIngredient(IItem ingredient, GameObject button)
     {
-        Debug.Log("setting " + ingredient.Name);
+        for(int i = 0; i < currentButtons.Count; i++)
+        {
+            if(currentIngredients[i] == null)
+            {
+                currentIngredients[i] = ingredient;
+                currentButtons[i].GetComponentInChildren<Text>().text = ingredient.Name;
+                currentButtons[i].GetComponentInChildren<Button>().onClick.AddListener(delegate { RemoveIngredient(i, button); });
+                button.GetComponentInChildren<Button>().enabled = false;
+                return;
+            }
+        }
+    }
+
+    private void RemoveIngredient(int ingredientIndex, GameObject buttonToReenable)
+    {
+        currentIngredients[ingredientIndex] = null;
+        currentButtons[ingredientIndex].GetComponentInChildren<Text>().text = "";
+        currentButtons[ingredientIndex].GetComponentInChildren<Button>().onClick.RemoveAllListeners();
+        buttonToReenable.GetComponentInChildren<Button>().enabled = true;
     }
 }
