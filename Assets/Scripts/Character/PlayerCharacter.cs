@@ -185,19 +185,19 @@ namespace Character.PlayerCharacter
             //    TogglePlayerMenu(true);
             //}
 
-            //if (Input.GetKeyDown(KeyCode.Escape))
-            //{
-            //    if (!inMenu)
-            //    {
-            //        //TODO: Do a pause
-            //    }
-            //    else
-            //    {
-            //        TogglePlayerMenu(false);
-            //        ToggleAlchemyMenu(false, null);
-            //    }
+            if (Input.GetKeyDown(KeyCode.Z))
+            {
+                if (!inMenu)
+                {
+                    //TODO: Do a pause
+                }
+                else
+                {
+                    TogglePlayerMenu(false);
+                    ToggleAlchemyMenu(false, null, -1);
+                }
 
-            //}
+            }
 
             if (!inMenu)
             {
