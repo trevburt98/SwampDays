@@ -2,20 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface AlchemyBase
+public interface IAlchemyIngredient
 {
-    GameObject ResultPrefab
-    {
-        get;
-        set;
-    }
-
-    string BaseName
+    int OptimalTemp
     {
         get;
     }
 
-    Sprite BaseImage
+    int MinTemp
+    {
+        get;
+    }
+
+    int MaxTemp
     {
         get;
     }

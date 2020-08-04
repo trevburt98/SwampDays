@@ -241,6 +241,7 @@ public class InventoryMenuController : MonoBehaviour
             case 8: return "Head Armor";
             case 9: return "Body Armor";
             case 10: return "Bag";
+            case 11: return "Alchemy Craftable";
             default: return null;
         }
     }

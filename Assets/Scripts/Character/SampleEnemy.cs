@@ -149,6 +149,11 @@ public class SampleEnemy : MonoBehaviour, INpc
 
     }
 
+    public void ChangeCurrentHealth(float healthChange)
+    {
+
+    }
+
     public void Die()
     {
         Debug.Log("well shit, guess i'll die then");

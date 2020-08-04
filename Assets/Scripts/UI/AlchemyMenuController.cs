@@ -166,4 +166,15 @@ public class AlchemyMenuController : MonoBehaviour
             Destroy(child.gameObject);
         }
     }
+
+    public void DoAlchemy()
+    {
+        GameObject resultPrefab = selectedBase.ResultPrefab;
+        Debug.Log(resultPrefab);
+        foreach(IItem item in currentIngredients)
+        {
+            Debug.Log(item.Name);
+        }
+        Debug.Log(heatSlider.value);
+    }
 }

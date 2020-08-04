@@ -73,5 +73,7 @@ public interface ICharacter<T>
 
     void Heal(T healthHealed);
 
+    void ChangeCurrentHealth(T healthChange);
+
     void Die();
 }

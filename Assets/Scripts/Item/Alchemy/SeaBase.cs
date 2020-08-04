@@ -8,6 +8,7 @@ public class SeaBase : AlchemyBase
     public GameObject ResultPrefab
     {
         get => _resultPrefab;
+        set => _resultPrefab = value;
     }
 
     private string _baseName = "I catch these in animal crossing";
@@ -24,6 +25,6 @@ public class SeaBase : AlchemyBase
 
     public SeaBase()
     {
-
+        ResultPrefab = Resources.Load("Alchemy/Flask") as GameObject;
     }
 }

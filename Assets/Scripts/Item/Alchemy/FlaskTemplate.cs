@@ -1,10 +1,8 @@
-﻿using Character.PlayerCharacter;
-using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HealConsumableExample : MonoBehaviour, IConsumable, IAlchemyIngredient
+public class FlaskTemplate : MonoBehaviour, IConsumable
 {
     private bool _equippable = false;
     public bool Equippable
@@ -12,26 +10,27 @@ public class HealConsumableExample : MonoBehaviour, IConsumable, IAlchemyIngredi
         get => _equippable;
     }
 
-    private string _itemId = "consHealEx";
+    private string _itemId = "flaskTemplate";
     public string ID
     {
         get => _itemId;
     }
 
-    private string _itemName = "Example Healing Consumable";
+    private string _itemName = "Flask";
     public string Name
     {
         get => _itemName;
+        set => _itemName = value;
     }
 
-    private string _flavourText = "Example implementation of a consumable that heals the player. Used to create a workflow for future consumables";
+    private string _flavourText = "Example implementation of a crafted alchemy item. Used to create a workflow for future alchemy craftables";
     public string FlavourText
     {
         get => _flavourText;
         set => _flavourText = value;
     }
 
-    private float _weight = 15.6f;
+    private float _weight = 2f;
     public float Weight
     {
         get => _weight;
@@ -51,8 +50,9 @@ public class HealConsumableExample : MonoBehaviour, IConsumable, IAlchemyIngredi
         get => _spaces;
         set => _spaces = value;
     }
-    private List<int> _tags = new List<int>(){3, 4};
-    public List<int> Tags{
+    private List<int> _tags = new List<int>() { 4, 11 };
+    public List<int> Tags
+    {
         get => _tags;
     }
 
@@ -63,7 +63,7 @@ public class HealConsumableExample : MonoBehaviour, IConsumable, IAlchemyIngredi
         set => _itemImage = value;
     }
 
-    private int _maxStack = 10;
+    private int _maxStack = 1;
     public int MaxStack
     {
         get => _maxStack;
@@ -76,23 +76,7 @@ public class HealConsumableExample : MonoBehaviour, IConsumable, IAlchemyIngredi
         set => _currentStack = value;
     }
 
-    private int _optTemp = 375;
-    public int OptimalTemp
-    {
-        get => _optTemp;
-    }
-
-    private int _minTemp = 150;
-    public int MinTemp
-    {
-        get => _minTemp;
-    }
-
-    private int _maxTemp = 400;
-    public int MaxTemp
-    {
-        get => _maxTemp;
-    }
+    private int healthChangeAmount;
 
     public void Interact(GameObject user)
     {
@@ -100,8 +84,13 @@ public class HealConsumableExample : MonoBehaviour, IConsumable, IAlchemyIngredi
         character.Bag.GetComponent<IBag>().Add(transform.gameObject, user);
     }
 
+    public void SetFlaskValues(int healthChange)
+    {
+        healthChangeAmount = healthChange;
+    }
+
     public void Use(ICharacter<float> user)
     {
-        user.Heal(10);
+        user.ChangeCurrentHealth(healthChangeAmount);
     }
 }

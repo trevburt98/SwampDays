@@ -283,6 +283,19 @@ namespace Character.PlayerCharacter
             healthUI.changeHealthUI(currentHealth);
         }
 
+        public void ChangeCurrentHealth(float healthChange)
+        {
+            currentHealth += healthChange;
+            if(currentHealth >= maxHealth)
+            {
+                currentHealth = maxHealth;
+            } else if(currentHealth <= 0)
+            {
+                Die();
+            }
+            healthUI.changeHealthUI(currentHealth);
+        }
+
         //ICharacter method for dying
         //TODO: implement death
         public void Die()
