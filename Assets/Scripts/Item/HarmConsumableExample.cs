@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HarmConsumableExample : MonoBehaviour, IConsumable
+public class HarmConsumableExample : MonoBehaviour, IConsumable, IAlchemyIngredient
 {
     private bool _equippable = false;
     public bool Equippable
@@ -52,7 +52,7 @@ public class HarmConsumableExample : MonoBehaviour, IConsumable
         set => _spaces = value;
     }
 
-    private List<int> _tags = new List<int>(){5};
+    private List<int> _tags = new List<int>(){3, 5};
     public List<int> Tags{
         get => _tags;
     }
@@ -75,6 +75,24 @@ public class HarmConsumableExample : MonoBehaviour, IConsumable
     {
         get => _currentStack;
         set => _currentStack = value;
+    }
+
+    private int _optTemp = 250;
+    public int OptimalTemp
+    {
+        get => _optTemp;
+    }
+
+    private int _minTemp = 175;
+    public int MinTemp
+    {
+        get => _minTemp;
+    }
+
+    private int _maxTemp = 350;
+    public int MaxTemp
+    {
+        get => _maxTemp;
     }
 
     public void Interact(GameObject user)

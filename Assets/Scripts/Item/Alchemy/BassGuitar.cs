@@ -8,6 +8,7 @@ public class BassGuitar : AlchemyBase
     public GameObject ResultPrefab
     {
         get => _resultPrefab;
+        set => _resultPrefab = value;
     }
 
     private string _baseName = "Slappin the bass";
@@ -24,6 +25,6 @@ public class BassGuitar : AlchemyBase
 
     public BassGuitar()
     {
-
+        ResultPrefab = Resources.Load("Alchemy/Flask") as GameObject;
     }
 }

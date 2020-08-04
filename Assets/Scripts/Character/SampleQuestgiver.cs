@@ -169,6 +169,11 @@ public class SampleQuestgiver : MonoBehaviour, INpc
 
     }
 
+    public void ChangeCurrentHealth(float healthChange)
+    {
+
+    }
+
     public void Die()
     {
 

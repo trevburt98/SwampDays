@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class Base1 : AlchemyBase
 {
-    [SerializeField] private GameObject _resultPrefab;
+    private GameObject _resultPrefab;
     public GameObject ResultPrefab
     {
         get => _resultPrefab;
+        set => _resultPrefab = value;
     }
 
     private string _baseName = "Basey boy";
@@ -24,6 +25,6 @@ public class Base1 : AlchemyBase
 
     public Base1()
     {
-
+        ResultPrefab = Resources.Load("Alchemy/Flask") as GameObject;
     }
 }

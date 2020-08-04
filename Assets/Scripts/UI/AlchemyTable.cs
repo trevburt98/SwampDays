@@ -5,6 +5,8 @@ using Character.PlayerCharacter;
 
 public class AlchemyTable : MonoBehaviour
 {
+    int numIngredients = 2;
+
     void Start()
     {
         baseList.Add(new Base1());
@@ -18,6 +20,6 @@ public class AlchemyTable : MonoBehaviour
     List<AlchemyBase> baseList = new List<AlchemyBase>();
 
     public void Interact(PlayerCharacter character){
-        character.ToggleAlchemyMenu(true, baseList);
+        character.ToggleAlchemyMenu(true, baseList, numIngredients);
     }
 }

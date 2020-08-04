@@ -185,19 +185,19 @@ namespace Character.PlayerCharacter
             //    TogglePlayerMenu(true);
             //}
 
-            //if (Input.GetKeyDown(KeyCode.Escape))
-            //{
-            //    if (!inMenu)
-            //    {
-            //        //TODO: Do a pause
-            //    }
-            //    else
-            //    {
-            //        TogglePlayerMenu(false);
-            //        ToggleAlchemyMenu(false, null);
-            //    }
+            if (Input.GetKeyDown(KeyCode.Z))
+            {
+                if (!inMenu)
+                {
+                    //TODO: Do a pause
+                }
+                else
+                {
+                    TogglePlayerMenu(false);
+                    ToggleAlchemyMenu(false, null, -1);
+                }
 
-            //}
+            }
 
             if (!inMenu)
             {
@@ -279,6 +279,19 @@ namespace Character.PlayerCharacter
             if (currentHealth >= maxHealth)
             {
                 currentHealth = maxHealth;
+            }
+            healthUI.changeHealthUI(currentHealth);
+        }
+
+        public void ChangeCurrentHealth(float healthChange)
+        {
+            currentHealth += healthChange;
+            if(currentHealth >= maxHealth)
+            {
+                currentHealth = maxHealth;
+            } else if(currentHealth <= 0)
+            {
+                Die();
             }
             healthUI.changeHealthUI(currentHealth);
         }
@@ -593,12 +606,12 @@ namespace Character.PlayerCharacter
             }
         }
 
-        public void ToggleAlchemyMenu(bool newInMenu, List<AlchemyBase> baseList)
+        public void ToggleAlchemyMenu(bool newInMenu, List<AlchemyBase> baseList, int numIngredients)
         {
             if (newInMenu != alchemyController.gameObject.activeInHierarchy)
             {
                 fpsController.inMenu = inMenu = newInMenu;
-                alchemyController.ToggleAlchemyMenu(newInMenu, baseList);
+                alchemyController.ToggleAlchemyMenu(newInMenu, baseList, numIngredients);
                 Cursor.visible = inMenu;
                 if (inMenu)
                 {
