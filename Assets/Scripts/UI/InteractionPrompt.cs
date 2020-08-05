@@ -12,12 +12,6 @@ public class InteractionPrompt : MonoBehaviour
         text = GetComponent<Text>();
     }
 
-    public void promptPickup(string interactableString)
-    {
-        string outString = "[E] Pickup " + interactableString;
-        text.text = outString;
-    }
-
     public void promptTalk(string NpcName)
     {
         string outString = "[E] Talk to " + NpcName;

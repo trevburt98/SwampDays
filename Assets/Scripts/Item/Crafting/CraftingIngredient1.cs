@@ -22,6 +22,13 @@ public class CraftingIngredient1 : MonoBehaviour, IItem, ICraftingIngredient
         get => _itemName;
     }
 
+    private string _interactPrompt = "Pick up example crafting ingredient 1";
+    public string InteractPrompt
+    {
+        get => _interactPrompt;
+        set => _interactPrompt = value;
+    }
+
     private string _flavourText = "Example implementation of a crafting ingredient. Used to create a workflow for future ingredients";
     public string FlavourText
     {

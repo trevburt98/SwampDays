@@ -437,7 +437,7 @@ namespace Character.PlayerCharacter
                 if (hit.transform.GetComponent<IInteractable>() != null)
                 {
                     IInteractable interactable = hit.transform.gameObject.GetComponent<IInteractable>();
-                    interactionPrompt.promptPickup(interactable.Name);
+                    interactionPrompt.displayPrompt(interactable.InteractPrompt);
                     try
                     {
                         if (Input.GetKeyDown(KeyCode.E))

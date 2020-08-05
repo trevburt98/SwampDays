@@ -9,5 +9,11 @@ public interface IInteractable
         get;
     }
 
+    string InteractPrompt
+    {
+        get;
+        set;
+    }
+
     void Interact(GameObject user);
 }

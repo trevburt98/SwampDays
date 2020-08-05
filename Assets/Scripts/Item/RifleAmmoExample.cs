@@ -22,6 +22,13 @@ public class RifleAmmoExample : MonoBehaviour, IAmmo
         get => _itemName;
     }
 
+    private string _interactPrompt = "Pick up rifle ammo";
+    public string InteractPrompt
+    {
+        get => _interactPrompt;
+        set => _interactPrompt = value;
+    }
+
     private string _flavourText = "Example implementation of ammo for the rifle. Used to create a workflow for future ammo types";
     public string FlavourText
     {
@@ -86,6 +93,11 @@ public class RifleAmmoExample : MonoBehaviour, IAmmo
     public int Effect
     {
         get => _effect;
+    }
+
+    public void Start()
+    {
+        InteractPrompt += ("x" + NumInStack);
     }
 
     public void Interact(GameObject user)
