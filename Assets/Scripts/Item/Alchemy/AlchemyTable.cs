@@ -3,8 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Character.PlayerCharacter;
 
-public class AlchemyTable : MonoBehaviour
+public class AlchemyTable : MonoBehaviour, IInteractable
 {
+    private string _name = "Alchemy Table";
+    public string Name
+    {
+        get => _name;
+    }
+
     int numIngredients = 2;
 
     void Start()
@@ -19,7 +25,8 @@ public class AlchemyTable : MonoBehaviour
 
     List<AlchemyBase> baseList = new List<AlchemyBase>();
 
-    public void Interact(PlayerCharacter character){
-        character.ToggleAlchemyMenu(true, baseList, numIngredients);
+    public void Interact(GameObject character){
+        PlayerCharacter player = character.GetComponent<PlayerCharacter>();
+        player.ToggleAlchemyMenu(true, baseList, numIngredients);
     }
 }

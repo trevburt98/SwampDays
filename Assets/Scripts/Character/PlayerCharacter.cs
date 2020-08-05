@@ -463,15 +463,6 @@ namespace Character.PlayerCharacter
                         beginConversation(npc);
                     }
                 }
-                //TODO: Remove this when merging with the IInteractable changes
-                else if (hit.transform.gameObject.GetComponent<AlchemyTable>() != null)
-                {
-                    interactionPrompt.displayPrompt("Do Alchemy");
-                    AlchemyTable alchemyTable = hit.transform.gameObject.GetComponent<AlchemyTable>();
-                    if (Input.GetKeyDown(KeyCode.E))
-                    {
-                        alchemyTable.Interact(this);
-                    }
                 //    
 
                 //    //Throw up the prompt for this interaction
@@ -513,7 +504,6 @@ namespace Character.PlayerCharacter
                 //    {
                 //        beginConversation(npc);    
                 //    }
-                }
             }
             //Otherwise, remove the interaction prompt from the screen
             //TODO: I would like to change this so that it isn't calling this more than necessary
