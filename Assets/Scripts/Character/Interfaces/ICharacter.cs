@@ -3,12 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 public interface ICharacter<T>
 {
-    string Name
-    {
-        get;
-        set;
-    }
-
     int Strength
     {
         get;

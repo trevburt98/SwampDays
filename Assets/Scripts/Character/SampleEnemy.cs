@@ -13,6 +13,13 @@ public class SampleEnemy : MonoBehaviour, INpc
         set => _name = value;
     }
 
+    private string _interactPrompt = "";
+    public string InteractPrompt
+    {
+        get => _interactPrompt;
+        set => _interactPrompt = value;
+    }
+
     //Strength affects how much melee damage a character does and the player character's various carrying tiers
     private int _strength = 5;
     public int Strength
@@ -178,5 +185,10 @@ public class SampleEnemy : MonoBehaviour, INpc
     public void endConversation()
     {
         
+    }
+
+    public void Interact(GameObject user)
+    {
+
     }
 }

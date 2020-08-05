@@ -380,6 +380,17 @@ namespace Character.PlayerCharacter
                 applyCurrentTier();
             }
         }
+
+        public void beginConversation(INpc conversationPartner)
+        {
+            fpsController.inMenu = inMenu = true;
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
+
+            conversationController.setConversationPartner(conversationPartner);
+            conversationController.toggleConversationCanvas(true);
+            interactionPrompt.removePrompt();
+        }
         #endregion
 
         #region Private Functions
@@ -451,63 +462,9 @@ namespace Character.PlayerCharacter
                         Debug.Log("no bag equipped");
                     }
                 }
-                //If the raycast instead hit an NPC that can be talked to
-                else if (hit.transform.gameObject.GetComponent<INpc>() != null)
-                {
-                    INpc npc = hit.transform.gameObject.GetComponent<INpc>();
-
-                    //Throw up the prompt to talk to that specific NPC
-                    interactionPrompt.promptTalk(npc.Name);
-                    if (Input.GetKeyDown(KeyCode.E))
-                    {
-                        beginConversation(npc);
-                    }
-                }
-                //    
-
-                //    //Throw up the prompt for this interaction
-                //    interactionPrompt.promptPickup(item.Name);
-                //    //If the player presses the interaction button
-                //    try
-                //    {
-                //        if (Input.GetKeyDown(KeyCode.E))
-                //        {
-                //            if (item is IBag && bag == null)
-                //            {
-                //                //IBag bag = interactable as IBag;
-                //                //this.bag = bag;
-                //                //Destroy(hit.transform.gameObject);
-                //                hit.transform.gameObject.SetActive(false);
-                //                hit.transform.parent = gameObject.transform;
-                //                bag = hit.transform.gameObject;
-                //            }
-                //            else if (bag.GetComponent<IBag>().Add(hit.transform.gameObject))
-                //            {
-                //                updateCarryingCapacity(item.Weight);
-                //                //Destroy(hit.transform.gameObject);
-                //            }
-                //        }
-                //    }
-                //    catch (NullReferenceException e)
-                //    {
-                //        Debug.Log("no bag equipped");
-                //    }
-                //}
-                ////If the raycast instead hit an NPC that can be talked to
-                //else if(hit.transform.gameObject.GetComponent<INpc>() != null)
-                //{
-                //    INpc npc = hit.transform.gameObject.GetComponent<INpc>();
-
-                //    //Throw up the prompt to talk to that specific NPC
-                //    interactionPrompt.promptTalk(npc.Name);
-                //    if(Input.GetKeyDown(KeyCode.E))
-                //    {
-                //        beginConversation(npc);    
-                //    }
             }
             //Otherwise, remove the interaction prompt from the screen
-            //TODO: I would like to change this so that it isn't calling this more than necessary
-            else
+            else if(interactionPrompt.currentlyDisplaying)
             {
                 interactionPrompt.removePrompt();
             }
@@ -633,17 +590,6 @@ namespace Character.PlayerCharacter
                     Cursor.lockState = CursorLockMode.Locked;
                 }
             }
-        }
-
-        private void beginConversation(INpc conversationPartner)
-        {
-            fpsController.inMenu = inMenu = true;
-            Cursor.lockState = CursorLockMode.Confined;
-            Cursor.visible = true;
-
-            conversationController.setConversationPartner(conversationPartner);
-            conversationController.toggleConversationCanvas(true);
-            interactionPrompt.removePrompt();
         }
 
         public void exitConversation()
