@@ -53,6 +53,13 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         get => _weaponName;
     }
 
+    private string _interactPrompt = "Pick up rifle";
+    public string InteractPrompt
+    {
+        get => _interactPrompt;
+        set => _interactPrompt = value;
+    }
+
     [SerializeField] private string _flavourText = "Example implementation of a ranged weapon. Used to create a workflow for future weapons";
     public string FlavourText
     {

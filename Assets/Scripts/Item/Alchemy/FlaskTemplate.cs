@@ -23,6 +23,13 @@ public class FlaskTemplate : MonoBehaviour, IConsumable
         set => _itemName = value;
     }
 
+    private string _interactPrompt = "Pick up flask";
+    public string InteractPrompt
+    {
+        get => _interactPrompt;
+        set => _interactPrompt = value;
+    }
+
     private string _flavourText = "Example implementation of a crafted alchemy item. Used to create a workflow for future alchemy craftables";
     public string FlavourText
     {

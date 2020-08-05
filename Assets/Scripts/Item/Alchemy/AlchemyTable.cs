@@ -11,6 +11,13 @@ public class AlchemyTable : MonoBehaviour, IInteractable
         get => _name;
     }
 
+    private string _interactPrompt = "Use alchemy table";
+    public string InteractPrompt
+    {
+        get => _interactPrompt;
+        set => _interactPrompt = value;
+    }
+
     int numIngredients = 2;
 
     void Start()

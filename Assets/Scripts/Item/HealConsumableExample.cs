@@ -24,6 +24,13 @@ public class HealConsumableExample : MonoBehaviour, IConsumable, IAlchemyIngredi
         get => _itemName;
     }
 
+    private string _interactPrompt = "Pick up example healing consumable";
+    public string InteractPrompt
+    {
+        get => _interactPrompt;
+        set => _interactPrompt = value;
+    }
+
     private string _flavourText = "Example implementation of a consumable that heals the player. Used to create a workflow for future consumables";
     public string FlavourText
     {

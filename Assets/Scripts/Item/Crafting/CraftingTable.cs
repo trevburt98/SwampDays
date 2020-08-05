@@ -11,6 +11,13 @@ public class CraftingTable : MonoBehaviour, IInteractable
         get => _name;
     }
 
+    private string _interactPrompt = "Use crafting table";
+    public string InteractPrompt
+    {
+        get => _interactPrompt;
+        set => _interactPrompt = value;
+    }
+
     int numIngredients = 3;
 
     public void Interact(GameObject player)

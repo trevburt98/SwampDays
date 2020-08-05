@@ -24,6 +24,13 @@ public class HeadEquipExample : MonoBehaviour, IEquipment
         get => _name;
     }
 
+    private string _interactPrompt = "Pick up head equipment";
+    public string InteractPrompt
+    {
+        get => _interactPrompt;
+        set => _interactPrompt = value;
+    }
+
     private string _flavourText = "Example implementation of a equipment equipped on the head. Used to create a workflow for future equipments";
     public string FlavourText
     {

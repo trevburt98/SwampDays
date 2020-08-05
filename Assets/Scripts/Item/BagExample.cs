@@ -24,6 +24,13 @@ public class BagExample : MonoBehaviour, IBag
         get => _name;
     }
 
+    private string _interactPrompt = "Pick up bag";
+    public string InteractPrompt
+    {
+        get => _interactPrompt;
+        set => _interactPrompt = value;
+    }
+
     private string _flavourText = "An example bag, used to establish workflow for future bags";
     public string FlavourText
     {

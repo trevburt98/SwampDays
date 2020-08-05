@@ -28,6 +28,13 @@ public class Harvestable : MonoBehaviour, IInteractable
         get => _name;
     }
 
+    private string _interactPrompt = "Harvest";
+    public string InteractPrompt
+    {
+        get => _interactPrompt;
+        set => _interactPrompt = value;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
