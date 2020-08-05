@@ -131,6 +131,7 @@ namespace Character.PlayerCharacter
         //Reference to the hand gameobject
         [SerializeField] private GameObject hand;
         [SerializeField] private AlchemyMenuController alchemyController;
+        [SerializeField] private CraftingMenuController craftingController;
         //Reference to the health readout on the UI
         private HealthReadout healthUI;
         //Reference to the stamina readout on the UI
@@ -195,6 +196,7 @@ namespace Character.PlayerCharacter
                 {
                     TogglePlayerMenu(false);
                     ToggleAlchemyMenu(false, null, -1);
+                    ToggleCraftingMenu(false, -1);
                 }
 
             }
@@ -445,6 +447,7 @@ namespace Character.PlayerCharacter
                     }
                     catch (NullReferenceException e)
                     {
+                        Debug.Log(e);
                         Debug.Log("no bag equipped");
                     }
                 }
@@ -622,7 +625,24 @@ namespace Character.PlayerCharacter
                     Cursor.lockState = CursorLockMode.Locked;
                 }
             }
+        }
 
+        public void ToggleCraftingMenu(bool newInMenu, int numIngredients)
+        {
+            if(newInMenu != craftingController.gameObject.activeInHierarchy)
+            {
+                fpsController.inMenu = inMenu = newInMenu;
+                craftingController.ToggleCraftingMenu(newInMenu, numIngredients);
+                Cursor.visible = inMenu;
+                if (inMenu)
+                {
+                    Cursor.lockState = CursorLockMode.Confined;
+                }
+                else
+                {
+                    Cursor.lockState = CursorLockMode.Locked;
+                }
+            }
         }
 
         private void beginConversation(INpc conversationPartner)
