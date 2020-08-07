@@ -2105,15 +2105,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 977819854, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
+    - target: {fileID: 1415243604, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
       propertyPath: questManager
       value: 
       objectReference: {fileID: 505936664}
-    - target: {fileID: 1184684982, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1415243604, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
+    - target: {fileID: 7667149694644921499, guid: 5e9e851c0e142814dac026a256ba2ac0,
+        type: 3}
       propertyPath: questManager
       value: 
       objectReference: {fileID: 505936664}
