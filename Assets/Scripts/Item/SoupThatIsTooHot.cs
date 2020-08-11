@@ -23,6 +23,13 @@ public class SoupThatIsTooHot : MonoBehaviour, IConsumable
         get => _itemName;
     }
 
+    private string _interactPrompt = "Pick up that hot ass soup";
+    public string InteractPrompt
+    {
+        get => _interactPrompt;
+        set => _interactPrompt = value;
+    }
+
     private string _flavourText = "This is a bowl of soup that is too hot to be eaten safely. Conveniently for the purpose of testing items with multiple tags on them, that means that this is simultaneously a food, drink, healing, and harmful item.";
     public string FlavourText
     {

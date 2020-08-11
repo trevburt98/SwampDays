@@ -233,7 +233,7 @@ public class InventoryMenuController : MonoBehaviour
             case 0: return "Rifle";
             case 1: return "Handgun";
             case 2: return "Ammunition";
-            case 3: return "Ingredient";
+            case 3: return "Alchemy Ingredient";
             case 4: return "Healing Item";
             case 5: return "Harmful Item";
             case 6: return "Food";
@@ -242,6 +242,7 @@ public class InventoryMenuController : MonoBehaviour
             case 9: return "Body Armor";
             case 10: return "Bag";
             case 11: return "Alchemy Craftable";
+            case 12: return "Crafting Ingredient";
             default: return null;
         }
     }

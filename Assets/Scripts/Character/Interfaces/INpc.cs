@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface INpc : ICharacter<float>
+public interface INpc : ICharacter<float>, IInteractable
 {
     //The NPCs opinion of the player. -100 is extremely hostile, 0 is neutral, and 100 is big like
     int Opinion

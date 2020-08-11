@@ -131,6 +131,7 @@ namespace Character.PlayerCharacter
         //Reference to the hand gameobject
         [SerializeField] private GameObject hand;
         [SerializeField] private AlchemyMenuController alchemyController;
+        [SerializeField] private CraftingMenuController craftingController;
         //Reference to the health readout on the UI
         private HealthReadout healthUI;
         //Reference to the stamina readout on the UI
@@ -195,6 +196,7 @@ namespace Character.PlayerCharacter
                 {
                     TogglePlayerMenu(false);
                     ToggleAlchemyMenu(false, null, -1);
+                    ToggleCraftingMenu(false, -1);
                 }
 
             }
@@ -378,6 +380,17 @@ namespace Character.PlayerCharacter
                 applyCurrentTier();
             }
         }
+
+        public void beginConversation(INpc conversationPartner)
+        {
+            fpsController.inMenu = inMenu = true;
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
+
+            conversationController.setConversationPartner(conversationPartner);
+            conversationController.toggleConversationCanvas(true);
+            interactionPrompt.removePrompt();
+        }
         #endregion
 
         #region Private Functions
@@ -435,7 +448,7 @@ namespace Character.PlayerCharacter
                 if (hit.transform.GetComponent<IInteractable>() != null)
                 {
                     IInteractable interactable = hit.transform.gameObject.GetComponent<IInteractable>();
-                    interactionPrompt.promptPickup(interactable.Name);
+                    interactionPrompt.displayPrompt(interactable.InteractPrompt);
                     try
                     {
                         if (Input.GetKeyDown(KeyCode.E))
@@ -445,76 +458,13 @@ namespace Character.PlayerCharacter
                     }
                     catch (NullReferenceException e)
                     {
+                        Debug.Log(e);
                         Debug.Log("no bag equipped");
                     }
                 }
-                //If the raycast instead hit an NPC that can be talked to
-                else if (hit.transform.gameObject.GetComponent<INpc>() != null)
-                {
-                    INpc npc = hit.transform.gameObject.GetComponent<INpc>();
-
-                    //Throw up the prompt to talk to that specific NPC
-                    interactionPrompt.promptTalk(npc.Name);
-                    if (Input.GetKeyDown(KeyCode.E))
-                    {
-                        beginConversation(npc);
-                    }
-                }
-                //TODO: Remove this when merging with the IInteractable changes
-                else if (hit.transform.gameObject.GetComponent<AlchemyTable>() != null)
-                {
-                    interactionPrompt.displayPrompt("Do Alchemy");
-                    AlchemyTable alchemyTable = hit.transform.gameObject.GetComponent<AlchemyTable>();
-                    if (Input.GetKeyDown(KeyCode.E))
-                    {
-                        alchemyTable.Interact(this);
-                    }
-                //    
-
-                //    //Throw up the prompt for this interaction
-                //    interactionPrompt.promptPickup(item.Name);
-                //    //If the player presses the interaction button
-                //    try
-                //    {
-                //        if (Input.GetKeyDown(KeyCode.E))
-                //        {
-                //            if (item is IBag && bag == null)
-                //            {
-                //                //IBag bag = interactable as IBag;
-                //                //this.bag = bag;
-                //                //Destroy(hit.transform.gameObject);
-                //                hit.transform.gameObject.SetActive(false);
-                //                hit.transform.parent = gameObject.transform;
-                //                bag = hit.transform.gameObject;
-                //            }
-                //            else if (bag.GetComponent<IBag>().Add(hit.transform.gameObject))
-                //            {
-                //                updateCarryingCapacity(item.Weight);
-                //                //Destroy(hit.transform.gameObject);
-                //            }
-                //        }
-                //    }
-                //    catch (NullReferenceException e)
-                //    {
-                //        Debug.Log("no bag equipped");
-                //    }
-                //}
-                ////If the raycast instead hit an NPC that can be talked to
-                //else if(hit.transform.gameObject.GetComponent<INpc>() != null)
-                //{
-                //    INpc npc = hit.transform.gameObject.GetComponent<INpc>();
-
-                //    //Throw up the prompt to talk to that specific NPC
-                //    interactionPrompt.promptTalk(npc.Name);
-                //    if(Input.GetKeyDown(KeyCode.E))
-                //    {
-                //        beginConversation(npc);    
-                //    }
-                }
             }
             //Otherwise, remove the interaction prompt from the screen
-            //TODO: I would like to change this so that it isn't calling this more than necessary
-            else
+            else if(interactionPrompt.currentlyDisplaying)
             {
                 interactionPrompt.removePrompt();
             }
@@ -622,18 +572,24 @@ namespace Character.PlayerCharacter
                     Cursor.lockState = CursorLockMode.Locked;
                 }
             }
-
         }
 
-        private void beginConversation(INpc conversationPartner)
+        public void ToggleCraftingMenu(bool newInMenu, int numIngredients)
         {
-            fpsController.inMenu = inMenu = true;
-            Cursor.lockState = CursorLockMode.Confined;
-            Cursor.visible = true;
-
-            conversationController.setConversationPartner(conversationPartner);
-            conversationController.toggleConversationCanvas(true);
-            interactionPrompt.removePrompt();
+            if(newInMenu != craftingController.gameObject.activeInHierarchy)
+            {
+                fpsController.inMenu = inMenu = newInMenu;
+                craftingController.ToggleCraftingMenu(newInMenu, numIngredients);
+                Cursor.visible = inMenu;
+                if (inMenu)
+                {
+                    Cursor.lockState = CursorLockMode.Confined;
+                }
+                else
+                {
+                    Cursor.lockState = CursorLockMode.Locked;
+                }
+            }
         }
 
         public void exitConversation()

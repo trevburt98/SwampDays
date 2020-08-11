@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FlaskTemplate : MonoBehaviour, IConsumable
+public class CraftingIngredient2 : MonoBehaviour, IItem, ICraftingIngredient
 {
     private bool _equippable = false;
     public bool Equippable
@@ -10,41 +10,40 @@ public class FlaskTemplate : MonoBehaviour, IConsumable
         get => _equippable;
     }
 
-    private string _itemId = "flaskTemplate";
+    private string _itemId = "craftIngredient2Ex";
     public string ID
     {
         get => _itemId;
     }
 
-    private string _itemName = "Flask";
+    private string _itemName = "Example Crafting Ingredient 2";
     public string Name
     {
         get => _itemName;
-        set => _itemName = value;
     }
 
-    private string _interactPrompt = "Pick up flask";
+    private string _interactPrompt = "Pick up example crafting ingredient 2";
     public string InteractPrompt
     {
         get => _interactPrompt;
         set => _interactPrompt = value;
     }
 
-    private string _flavourText = "Example implementation of a crafted alchemy item. Used to create a workflow for future alchemy craftables";
+    private string _flavourText = "Example implementation of a crafting ingredient. Used to create a workflow for future ingredients";
     public string FlavourText
     {
         get => _flavourText;
         set => _flavourText = value;
     }
 
-    private float _weight = 2f;
+    private float _weight = 22.89f;
     public float Weight
     {
         get => _weight;
         set => _weight = value;
     }
 
-    private int _value = 5;
+    private int _value = 10;
     public int MonetaryValue
     {
         get => _value;
@@ -57,7 +56,8 @@ public class FlaskTemplate : MonoBehaviour, IConsumable
         get => _spaces;
         set => _spaces = value;
     }
-    private List<int> _tags = new List<int>() { 4, 11 };
+
+    private List<int> _tags = new List<int>() { 12 };
     public List<int> Tags
     {
         get => _tags;
@@ -70,7 +70,7 @@ public class FlaskTemplate : MonoBehaviour, IConsumable
         set => _itemImage = value;
     }
 
-    private int _maxStack = 1;
+    private int _maxStack = 2;
     public int MaxStack
     {
         get => _maxStack;
@@ -83,21 +83,15 @@ public class FlaskTemplate : MonoBehaviour, IConsumable
         set => _currentStack = value;
     }
 
-    private int healthChangeAmount;
+    private int _craftingId = 1;
+    public int CraftingID
+    {
+        get => _craftingId;
+    }
 
     public void Interact(GameObject user)
     {
         ICharacter<float> character = user.GetComponent<ICharacter<float>>();
         character.Bag.GetComponent<IBag>().Add(transform.gameObject, user);
-    }
-
-    public void SetFlaskValues(int healthChange)
-    {
-        healthChangeAmount = healthChange;
-    }
-
-    public void Use(ICharacter<float> user)
-    {
-        user.ChangeCurrentHealth(healthChangeAmount);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Character.PlayerCharacter;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
@@ -11,6 +12,13 @@ public class SampleQuestgiver : MonoBehaviour, INpc
     {
         get => _name;
         set => _name = value;
+    }
+
+    private string _interactPrompt = "Talk to Sample Questgiver";
+    public string InteractPrompt
+    {
+        get => _interactPrompt;
+        set => _interactPrompt = value;
     }
 
     //Strength affects how much melee damage a character does and the player character's various carrying tiers
@@ -177,6 +185,12 @@ public class SampleQuestgiver : MonoBehaviour, INpc
     public void Die()
     {
 
+    }
+
+    public void Interact(GameObject user)
+    {
+        PlayerCharacter player = user.GetComponent<PlayerCharacter>();
+        player.beginConversation(this);
     }
 
     public int startConversation()
