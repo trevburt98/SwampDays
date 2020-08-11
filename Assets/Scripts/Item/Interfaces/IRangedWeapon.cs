@@ -28,6 +28,12 @@ public interface IRangedWeapon : IWeapon
     }
 
     //Item Stats
+    float DamageModifier
+    {
+        get;
+        set;
+    }
+
     float Accuracy
     {
         get;
@@ -97,8 +103,74 @@ public interface IRangedWeapon : IWeapon
         set;
     }
 
+    bool HasBarrelAttachment
+    {
+        get;
+    }
+
+    float CooldownBetweenShots
+    {
+        get;
+    }
+
+    float CooldownBetweenShotsModifier
+    {
+        get;
+        set;
+    }
+
+    WeaponAttachment CurrentBarrelAttachment
+    {
+        get;
+        set;
+    }
+
+    bool HasGripAttachment
+    {
+        get;
+    }
+
+    WeaponAttachment CurrentGripAttachment
+    {
+        get;
+        set;
+    }
+
+    bool HasMagazineAttachment
+    {
+        get;
+    }
+
+    WeaponAttachment CurrentMagazineAttachment
+    {
+        get;
+        set;
+    }
+
+    bool HasSightAttachment
+    {
+        get;
+    }
+
+    WeaponAttachment CurrentSightAttachment
+    {
+        get;
+        set;
+    }
+
+    bool HasStockAttachment
+    {
+        get;
+    }
+
+    WeaponAttachment CurrentStockAttachment
+    {
+        get;
+        set;
+    }
+
     void Reload(int numToReload, ICharacter<float> character);
     void toggleADS(ICharacter<float> character);
-
     void HolsterWeapon(ICharacter<float> character);
+    void ModifyWeapon(GameObject newAttachment);
 }
