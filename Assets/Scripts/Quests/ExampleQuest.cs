@@ -84,7 +84,7 @@ public class ExampleQuest : MonoBehaviour, IQuest
         Status = 6;
 
         //This seems questionable, but y'know, whatever
-        GameObject reward = Instantiate(Resources.Load("consHealEx")) as GameObject;
+        GameObject reward = Instantiate(Resources.Load("Consumables/consHealEx")) as GameObject;
         reward.transform.parent = player.Bag.transform;
         Destroy(reward);
     }

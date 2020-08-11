@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
+using System.Net.Mail;
 
 public class RifleExample : MonoBehaviour, IRangedWeapon
 {
@@ -72,6 +73,13 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
     {
         get => _damage;
         set => _damage = value;
+    }
+
+    private float _damageModifier = 1;
+    public float DamageModifier
+    {
+        get => _damageModifier;
+        set => _damageModifier = value;
     }
 
     [SerializeField] private float _range = 50;
@@ -324,13 +332,86 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         set => _zoomModifier = value;
     }
 
-    [SerializeField] private float _timeToFire = 0.5f;
-    public float TimeToFire
+    [SerializeField] private float _cooldownBetweenShots = 0.5f;
+    public float CooldownBetweenShots
     {
-        get => _timeToFire;
+        get => _cooldownBetweenShots;
+    }
+
+    private float _cooldownBetweenShotsModifier;
+    public float CooldownBetweenShotsModifier
+    {
+        get => _cooldownBetweenShots;
+        set => _cooldownBetweenShots = value;
     }
     #endregion
 
+    #region Attachment Stuff
+    private bool _hasBarrel = true;
+    public bool HasBarrelAttachment
+    {
+        get => _hasBarrel;
+    }
+
+    private WeaponAttachment _barrelAttachment;
+    public WeaponAttachment CurrentBarrelAttachment
+    {
+        get => _barrelAttachment;
+        set => _barrelAttachment = value;
+    }
+
+    private bool _hasGrip = true;
+    public bool HasGripAttachment
+    {
+        get => _hasGrip;
+    }
+
+    private WeaponAttachment _gripAttachment;
+    public WeaponAttachment CurrentGripAttachment
+    {
+        get => _gripAttachment;
+        set => _gripAttachment = value;
+    }
+
+    private bool _hasMagazine = true;
+    public bool HasMagazineAttachment
+    {
+        get => _hasMagazine;
+    }
+
+    private WeaponAttachment _magazineAttachment;
+    public WeaponAttachment CurrentMagazineAttachment
+    {
+        get => _magazineAttachment;
+        set => _magazineAttachment = value;
+    }
+
+    private bool _hasSight = true;
+    public bool HasSightAttachment
+    {
+        get => _hasSight;
+    }
+
+    private WeaponAttachment _sightAttachment;
+    public WeaponAttachment CurrentSightAttachment
+    {
+        get => _sightAttachment;
+        set => _sightAttachment = value;
+    }
+
+    private bool _hasStock = true;
+    public bool HasStockAttachment
+    {
+        get => _hasStock;
+    }
+
+    private WeaponAttachment _stockAttachment;
+    public WeaponAttachment CurrentStockAttachment
+    {
+        get => _stockAttachment;
+        set => _stockAttachment = value;
+    }
+    #endregion
 
     [SerializeField] public GameObject BulletHole;
 
@@ -430,7 +511,7 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
                     }
                 }
                 GunKickAcc += Mathf.Lerp(GunKick, MinGunKick, character.getRifleSkillModifier()) * GunKickModifier;
-                anim["RifleFire"].speed = 1 / TimeToFire;
+                anim["RifleFire"].speed = 1 / CooldownBetweenShots;
                 anim.Play("RifleFire");
             }
             else
@@ -499,6 +580,67 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
                 Holster = true;
             }
         }
+    }
+
+    public void ModifyWeapon(GameObject newAttachment)
+    {
+        WeaponAttachment attachment = newAttachment.GetComponent<WeaponAttachment>();
+
+        //TODO: I hate having these two switch statements, but can't figure out another way to do it.
+        //Look into enums?
+        switch (attachment.attachmentType)
+        {
+            case 0:
+                CurrentBarrelAttachment = attachment;
+                break;
+            case 1:
+                CurrentGripAttachment = attachment;
+                break;
+            case 2:
+                CurrentMagazineAttachment = attachment;
+                break;
+            case 3:
+                CurrentSightAttachment = attachment;
+                break;
+            case 4:
+                CurrentStockAttachment = attachment;
+                break;
+        }
+
+        foreach (WeaponModifier mod in attachment.modifierList)
+        {
+            switch (mod.modificationType)
+            {
+                case 0:
+                    DamageModifier = mod.modificationAmount;
+                    break;
+                case 1:
+                    HolsterSpeedModifier = mod.modificationAmount;
+                    break;
+                case 2:
+                    AccuracyModifier = mod.modificationAmount;
+                    break;
+                case 3:
+                    ADSAccuracyModifierModifier = mod.modificationAmount;
+                    break;
+                case 4:
+                    GunKickModifier = mod.modificationAmount;
+                    break;
+                case 5:
+                    ReloadSpeedModifier = mod.modificationAmount;
+                    break;
+                case 6:
+                    MagazineSizeModifier = (int)mod.modificationAmount;
+                    break;
+                case 7:
+                    ZoomModifier = mod.modificationAmount;
+                    break;
+                case 8:
+                    CooldownBetweenShotsModifier = mod.modificationAmount;
+                    break;
+            }
+        }
+        newAttachment.transform.parent = this.transform;
     }
 
     void IWeapon.Break()

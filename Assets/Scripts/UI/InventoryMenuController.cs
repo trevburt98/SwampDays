@@ -19,6 +19,7 @@ public class InventoryMenuController : MonoBehaviour
     public Button useButton;
     public Button equipButton;
     public Button dropButton;
+    public Button modifyButton;
 
     private PlayerCharacter player;
     private EquipmentManager equipmentManager;
@@ -176,6 +177,11 @@ public class InventoryMenuController : MonoBehaviour
         PopulateInventory();
     }
 
+    void ToggleWeaponModifyCanvas(GameObject objectToModify)
+    {
+
+    }
+
     void DropItem(GameObject item)
     {
         player.Bag.GetComponent<IBag>().Drop(item, playerObject);
@@ -243,6 +249,12 @@ public class InventoryMenuController : MonoBehaviour
             case 10: return "Bag";
             case 11: return "Alchemy Craftable";
             case 12: return "Crafting Ingredient";
+            case 13: return "Attachment";
+            case 14: return "Stock Attachment";
+            case 15: return "Sight Attachment";
+            case 16: return "Magazine Attachment";
+            case 17: return "Grip Attachment";
+            case 18: return "Barrel Attachment";
             default: return null;
         }
     }
