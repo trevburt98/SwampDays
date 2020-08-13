@@ -126,6 +126,7 @@ namespace Character.PlayerCharacter
         [SerializeField] private GameObject playerMenuCanvas;
         //Reference to the Player Menu Controller
         [SerializeField] private PlayerMenuController playerMenuController;
+        [SerializeField] private GameObject notesOverlayCanvas;
         //Reference to the camera of the character
         [SerializeField] private Camera camera;
         //Reference to the hand gameobject
@@ -140,7 +141,7 @@ namespace Character.PlayerCharacter
         private InteractionPrompt interactionPrompt;
         //Reference to the conversation controller controlling the conversation canvas
         [SerializeField] private ConversationController conversationController;
-
+        private bool notesOpen = false;
         //TEMP
         //Public versions to quickly change from unity editor
         public int strength;
@@ -149,6 +150,7 @@ namespace Character.PlayerCharacter
         public int moveSpeed;
 
         private bool inMenu = false;
+        private bool mouseFree = false;
 
         void Start()
         {
@@ -199,6 +201,15 @@ namespace Character.PlayerCharacter
                     ToggleCraftingMenu(false, -1);
                 }
 
+            }
+
+            if (Input.GetKeyDown(KeyCode.J)){
+                notesOpen = !notesOpen;
+                notesOverlayCanvas.SetActive(notesOpen);
+            }
+
+            if (Input.GetKeyDown(KeyCode.P)){
+                ToggleMouseFree();
             }
 
             if (!inMenu)
@@ -554,6 +565,21 @@ namespace Character.PlayerCharacter
                     Cursor.lockState = CursorLockMode.Locked;
                 }
             }
+        }
+
+        private void ToggleMouseFree(){
+            mouseFree = !mouseFree;
+            fpsController.inMenu = mouseFree;
+            if (mouseFree)
+                {
+                    Cursor.lockState = CursorLockMode.Confined;
+                    Cursor.visible = true;
+                }
+                else
+                {
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                }
         }
 
         public void ToggleAlchemyMenu(bool newInMenu, List<AlchemyBase> baseList, int numIngredients)
