@@ -664,6 +664,17 @@ public class RifleExample : MonoBehaviour, IRangedWeapon
         }
     }
 
+    public bool Modifiable()
+    {
+        bool ret = false;
+        if(HasBarrelAttachment || HasGripAttachment || HasMagazineAttachment || HasSightAttachment || HasStockAttachment)
+        {
+            ret = true;
+        }
+
+        return ret;
+    }
+
     bool rifleBusy()
     {
         if (anim.isPlaying || Holster)

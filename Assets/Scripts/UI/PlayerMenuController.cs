@@ -74,6 +74,6 @@ public class PlayerMenuController : MonoBehaviour
         journalCanvas.SetActive(true);
 
         lastTab = 2;
-        journalCanvas.GetComponentInChildren<JournalController>().PopulateJournal();
+        journalCanvas.GetComponentInChildren<JournalController>().updateNavigation(false);
     }
 }

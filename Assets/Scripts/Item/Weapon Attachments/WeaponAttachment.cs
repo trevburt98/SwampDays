@@ -12,7 +12,7 @@ public class WeaponAttachment : MonoBehaviour, IItem
     //4 - Stock
     public int attachmentType;
     public List<WeaponModifier> modifierList;
-    public List<IRangedWeapon> validWeapons;
+    public List<string> validWeaponIds;
     #endregion
 
     #region Item Implementation

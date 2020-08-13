@@ -173,4 +173,5 @@ public interface IRangedWeapon : IWeapon
     void toggleADS(ICharacter<float> character);
     void HolsterWeapon(ICharacter<float> character);
     void ModifyWeapon(GameObject newAttachment);
+    bool Modifiable();
 }

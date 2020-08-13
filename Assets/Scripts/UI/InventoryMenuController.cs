@@ -16,10 +16,17 @@ public class InventoryMenuController : MonoBehaviour
 
     public Image itemImage;
     public Text itemDescription;
-    public Button useButton;
-    public Button equipButton;
-    public Button dropButton;
-    public Button modifyButton;
+    public GameObject useButtonObj;
+    public GameObject equipButtonObj;
+    public GameObject dropButtonObj;
+    public GameObject modifyButtonObj;
+
+    private Button useButton;
+    private Button equipButton;
+    private Button dropButton;
+    private Button modifyButton;
+
+    public RangedWeaponModifyController modifyController;
 
     private PlayerCharacter player;
     private EquipmentManager equipmentManager;
@@ -29,12 +36,18 @@ public class InventoryMenuController : MonoBehaviour
     {
         player = playerObject.GetComponent<PlayerCharacter>();
         equipmentManager = playerObject.GetComponent<EquipmentManager>();
+
+        useButton = useButtonObj.GetComponent<Button>();
+        equipButton = equipButtonObj.GetComponent<Button>();
+        dropButton = dropButtonObj.GetComponent<Button>();
+        modifyButton = modifyButtonObj.GetComponent<Button>();
+
+
         toggleAllButtons(false);
     }
 
     public void PopulateInventory()
     {
-        player = playerObject.GetComponent<PlayerCharacter>();
         //Delete the existing inventory
         foreach(Transform child in this.transform)
         {
@@ -89,28 +102,34 @@ public class InventoryMenuController : MonoBehaviour
         if (itemInfo is IConsumable)
         {
             useButton.onClick.AddListener(delegate { UseItem(itemObj); });
-            toggleUseButton(true);
+            ToggleButton(useButtonObj, true);
         } else if(itemInfo is IEquipment)
         {
             equipButton.onClick.AddListener(delegate { EquipItem(itemObj); });
-            toggleEquipButton(true);
+            ToggleButton(equipButtonObj, true);
         } else if(itemInfo is IWeapon)
         {
             equipButton.onClick.AddListener(delegate { EquipWeapon(itemObj, true); });
-            toggleEquipButton(true);
+            IRangedWeapon rangedWeapon = itemObj.GetComponent<IRangedWeapon>();
+            if(rangedWeapon.Modifiable())
+            {
+                modifyButtonObj.GetComponent<Button>().onClick.AddListener(delegate { ToggleWeaponModifyCanvas(itemObj); });
+                ToggleButton(modifyButtonObj, true);
+            }
+            ToggleButton(equipButtonObj, true);
         } else if(itemInfo is IBag)
         {
             //GameObject obj = (GameObject)Resources.Load(item.ID);
             //IBag bag = obj.GetComponent<IBag>();
             equipButton.onClick.AddListener(delegate { EquipBag(itemObj); });
-            toggleEquipButton(true);
+            ToggleButton(equipButtonObj, true);
         }
 
         itemDescription.text = itemInfo.FlavourText +  "\n" + getTagList(itemInfo.Tags);
         itemImage.sprite = itemInfo.ItemImage;
 
         dropButton.onClick.AddListener(delegate { DropItem(itemObj); });
-        toggleDropButton(true);
+        ToggleButton(dropButtonObj, true);
     }
 
     void ClearItemInfo()
@@ -120,6 +139,7 @@ public class InventoryMenuController : MonoBehaviour
         useButton.onClick.RemoveAllListeners();
         dropButton.onClick.RemoveAllListeners();
         equipButton.onClick.RemoveAllListeners();
+        modifyButton.onClick.RemoveAllListeners();
 
         toggleAllButtons(false);
     }
@@ -190,32 +210,17 @@ public class InventoryMenuController : MonoBehaviour
         PopulateInventory();
     }
 
+    void ToggleButton(GameObject buttonObj, bool toggleOn)
+    {
+        buttonObj.SetActive(toggleOn);
+    }
+
     void toggleAllButtons(bool toggleOn)
     {
-        toggleUseButton(toggleOn);
-        toggleEquipButton(toggleOn);
-        toggleDropButton(toggleOn);
-    }
-
-    void toggleUseButton(bool toggleOn)
-    {
-        useButton.GetComponent<Image>().enabled = toggleOn;
-        useButton.GetComponent<Button>().enabled = toggleOn;
-        useButton.GetComponentInChildren<Text>().enabled = toggleOn;
-    }
-
-    void toggleEquipButton(bool toggleOn)
-    {
-        equipButton.GetComponent<Image>().enabled = toggleOn;
-        equipButton.GetComponent<Button>().enabled = toggleOn;
-        equipButton.GetComponentInChildren<Text>().enabled = toggleOn;
-    }
-
-    void toggleDropButton(bool toggleOn)
-    {
-        dropButton.GetComponent<Image>().enabled = toggleOn;
-        dropButton.GetComponent<Button>().enabled = toggleOn;
-        dropButton.GetComponentInChildren<Text>().enabled = toggleOn;
+        ToggleButton(useButtonObj, toggleOn);
+        ToggleButton(equipButtonObj, toggleOn);
+        ToggleButton(dropButtonObj, toggleOn);
+        ToggleButton(modifyButtonObj, toggleOn);
     }
 
     string getTagList(List<int> tags){
