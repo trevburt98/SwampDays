@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using Character.PlayerCharacter;
+using Character.Extensions;
 
 public class SampleCombatant : MonoBehaviour, INpc
 {
@@ -14,6 +15,9 @@ public class SampleCombatant : MonoBehaviour, INpc
     [SerializeField] private float maxIdleTime;
     [SerializeField] private List<AudioClip> perkSounds;
     [SerializeField] private List<AudioClip> investigateSounds;
+    [SerializeField] private List<AudioClip> paranoidSounds;
+    [SerializeField] private List<AudioClip> alertSounds;
+    [SerializeField] private List<AudioClip> relaxSounds;
     [SerializeField] private AudioSource audioSource;
     private enum CombatState
     {
@@ -62,7 +66,7 @@ public class SampleCombatant : MonoBehaviour, INpc
     }
 
     //Strength affects how much melee damage a character does and the player character's various carrying tiers
-    private int _strength = 5;
+    private int _strength = 20;
     public int Strength
     {
         get => _strength;
@@ -167,11 +171,16 @@ public class SampleCombatant : MonoBehaviour, INpc
 
     private float maxHealth;
     private float currentHealth;
+    private float moveSpeed = 0;
+    private Vector3 lookAtTarget;
+    private bool hasLookAtTarget = false;
 
     // Start is called before the first frame update
     void Start()
     {
         maxHealth = currentHealth = Vitality * 2;
+        moveSpeed = this.calculateMoveSpeed();
+        toggleUrgency(false);
     }
     void Update()
     {
@@ -201,27 +210,67 @@ public class SampleCombatant : MonoBehaviour, INpc
                 }
                 break;
             case CombatState.Perked:
-                if (playerDetectionAccumulator >= 33){
+                if (playerDetectionAccumulator >= 33)
+                {
                     becomeInvestigating();
                 }
-                else if (!agent.hasPath){
+                else if (!agent.hasPath)
+                {
                     becomeRelaxing();
                 }
                 break;
             case CombatState.Investigating:
-                if (playerDetectionAccumulator >= 66){
+                if (playerDetectionAccumulator >= 66)
+                {
                     becomeParanoid();
                 }
-                else if(!agent.hasPath){
+                else if (!agent.hasPath)
+                {
                     becomeRelaxing();
                 }
                 break;
+            case CombatState.Paranoid:
+                if (playerDetectionAccumulator >= 100)
+                {
+                    becomeAlerted();
+                }
+                else if (detectionThisFrame)
+                {
+                    becomeParanoid();
+                }
+                else if (!agent.hasPath)
+                {
+                    becomeSearching();
+                }
+                break;
+            case CombatState.Alerted:
+                if (detectionThisFrame)
+                {
+                    becomeAlerted();
+                }
+                if (!agent.hasPath)
+                {
+                    becomeSearching();
+                }
+                break;
+            case CombatState.Searching:
+                if (detectionThisFrame)
+                {
+                    becomeParanoid();
+                }
+                if (!agent.hasPath)
+                {
+                    becomeSearching();
+                }
+                break;
             case CombatState.Relaxing:
-                if(playerDetectionAccumulator <= 0){
+                if (playerDetectionAccumulator <= 0)
+                {
                     playerDetectionAccumulator = 0;
                     becomePatrolling();
                 }
-                else if (!detectionThisFrame){
+                else if (!detectionThisFrame)
+                {
                     //TODO: Some kind of looking around animation
                     playerDetectionAccumulator -= Time.deltaTime * 10;
                 }
@@ -269,6 +318,7 @@ public class SampleCombatant : MonoBehaviour, INpc
         state = CombatState.Posted;
         timeSinceUpdate = 0;
         timeToUpdate = (float)random.NextDouble() * maxIdleTime + minIdleTime;
+        Debug.Log("Standin' around...");
     }
 
     private void becomePatrolling()
@@ -277,37 +327,100 @@ public class SampleCombatant : MonoBehaviour, INpc
         agent.SetDestination(patrolLocations[r].position);
         state = CombatState.Patrolling;
         timeSinceUpdate = 0;
+        Debug.Log("Patrollin' around...");
     }
 
     private void becomePerked()
     {
         state = CombatState.Perked;
-        Vector3 direction = Vector3.Normalize(lastKnownPlayerLocation -  eyes.position);
+        Vector3 direction = Vector3.Normalize(lastKnownPlayerLocation - eyes.position);
         agent.SetDestination(eyes.position + (direction * 3));
-        Debug.Log(agent.path.corners.Length);
-        if (agent.path.corners.Length > 2){
+        if (agent.path.corners.Length > 2)
+        {
             agent.SetDestination(eyes.position + direction);
-            if (agent.path.corners.Length > 2){
+            if (agent.path.corners.Length > 2)
+            {
                 agent.ResetPath();
             }
         }
         timeSinceUpdate = 0;
         //TODO: trigger vocal bark (e.g. "Huh?")
+        Debug.Log("Did I see something?");
     }
-    
-    private void becomeInvestigating(){
+
+    private void becomeInvestigating()
+    {
         state = CombatState.Investigating;
-        agent.SetDestination(lastKnownPlayerLocation);
+        agent.SetDestination(getChaseLocation(lastKnownPlayerLocation));
         timeSinceUpdate = 0;
         //TODO: trigger vocal bark (e.g. "Better check it out...")
+        Debug.Log("Lemme go check that out...");
     }
 
-    private void becomeParanoid(){
-
+    private void becomeParanoid()
+    {
+        state = CombatState.Paranoid;
+        //TODO: Alert Nearby Enemies, giving them 66 detection and causing them to become searching
+        agent.SetDestination(getChaseLocation(lastKnownPlayerLocation));
+        timeSinceUpdate = 0;
+        toggleUrgency(true);
+        Debug.Log("I think there's someone here");
     }
 
-    private void becomeRelaxing(){
+    private void becomeAlerted()
+    {
+        state = CombatState.Alerted;
+        //TODO: Alert Nearby Enemies, giving them 100 detection, accurately updating their lastKnownPlayerLocation, and causing them to become Alerted.
+        agent.SetDestination(getChaseLocation(lastKnownPlayerLocation));
+        timeSinceUpdate = 0;
+        toggleUrgency(true);
+        Debug.Log("I found him!");
+    }
+
+    private void becomeSearching()
+    {
+        state = CombatState.Searching;
+        //TODO: determine search desination some toher way?
+        int r = random.Next(patrolLocations.Count);
+        agent.SetDestination(patrolLocations[r].position);
+        timeSinceUpdate = 0;
+        toggleUrgency(false);
+        Debug.Log("I lost him!");
+    }
+
+    private void becomeRelaxing()
+    {
         state = CombatState.Relaxing;
+        timeSinceUpdate = 0;
+        Debug.Log("Guess it was nothing...");
+    }
+
+    private void toggleUrgency(bool urgent)
+    {
+        if (urgent)
+        {
+            agent.speed = moveSpeed * 2;
+            Debug.Log("Go go go!");
+        }
+        else
+        {
+            agent.speed = moveSpeed;
+        }
+    }
+
+    private Vector3 getChaseLocation(Vector3 playerLocation)
+    {
+        float playerDistance = Vector3.Distance(eyes.position, playerLocation);
+        if (playerDistance < 5)
+        {
+            return eyes.position;
+        }
+        else
+        {
+            Vector3 directionToPlayer = Vector3.Normalize(playerLocation - eyes.position);
+            return (eyes.position + (directionToPlayer * (playerDistance - 5)));
+        }
+
     }
 
     private void playerDetection()
@@ -315,7 +428,8 @@ public class SampleCombatant : MonoBehaviour, INpc
         detectionThisFrame = false;
         bool hasLineOfSight = false;
         RaycastHit hit;
-        if(Physics.Raycast(eyes.position, player.position - eyes.position, out hit, partialVisionRange)){
+        if (Physics.Raycast(eyes.position, player.position - eyes.position, out hit, partialVisionRange))
+        {
             hasLineOfSight = (hit.transform.GetComponent<PlayerCharacter>() != null);
         }
         float playerDistance = Vector3.Distance(eyes.position, player.position);
@@ -351,7 +465,8 @@ public class SampleCombatant : MonoBehaviour, INpc
             lastKnownPlayerLocation = player.position;
             detectionThisFrame = true;
         }
-        if (playerDetectionAccumulator > 100){
+        if (playerDetectionAccumulator > 100)
+        {
             playerDetectionAccumulator = 100;
         }
     }

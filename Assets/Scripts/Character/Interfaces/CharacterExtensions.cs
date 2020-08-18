@@ -35,5 +35,11 @@ namespace Character.Extensions
             float skill = character.HarvestSkill;
             return skill / (1250 + skill);
         }
+
+        public static float calculateMoveSpeed(this ICharacter<float> character){
+            //TODO: balance this calculation and probably all these other ones too
+            float strength = character.Strength;
+            return ((character.Strength / (12 + strength)) * 6) + 3;
+        }
     }
 }
