@@ -19,6 +19,8 @@ public class SampleCombatant : MonoBehaviour, INpc
     [SerializeField] private List<AudioClip> alertSounds;
     [SerializeField] private List<AudioClip> relaxSounds;
     [SerializeField] private AudioSource audioSource;
+    [SerializeField] private Transform debugDestTarget;
+    [SerializeField] private Transform debugLookTarget;
     private enum CombatState
     {
         Posted,
@@ -173,11 +175,13 @@ public class SampleCombatant : MonoBehaviour, INpc
     private float currentHealth;
     private float moveSpeed = 0;
     private Vector3 lookAtTarget;
-    private bool hasLookAtTarget = false;
+    private Vector3 currentRotation;
 
     // Start is called before the first frame update
     void Start()
     {
+        setLookingTarget(eyes.position + eyes.forward);
+        agent.updateRotation = false;
         maxHealth = currentHealth = Vitality * 2;
         moveSpeed = this.calculateMoveSpeed();
         toggleUrgency(false);
@@ -190,6 +194,7 @@ public class SampleCombatant : MonoBehaviour, INpc
         switch (state)
         {
             case CombatState.Posted:
+            setLookingTarget(eyes.position + eyes.forward);
                 if (playerDetectionAccumulator > 0)
                 {
                     becomePerked();
@@ -200,6 +205,7 @@ public class SampleCombatant : MonoBehaviour, INpc
                 }
                 break;
             case CombatState.Patrolling:
+            setLookingTarget(agent.steeringTarget);
                 if (playerDetectionAccumulator > 0)
                 {
                     becomePerked();
@@ -210,6 +216,7 @@ public class SampleCombatant : MonoBehaviour, INpc
                 }
                 break;
             case CombatState.Perked:
+            setLookingTarget(lastKnownPlayerLocation);
                 if (playerDetectionAccumulator >= 33)
                 {
                     becomeInvestigating();
@@ -220,6 +227,7 @@ public class SampleCombatant : MonoBehaviour, INpc
                 }
                 break;
             case CombatState.Investigating:
+            setLookingTarget(lastKnownPlayerLocation);
                 if (playerDetectionAccumulator >= 66)
                 {
                     becomeParanoid();
@@ -230,6 +238,7 @@ public class SampleCombatant : MonoBehaviour, INpc
                 }
                 break;
             case CombatState.Paranoid:
+            setLookingTarget(lastKnownPlayerLocation);
                 if (playerDetectionAccumulator >= 100)
                 {
                     becomeAlerted();
@@ -244,6 +253,7 @@ public class SampleCombatant : MonoBehaviour, INpc
                 }
                 break;
             case CombatState.Alerted:
+            setLookingTarget(lastKnownPlayerLocation);
                 if (detectionThisFrame)
                 {
                     becomeAlerted();
@@ -254,6 +264,7 @@ public class SampleCombatant : MonoBehaviour, INpc
                 }
                 break;
             case CombatState.Searching:
+            setLookingTarget(lastKnownPlayerLocation);
                 if (detectionThisFrame)
                 {
                     becomeParanoid();
@@ -264,6 +275,7 @@ public class SampleCombatant : MonoBehaviour, INpc
                 }
                 break;
             case CombatState.Relaxing:
+            setLookingTarget(eyes.position + eyes.forward);
                 if (playerDetectionAccumulator <= 0)
                 {
                     playerDetectionAccumulator = 0;
@@ -280,6 +292,7 @@ public class SampleCombatant : MonoBehaviour, INpc
                 }
                 break;
         }
+        calculateLookAngle();
     }
     public void Damage(float damageTaken)
     {
@@ -324,7 +337,7 @@ public class SampleCombatant : MonoBehaviour, INpc
     private void becomePatrolling()
     {
         int r = random.Next(patrolLocations.Count);
-        agent.SetDestination(patrolLocations[r].position);
+        setWalkingTarget(patrolLocations[r].position);
         state = CombatState.Patrolling;
         timeSinceUpdate = 0;
         Debug.Log("Patrollin' around...");
@@ -334,10 +347,10 @@ public class SampleCombatant : MonoBehaviour, INpc
     {
         state = CombatState.Perked;
         Vector3 direction = Vector3.Normalize(lastKnownPlayerLocation - eyes.position);
-        agent.SetDestination(eyes.position + (direction * 3));
+        setWalkingTarget(eyes.position + (direction * 3));
         if (agent.path.corners.Length > 2)
         {
-            agent.SetDestination(eyes.position + direction);
+            setWalkingTarget(eyes.position + direction);
             if (agent.path.corners.Length > 2)
             {
                 agent.ResetPath();
@@ -351,7 +364,7 @@ public class SampleCombatant : MonoBehaviour, INpc
     private void becomeInvestigating()
     {
         state = CombatState.Investigating;
-        agent.SetDestination(getChaseLocation(lastKnownPlayerLocation));
+        setWalkingTarget(getChaseLocation(lastKnownPlayerLocation));
         timeSinceUpdate = 0;
         //TODO: trigger vocal bark (e.g. "Better check it out...")
         Debug.Log("Lemme go check that out...");
@@ -361,7 +374,7 @@ public class SampleCombatant : MonoBehaviour, INpc
     {
         state = CombatState.Paranoid;
         //TODO: Alert Nearby Enemies, giving them 66 detection and causing them to become searching
-        agent.SetDestination(getChaseLocation(lastKnownPlayerLocation));
+        setWalkingTarget(getChaseLocation(lastKnownPlayerLocation));
         timeSinceUpdate = 0;
         toggleUrgency(true);
         Debug.Log("I think there's someone here");
@@ -371,7 +384,7 @@ public class SampleCombatant : MonoBehaviour, INpc
     {
         state = CombatState.Alerted;
         //TODO: Alert Nearby Enemies, giving them 100 detection, accurately updating their lastKnownPlayerLocation, and causing them to become Alerted.
-        agent.SetDestination(getChaseLocation(lastKnownPlayerLocation));
+        setWalkingTarget(getChaseLocation(lastKnownPlayerLocation));
         timeSinceUpdate = 0;
         toggleUrgency(true);
         Debug.Log("I found him!");
@@ -382,7 +395,7 @@ public class SampleCombatant : MonoBehaviour, INpc
         state = CombatState.Searching;
         //TODO: determine search desination some toher way?
         int r = random.Next(patrolLocations.Count);
-        agent.SetDestination(patrolLocations[r].position);
+        setWalkingTarget(patrolLocations[r].position);
         timeSinceUpdate = 0;
         toggleUrgency(false);
         Debug.Log("I lost him!");
@@ -411,16 +424,8 @@ public class SampleCombatant : MonoBehaviour, INpc
     private Vector3 getChaseLocation(Vector3 playerLocation)
     {
         float playerDistance = Vector3.Distance(eyes.position, playerLocation);
-        if (playerDistance < 5)
-        {
-            return eyes.position;
-        }
-        else
-        {
-            Vector3 directionToPlayer = Vector3.Normalize(playerLocation - eyes.position);
-            return (eyes.position + (directionToPlayer * (playerDistance - 5)));
-        }
-
+        Vector3 directionToPlayer = Vector3.Normalize(playerLocation - eyes.position);
+        return (eyes.position + (directionToPlayer * (playerDistance - 5)));
     }
 
     private void playerDetection()
@@ -469,5 +474,47 @@ public class SampleCombatant : MonoBehaviour, INpc
         {
             playerDetectionAccumulator = 100;
         }
+    }
+
+    private void setWalkingTarget(Vector3 target)
+    {
+        agent.SetDestination(target);
+        //TODO: Debug code
+        Vector3 debugLocation = new Vector3(target.x, debugDestTarget.position.y, target.z);
+        debugDestTarget.position = debugLocation;
+        //End debug code
+    }
+
+    private void setLookingTarget(Vector3 target)
+    {
+        lookAtTarget = target;
+        //TODO: Debug code
+        Vector3 debugLocation = new Vector3(target.x, debugLookTarget.position.y, target.z);
+        debugLookTarget.position = debugLocation;
+        //End debug code
+    }
+
+    private void calculateLookAngle()
+    {
+        Vector3 fwd = eyes.forward;
+        Vector3 toTarget = lookAtTarget - eyes.position;
+        float currentAngle = Vector3.SignedAngle(Vector3.forward, fwd, Vector3.up);
+        float targetAngle = Vector3.SignedAngle(Vector3.forward, toTarget, Vector3.up);
+        float neededTurn = targetAngle - currentAngle;
+        float maxTurn = agent.angularSpeed * Time.deltaTime;
+        if (neededTurn < 0)
+        {
+            maxTurn *= -1;
+        }
+        float newAngle = currentAngle + Mathf.Min(Mathf.Abs(neededTurn), Mathf.Abs(maxTurn));
+        transform.rotation = Quaternion.Euler(transform.rotation.x, newAngle, transform.rotation.z);
+        /*if (Mathf.Abs(angle) > Mathf.Abs(maxTurn))
+        {
+            transform.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y + maxTurn, transform.rotation.z);
+        }
+        else
+        {
+            transform.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y + angle, transform.rotation.z);
+        }*/
     }
 }
