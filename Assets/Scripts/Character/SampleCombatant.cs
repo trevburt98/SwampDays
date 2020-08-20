@@ -258,13 +258,13 @@ public class SampleCombatant : MonoBehaviour, INpc
                 {
                     becomeAlerted();
                 }
-                if (!agent.hasPath)
+                else if (!agent.hasPath)
                 {
                     becomeSearching();
                 }
                 break;
             case CombatState.Searching:
-            setLookingTarget(lastKnownPlayerLocation);
+            setLookingTarget(agent.steeringTarget);
                 if (detectionThisFrame)
                 {
                     becomeParanoid();
@@ -506,15 +506,11 @@ public class SampleCombatant : MonoBehaviour, INpc
         {
             maxTurn *= -1;
         }
-        float newAngle = currentAngle + Mathf.Min(Mathf.Abs(neededTurn), Mathf.Abs(maxTurn));
-        transform.rotation = Quaternion.Euler(transform.rotation.x, newAngle, transform.rotation.z);
-        /*if (Mathf.Abs(angle) > Mathf.Abs(maxTurn))
-        {
-            transform.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y + maxTurn, transform.rotation.z);
+        float turnAmount = Mathf.Abs(neededTurn) < Mathf.Abs(maxTurn) ? neededTurn : maxTurn;
+        if(Vector3.Magnitude(toTarget) < 2){
+            turnAmount = 0;
         }
-        else
-        {
-            transform.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y + angle, transform.rotation.z);
-        }*/
+        float newAngle = currentAngle + turnAmount;
+        transform.rotation = Quaternion.Euler(transform.rotation.x, newAngle, transform.rotation.z);
     }
 }
