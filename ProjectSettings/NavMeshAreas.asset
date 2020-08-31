@@ -11,13 +11,13 @@ NavMeshProjectSettings:
     cost: 1
   - name: Jump
     cost: 2
-  - name: 
+  - name: Walkable Highcover
     cost: 1
-  - name: 
+  - name: Walkable Lowcover
     cost: 1
-  - name: 
+  - name: Highcover
     cost: 1
-  - name: 
+  - name: Lowcover
     cost: 1
   - name: 
     cost: 1

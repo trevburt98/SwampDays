@@ -7,7 +7,8 @@ using Character.Extensions;
 
 public class SampleCombatant : MonoBehaviour, INpc
 {
-    [SerializeField] private List<Transform> patrolLocations;
+    [SerializeField] private Transform patrolLocationsHolder;
+    [SerializeField] private Transform coverLocationsHolder;
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private Transform eyes;
     [SerializeField] private Transform player;
@@ -21,6 +22,9 @@ public class SampleCombatant : MonoBehaviour, INpc
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private Transform debugDestTarget;
     [SerializeField] private Transform debugLookTarget;
+    [SerializeField] private GameObject debugLocationPrefab;
+    [SerializeField] private Transform smallerBoundingPoint;
+    [SerializeField] private Transform largerBoundingPoint;
     private enum CombatState
     {
         Posted,
@@ -51,6 +55,8 @@ public class SampleCombatant : MonoBehaviour, INpc
     private Vector3 lastKnownPlayerLocation;
     private float playerDetectionAccumulator = 0;
     private bool detectionThisFrame = false;
+    private List<Transform> coverLocations;
+    private List<Transform> patrolLocations;
 
     #region Trait Declarations
     private string _name = "Sample Combatant";
@@ -180,6 +186,16 @@ public class SampleCombatant : MonoBehaviour, INpc
     // Start is called before the first frame update
     void Start()
     {
+        patrolLocations = new List<Transform>();
+        coverLocations = new List<Transform>();
+        foreach (Transform child in patrolLocationsHolder)
+        {
+            patrolLocations.Add(child);
+        }
+        foreach (Transform child in coverLocationsHolder)
+        {
+            coverLocations.Add(child);
+        }
         setLookingTarget(eyes.position + eyes.forward);
         agent.updateRotation = false;
         maxHealth = currentHealth = Vitality * 2;
@@ -194,7 +210,7 @@ public class SampleCombatant : MonoBehaviour, INpc
         switch (state)
         {
             case CombatState.Posted:
-            setLookingTarget(eyes.position + eyes.forward);
+                setLookingTarget(eyes.position + eyes.forward);
                 if (playerDetectionAccumulator > 0)
                 {
                     becomePerked();
@@ -205,7 +221,7 @@ public class SampleCombatant : MonoBehaviour, INpc
                 }
                 break;
             case CombatState.Patrolling:
-            setLookingTarget(agent.steeringTarget);
+                setLookingTarget(agent.steeringTarget);
                 if (playerDetectionAccumulator > 0)
                 {
                     becomePerked();
@@ -216,7 +232,7 @@ public class SampleCombatant : MonoBehaviour, INpc
                 }
                 break;
             case CombatState.Perked:
-            setLookingTarget(lastKnownPlayerLocation);
+                setLookingTarget(lastKnownPlayerLocation);
                 if (playerDetectionAccumulator >= 33)
                 {
                     becomeInvestigating();
@@ -227,7 +243,7 @@ public class SampleCombatant : MonoBehaviour, INpc
                 }
                 break;
             case CombatState.Investigating:
-            setLookingTarget(lastKnownPlayerLocation);
+                setLookingTarget(lastKnownPlayerLocation);
                 if (playerDetectionAccumulator >= 66)
                 {
                     becomeParanoid();
@@ -238,7 +254,7 @@ public class SampleCombatant : MonoBehaviour, INpc
                 }
                 break;
             case CombatState.Paranoid:
-            setLookingTarget(lastKnownPlayerLocation);
+                setLookingTarget(lastKnownPlayerLocation);
                 if (playerDetectionAccumulator >= 100)
                 {
                     becomeAlerted();
@@ -253,18 +269,31 @@ public class SampleCombatant : MonoBehaviour, INpc
                 }
                 break;
             case CombatState.Alerted:
-            setLookingTarget(lastKnownPlayerLocation);
+                setLookingTarget(lastKnownPlayerLocation);
                 if (detectionThisFrame)
                 {
-                    becomeAlerted();
+                    becomeSeekingCover();
                 }
                 else if (!agent.hasPath)
                 {
                     becomeSearching();
                 }
                 break;
+            case CombatState.seekingCover:
+                setLookingTarget(lastKnownPlayerLocation);
+                if (!agent.hasPath)
+                {
+                    becomeInCover();
+                }
+                break;
+            case CombatState.inCover:
+                setLookingTarget(lastKnownPlayerLocation);
+                if (timeSinceUpdate >= timeToUpdate){
+                    becomeSeekingCover();
+                }
+                break;
             case CombatState.Searching:
-            setLookingTarget(agent.steeringTarget);
+                setLookingTarget(agent.steeringTarget);
                 if (detectionThisFrame)
                 {
                     becomeParanoid();
@@ -275,7 +304,7 @@ public class SampleCombatant : MonoBehaviour, INpc
                 }
                 break;
             case CombatState.Relaxing:
-            setLookingTarget(eyes.position + eyes.forward);
+                setLookingTarget(eyes.position + eyes.forward);
                 if (playerDetectionAccumulator <= 0)
                 {
                     playerDetectionAccumulator = 0;
@@ -388,6 +417,20 @@ public class SampleCombatant : MonoBehaviour, INpc
         timeSinceUpdate = 0;
         toggleUrgency(true);
         Debug.Log("I found him!");
+    }
+
+    private void becomeSeekingCover()
+    {
+        setWalkingTarget(chooseCoverLocation(lastKnownPlayerLocation));
+        state = CombatState.seekingCover;
+        timeSinceUpdate = 0;
+    }
+
+    private void becomeInCover()
+    {
+        state = CombatState.inCover;
+        timeSinceUpdate = 0;
+        timeToUpdate = 2;
     }
 
     private void becomeSearching()
@@ -507,10 +550,68 @@ public class SampleCombatant : MonoBehaviour, INpc
             maxTurn *= -1;
         }
         float turnAmount = Mathf.Abs(neededTurn) < Mathf.Abs(maxTurn) ? neededTurn : maxTurn;
-        if(Vector3.Magnitude(toTarget) < 2){
+        if (Vector3.Magnitude(toTarget) < 2)
+        {
             turnAmount = 0;
         }
         float newAngle = currentAngle + turnAmount;
         transform.rotation = Quaternion.Euler(transform.rotation.x, newAngle, transform.rotation.z);
+    }
+
+    private Vector3 chooseCoverLocation(Vector3 playerLocation)
+    {
+        RaycastHit hit;
+        Vector3? bestLocation = null;
+        bool safety = false;
+        float combinedDistance = 0f;
+        foreach (Transform candidate in coverLocations)
+        {
+            if (bestLocation == null)
+            {
+                bestLocation = candidate.position;
+                if (Physics.Raycast(candidate.position, lastKnownPlayerLocation - candidate.position, out hit))
+                {
+                    if (hit.transform.GetComponent<PlayerCharacter>() == null)
+                    {
+                        safety = true;
+                    }
+                }
+                combinedDistance = Vector3.Distance(eyes.position, candidate.position) / 2 + Vector3.Distance(candidate.position, lastKnownPlayerLocation);
+            }
+            else
+            {
+                float thisDistance = Vector3.Distance(eyes.position, candidate.position) / 2 + Vector3.Distance(candidate.position, lastKnownPlayerLocation);
+                bool thisSafety = false;
+                if (Physics.Raycast(candidate.position, lastKnownPlayerLocation - candidate.position, out hit))
+                {
+                    if (hit.transform.GetComponent<PlayerCharacter>() == null)
+                    {
+                        thisSafety = true;
+                    }
+                }
+                if (!safety)
+                {
+                    if (thisSafety)
+                    {
+                        bestLocation = candidate.position;
+                        safety = thisSafety;
+                        combinedDistance = thisDistance;
+                    }
+                    else if (thisDistance < combinedDistance)
+                    {
+                        bestLocation = candidate.position;
+                        safety = thisSafety;
+                        combinedDistance = thisDistance;
+                    }
+                }
+                else if (thisSafety && thisDistance < combinedDistance)
+                {
+                    bestLocation = candidate.position;
+                    safety = thisSafety;
+                    combinedDistance = thisDistance;
+                }
+            }
+        }
+        return (Vector3)bestLocation;
     }
 }
